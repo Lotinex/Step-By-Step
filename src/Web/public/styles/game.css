@@ -1,0 +1,178 @@
+@font-face { font-family: N; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff'); font-weight: normal; font-style: normal; }
+html, body {
+    font-family: N;
+}
+.dialog {
+    position: fixed;
+    background: rgba(0,0,0,0.8);
+    border-radius: 7px;
+    cursor: pointer;
+}
+.dialog-head {
+    font-weight: bold;
+    font-size: 15px;
+    padding: 3px;
+    color: white;
+    height: 20px;
+    background: rgba(125,125,125,0.8);
+    border-top-right-radius: 7px;
+    border-top-left-radius: 7px;
+}
+.dialog-close {
+    color: white;
+    font-size: 17px;
+    float: right;
+    padding: 3px;
+}
+.dialog-body {
+    padding: 5px;
+}
+#inventory-box {
+    color: white;
+    overflow-y: scroll;
+    height: 300px;
+}
+#inventory-box::-webkit-scrollbar {
+    background: rgba(0, 0, 0, 0.432);
+}
+#inventory-box::-webkit-scrollbar-thumb {
+    background: rgba(125,125,125,0.7);
+}
+.item-box {
+    width: 50px;
+    height: 50px;
+    border: 1px solid white;
+    background: rgba(0,0,0,0.7);
+    background-size: auto;
+    display: inline-block;
+    margin: 3px;
+    cursor: help;
+}
+.item-img {
+    width: 50px;
+    height: 50px;
+}
+
+/* 여기서부터 아이템 툴팁 */
+
+#itemTooltip {
+    z-index: 3;
+    background: rgba(0,0,0,0.8);
+    border-radius: 7px;
+    user-select: none;
+    width: 300px;
+    height: 600px;
+    position: fixed;
+    padding: 5px;
+    display: none;
+}
+#itemTooltip-top {
+    height: 70px;
+    border-bottom: 1px solid white;
+    padding: 5px;
+}
+    #itemTooltip-nameGroup {
+        height: 55px;
+    }
+    #itemTooltip-name {
+        color: white;
+        font-size: 25px;
+        text-align: center;
+    }
+    #itemTooltip-rare {
+        color: white;
+        font-size: 13px;
+        width: 100%;
+        text-align: center;
+    }
+        .rare-normal {
+            color: white;
+            background: linear-gradient(to right, rgba(255,255,255,0.01),rgba(255,255,255,0.2), rgba(255,255,255,0.4),rgba(255,255,255,0.6),rgba(255,255,255,0.8), rgba(255,255,255,1),rgba(255,255,255,0.8),rgba(255,255,255,0.6), rgba(255,255,255,0.4), rgba(255,255,255,0.2),rgba(255,255,255,0.01));
+        }
+        .rare-rare {
+            color: lightgreen;
+            background: linear-gradient(to right, rgba(144,238,144,0.01),rgba(144,238,144,0.2), rgba(144,238,144,0.4),rgba(144,238,144,0.6),rgba(144,238,144,0.8), rgba(144,238,144,1),rgba(144,238,144,0.8),rgba(144,238,144,0.6), rgba(144,238,144,0.4), rgba(144,238,144,0.2),rgba(144,238,144,0.01));
+        }
+        .rare-epic {
+            color: lightblue;
+            background: linear-gradient(to right, rgba(173,216,230,0.01),rgba(173,216,230,0.2), rgba(173,216,230,0.4),rgba(173,216,230,0.6),rgba(173,216,230,0.8), rgba(173,216,230,1),rgba(173,216,230,0.8),rgba(173,216,230,0.6), rgba(173,216,230,0.4), rgba(173,216,230,0.2),rgba(173,216,230,0.01));
+        }
+        .rare-legendary {
+            color: gold;
+            background: linear-gradient(to right, rgba(255,125,0,0.01),rgba(255,125,0,0.2), rgba(255,125,0,0.4),rgba(255,125,0,0.6),rgba(255,125,0,0.8), rgba(255,125,0,1),rgba(255,125,0,0.8),rgba(255,125,0,0.6), rgba(255,125,0,0.4), rgba(255,125,0,0.2),rgba(255,125,0,0.01));
+        }
+        .rare-mythic {
+            color: red;
+            background: linear-gradient(to right, rgba(255,0,0,0.01),rgba(255,0,0,0.2), rgba(255,0,0,0.4),rgba(255,0,0,0.6),rgba(255,0,0,0.8), rgba(255,0,0,1),rgba(255,0,0,0.8),rgba(255,0,0,0.6), rgba(255,0,0,0.4), rgba(255,0,0,0.2),rgba(255,0,0,0.01));
+        }
+
+    #itemTooltip-levelGroup {
+        height: 15px;
+    }
+    #itemTooltip-level {
+        color: white;
+        display: inline-block;
+    }
+    #itemTooltip-reqLv {
+        color: orange;
+        display: inline-block;
+        margin-left: 20px;
+    }
+    #itemTooltip-star {
+        color: white;
+        float: right;
+    }
+
+
+#itemTooltip-mid {
+    height: 200px;
+    border-bottom: 1px solid white;
+    display: flex;
+    align-items: center;
+}
+    #itemTooltip-img {
+        width: 150px;
+        height: 150px;
+        border: 2px solid white;
+        margin-left: 10px;
+    }
+    #itemTooltip-stat {
+        width: 120px;
+        margin-left: 10px;
+        height: 170px;
+        color: white;
+    }
+
+#itemTooltip-power {
+    height: 70px;
+    border-bottom: 1px solid white;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+    #itemTooltip-powerText {
+        color: gray;
+        font-size: 20px;
+        margin-left: 30px;
+    }
+    #itemTooltip-powerValue {
+        color: white;
+        font-size: 40px;
+        margin-left: 30px;
+    }
+#itemTooltip-bottom {
+    height: 250px;
+    border-bottom: 1px solid white;
+}
+    #itemTooltip-description {
+        height: 150px;
+        border-bottom: 2px dotted gray;
+        color: white;
+        padding: 5px;
+    }
+    #itemTooltip-abilities {
+        color: white;
+        padding: 5px;
+    }
+
+/* 아이템 툴팁 끝 */

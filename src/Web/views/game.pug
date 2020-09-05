@@ -1,0 +1,47 @@
+html(lang="ko")
+    include base.pug
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title 스바스(Step by Step)
+        link(rel="stylesheet", href="styles/game.css")
+    body
+        mixin Dialog(id, title, w, h)
+            div.dialog(id=id style=`width:${w}px; height:${h}px;`)
+                div.dialog-head
+                    span= title
+                    div.dialog-close
+                        i.fas.fa-times
+                div.dialog-body
+                    block
+        div#itemTooltip
+            div#itemTooltip-top
+                div#itemTooltip-nameGroup
+                    div#itemTooltip-name 테스트
+                    div#itemTooltip-rare 노말
+                div#itemTooltip-levelGroup
+                    div#itemTooltip-level Lv.0
+                    div#itemTooltip-reqLV reqLv.0
+                    div#itemTooltip-star ★☆☆☆☆☆☆
+            div#itemTooltip-mid
+                img#itemTooltip-img
+                div#itemTooltip-stat
+            div#itemTooltip-power
+                div#itemTooltip-powerText 파워
+                div#itemTooltip-powerValue +0
+            div#itemTooltip-bottom
+                div#itemTooltip-description 이예에
+                div#itemTooltip-abilities 아무것도없슴니다.tr
+
+        +Dialog("Inventory", "인벤토리", 610, 340)
+            div#inventory-box
+    
+    script(src="scripts/game.js")
+    
+
+
+
+
+
+
+
