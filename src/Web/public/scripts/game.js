@@ -3,6 +3,7 @@ const CONFIG = {
 } //나중에 분리하자.
 const my = {}; //내 정보 (스탯 등)
 
+const ws = new Socket();
 
 function drag(dialog) {
     dialog.children(".dialog-head").on('mousedown', e => {
