@@ -8,7 +8,7 @@
   + jQuery
   + MySQL
 
-> Prograss
+> Progress
 
 - [x] 웹 서버 구축
 - [x] 게임 서버 구축
