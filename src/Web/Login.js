@@ -21,11 +21,20 @@ exports.init = function(App){
             passReqToCallback : true
         }, (req, accessToken, refreshToken, profile, done) => {
             process.nextTick(async () => {
-                const user = await DB.TABLE.users.find({ id : profile.id });
-                if(user.length == 0){
+                const user = await DB.TABLE.users.findOne({ id : profile.id });
+                if(!user){
                     await DB.TABLE.users.add(profile.id, "{}", 1);
                 }
-                req.session.profile = profile;
+                const userSession = await DB.TABLE.session.findOne({ id : req.session.id });
+                req.session.profile = {
+                    id : profile.id,
+                    // 나머지 정보.. 나중에 구현하자 (프로필 사진 등)
+                }
+                if(!userSession){
+                    await DB.TABLE.session.add(req.session.id, req.session.profile, Date.now());
+                } else {
+                    // ...?
+                }
                 return done(null, profile);
             })
         }

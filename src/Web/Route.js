@@ -2,10 +2,11 @@ const Express = require("express");
 const Login = require("./Login");
 const DB = require("../DB/Database");
 
-module.exports = function(){
+module.exports = function(Logger){
     const Router = Express.Router();
 
-    Router.get("/game", Login.isAuthenticated, (req, res) => {
+    Router.get("/game", Login.isAuthenticated, async (req, res) => {
+        Logger.trace(req.session.id)
         res.render("game");
     })
     Router.get("/", (req, res) => {

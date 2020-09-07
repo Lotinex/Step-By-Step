@@ -43,6 +43,16 @@ class Table {
             })
         })
     }
+    findOne(...conditions){
+        return new Promise((rs, rj) => {
+            let conditionsArr = Table.parseExpression(conditions)
+
+            DB.query(`SELECT * FROM ${this.table} WHERE ${conditionsArr.join(' , ')} LIMIT 1;`, (err, res) => {
+                if(err) rj(err);
+                else rs(res);
+            })
+        })
+    }
     add(...values){
         return new Promise((rs, rj) => {
             let valueArr = values.map(v => `"${v}"`);
@@ -67,6 +77,7 @@ class Table {
 module.exports = {
     TABLE : {
         users : new Table("users"),
-        item : new Table("item")
+        item : new Table("item"),
+        session : new Table("session")
     }
 }

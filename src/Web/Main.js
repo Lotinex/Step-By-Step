@@ -3,23 +3,26 @@ const Path = require("path");
 const Route = require("./Route");
 const DB = require("../DB/Database");
 const MySQL = require("mysql");
-const Item = require("../Tools/item");
 const Login = require("./Login");
-
-
+const Socket = require("socket.io-client");
+const Color = require("ansi-colors");
+const Lognex = require("../Tools/Lognex");
+const GLOBAL = require("../global-config.json");
 
 const App = Express();
-
+const ws = Socket(`ws://${GLOBAL.INTERNAL_WS_URL}:${GLOBAL.WS_PORT}`)
+const Logger = new Lognex("WEB", "red");
 Login.init(App);
+
 App.use(Express.static(`${__dirname}/public`))
 
 App.set('views', `${__dirname}/views`)
 App.set('view engine', 'pug')
 
-App.use("/", Route());
+App.use("/", Route(Logger));
 
 App.listen(80, () => {
-    console.log("Web server opened.")
+    Logger.trace("Web Server opened.")
 })
 
 
