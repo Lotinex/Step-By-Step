@@ -10,7 +10,7 @@ const Lognex = require("../Tools/Lognex");
 const GLOBAL = require("../global-config.json");
 
 const App = Express();
-const ws = Socket(`ws://${GLOBAL.INTERNAL_WS_URL}:${GLOBAL.WS_PORT}`)
+const ws = Socket(`${GLOBAL.INTERNAL_WS_URL}:${GLOBAL.WS_PORT}`)
 const Logger = new Lognex("WEB", "red");
 Login.init(App);
 

@@ -10,7 +10,7 @@ class Logger { //일단 이 클래스 하나만 둔다. 나중에 재작성한�
 
     }
     trace(value){
-        console.log(`${Color[this.color](this.label)} | ${Utils.time()} | ${value}`)
+        console.log(`${Color[this.color](this.label)} | ${Color.cyan(Utils.time())} | ${value}`)
 
     }
 }
