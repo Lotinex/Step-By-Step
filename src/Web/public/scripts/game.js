@@ -5,7 +5,9 @@ const my = {}; //내 정보 (스탯 등)
 
 const ws = new Socket();
 
-
+ws.on('enter', myData => {
+    console.log(myData); //TEST
+})
 function drag(dialog) {
     dialog.children(".dialog-head").on('mousedown', e => {
       var offsetX = e.clientX - parseInt(dialog.css("left"))

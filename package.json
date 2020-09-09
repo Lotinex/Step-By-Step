@@ -11,7 +11,9 @@
   "dependencies": {
     "ansi-colors": "^4.1.1",
     "child_process": "^1.0.2",
+    "connect": "^3.7.0",
     "cookie": "^0.4.1",
+    "cookie-parser": "^1.4.5",
     "cookies": "^0.8.0",
     "electron": "^10.1.1",
     "express": "^4.17.1",

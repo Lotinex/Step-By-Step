@@ -7,7 +7,7 @@ class Socket {
     send(event, ...data){
         this.ws.emit(event, ...data)
     }
-    receive(event, receiver){
+    on(event, receiver){
         this.ws.on(event, receiver)
     }
 }

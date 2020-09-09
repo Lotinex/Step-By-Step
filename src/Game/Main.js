@@ -5,7 +5,9 @@ const Lognex = require("../Tools/Lognex");
 const User = require("./User");
 const GLOBAL = require("../global-config.json");
 const Cookie = require("cookie");
-
+const CookieParser = require("cookie-parser");
+const LoginConfig = require("../Web/json/login.json");
+const DB = require("../DB/Database");
 
 const Server = Http.createServer();
 const ws = Socket(Server);
@@ -13,7 +15,7 @@ const Logger = new Lognex("GAME", "blue");
 
 const Clients = {};
 
-ws.on('connection', socket => {
+ws.on('connection', async socket => {
     const sid = socket.id;
     const address = socket.handshake.headers.host.split(':')[0];
     if(address === GLOBAL.INTERNAL_WS_URL){
@@ -25,10 +27,18 @@ ws.on('connection', socket => {
         Logger.trace("Server Manager connected.")
         // 매니저에 대한 disconnect는 처리하지 않는다.
         // (어짜피 걔가 죽으면 서버 두개가 다 죽는다.)
-    } else { //어떻게 할지 생각해보자.
-        Logger.trace(`Client ${socket.id} connected.`)
-        const id = Cookie.parse(socket.handshake.headers.cookie)['connect.sid'];
+    } else { 
+        Logger.trace(`Client ${socket.id} connected.`);
+
         Clients[sid] = new User(socket, sid);
+
+        const sidCookie = Cookie.parse(socket.handshake.headers.cookie)['connect.sid'];
+        const sessionID = CookieParser.signedCookie(sidCookie, LoginConfig.SESSION_SECRET);
+        
+        const userID = await DB.TABLE.session.findOne([{id: sessionID}]).id;
+        const user = await DB.TABLE.users.findOne([{id: userID}])
+
+        Clients[sid].send("enter", user);
 
     }
 })

@@ -55,7 +55,10 @@ class Table {
     }
     add(...values){
         return new Promise((rs, rj) => {
-            let valueArr = values.map(v => `"${v}"`);
+            let valueArr = values.map(v => {
+                if(typeof v == 'object') return `'${JSON.stringify(v)}'`;
+                return `"${v}"`;
+            });
             DB.query(`INSERT INTO ${this.table} VALUES (${valueArr.join(" , ")})`, err => {
                 if(err) rj(err);
                 else rs();
@@ -68,6 +71,15 @@ class Table {
             let valueArr = Table.parseExpression(valueExpression)
 
             DB.query(`UPDATE ${this.table} SET ${valueArr.join(' , ')} WHERE ${conditionsArr.join(' ')}`, err => {
+                if(err) rj(err);
+                else rs();
+            })
+        })
+    }
+    delete(conditions){
+        return new Promise((rs, rj) => {
+            let conditionsArr = Table.parseExpression(conditions)
+            DB.query(`DELETE FROM ${this.table} WHERE ${conditionsArr.join(' ')}`, err => {
                 if(err) rj(err);
                 else rs();
             })

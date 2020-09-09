@@ -2,6 +2,7 @@ const passport = require('passport');
 const DB = require("../DB/Database")
 const session = require('express-session');
 const CONFIG = require("./json/login.json");
+const MySQL = require("mysql");
 
 const GoogleStrategy = require( 'passport-google-oauth20' ).Strategy
 
@@ -25,16 +26,10 @@ exports.init = function(App){
                 if(!user){
                     await DB.TABLE.users.add(profile.id, "{}", 1);
                 }
-                const userSession = await DB.TABLE.session.findOne({ id : req.session.id });
                 req.session.profile = {
-                    id : profile.id,
-                    // 나머지 정보.. 나중에 구현하자 (프로필 사진 등)
+                    id : profile.id
                 }
-                if(!userSession){
-                    await DB.TABLE.session.add(req.session.id, req.session.profile, Date.now());
-                } else {
-                    // ...?
-                }
+                await DB.TABLE.session.add(req.session.id, req.session.profile, Date.now());
                 return done(null, profile);
             })
         }

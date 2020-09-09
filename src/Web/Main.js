@@ -19,7 +19,7 @@ App.use(Express.static(`${__dirname}/public`))
 App.set('views', `${__dirname}/views`)
 App.set('view engine', 'pug')
 
-App.use("/", Route(Logger));
+App.use("/", Route());
 
 App.listen(80, () => {
     Logger.trace("Web Server opened.")
