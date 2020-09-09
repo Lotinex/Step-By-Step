@@ -2,16 +2,18 @@
   "name": "step-by-step",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "manager/Main.js",
   "scripts": {
-    "start": "node ./src/Web/Main && node ./src/Game/Main"
+    "start": "electron ."
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "ansi-colors": "^4.1.1",
+    "child_process": "^1.0.2",
     "cookie": "^0.4.1",
     "cookies": "^0.8.0",
+    "electron": "^10.1.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "mysql": "^2.18.1",

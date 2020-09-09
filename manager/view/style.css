@@ -1,0 +1,48 @@
+html, body {
+    padding: 0;
+    margin: 0 auto;
+    height: 100%;
+    font-family: 'Ubuntu', sans-serif;
+}
+#console {
+    background: rgb(8, 8, 8);
+    width: 100%;
+    height: 513px;
+    margin: 0 auto;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: scroll;
+}
+#command {
+    width: 787px;
+    padding: 3px;
+    margin: 0 auto;
+    height: 30px;
+    color: white;
+    background: rgba(0,0,0,0.85);
+    border: 1px solid white;
+}
+#command:focus {
+    outline: none;
+}
+#command::placeholder {
+    color: white;
+}
+
+.logBox {
+    padding: 1px;
+    color: white;
+    height: 15px;
+    font-size: 14px;
+    clear: both;
+}
+#command_console {
+    top:0;
+    position: fixed;
+    width: 100%;
+    height: 562px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 5px;
+    display: none;
+}

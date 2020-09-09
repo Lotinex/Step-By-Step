@@ -15,18 +15,22 @@ const Clients = {};
 
 ws.on('connection', socket => {
     const sid = socket.id;
-    if(socket.handshake.headers.host.split(':')[0] === GLOBAL.INTERNAL_WS_URL){
+    const address = socket.handshake.headers.host.split(':')[0];
+    if(address === GLOBAL.INTERNAL_WS_URL){
         Logger.trace("Web server connected.")
         socket.on('disconnect', () => {
              Logger.trace("Web server died.")
         })
+    } else if(address === '127.0.0.3'){
+        Logger.trace("Server Manager connected.")
+        // 매니저에 대한 disconnect는 처리하지 않는다.
+        // (어짜피 걔가 죽으면 서버 두개가 다 죽는다.)
     } else { //어떻게 할지 생각해보자.
+        Logger.trace(`Client ${socket.id} connected.`)
         const id = Cookie.parse(socket.handshake.headers.cookie)['connect.sid'];
-        console.log(id)
         Clients[sid] = new User(socket, sid);
 
     }
-    Logger.trace(`Client ${socket.id} connected.`)
 })
 Server.listen(GLOBAL.WS_PORT, () => {
     Logger.trace(`Game Server opened : ${GLOBAL.WS_PORT}`)
