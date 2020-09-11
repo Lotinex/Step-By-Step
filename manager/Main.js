@@ -52,7 +52,7 @@ function Engine(){
             ]
         }
     ]))
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
 }
 function stopServers(){
