@@ -1,4 +1,7 @@
 class GraphicRenderer {
+    /**
+     * @param {HTMLCanvasElement} canvas 
+     */
     constructor(canvas){
         /**
          * @type {CanvasRenderingContext2D}
@@ -9,6 +12,21 @@ class GraphicRenderer {
         this.entities = {};
 
         window.requestAnimationFrame(this.UpdateRequest)
+
+        canvas.addEventListener("click", e => {
+            for(let id in this.entities){
+                const entity = this.entities[id];
+
+                const checkMinX = e.pageX >= entity.x - entity.w / 2;
+                const checkMaxX = e.pageX <= entity.x + entity.w / 2;
+                const checkMinY = e.pageY >= entity.y - entity.h / 2;
+                const checkMaxY = e.pageY <= entity.y + entity.h / 2;
+
+                if(checkMinX && checkMaxX && checkMinY && checkMaxY){
+                    entity.onClick(e.pageX, e.pageY)
+                }
+            }
+        })
     }
     clear(){
         this.ctx.clearRect(0, 0, this.w, this.h)
@@ -96,7 +114,7 @@ class Entity {
     }
     /**
      * 렌더링 중 연산을 최소화하기 위해 set_animatedTexture에서 
-     * this._animatedTexture에 미리 Image 인스턴스를 넣어두는 작업을 한다.
+     * this._animatedText  ure에 미리 Image 인스턴스를 넣어두는 작업을 한다.
      */
     updateAnimatedTexture(){ //줄 수 있다.
         this.img = this._animatedTexture[this._animatedCount];
@@ -108,4 +126,8 @@ class Entity {
      * @abstract
      */
     render(){}
+    /**
+     * @abstract
+     */
+    onClick(){}
 }

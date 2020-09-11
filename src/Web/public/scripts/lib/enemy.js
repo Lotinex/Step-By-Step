@@ -5,4 +5,7 @@ class Enemy extends Entity {
     render(ctx){
         ctx.drawImage(this.img, this.x, this.y)
     }
+    onClick(x, y){
+        // hp가 달거나 뭐 그러겠지?
+    }
 }
