@@ -2,3 +2,4 @@ node_modules/
 step-by-step.code-workspace
 src/DB/config.json
 src/Web/json/
+.VSCodeCounter/

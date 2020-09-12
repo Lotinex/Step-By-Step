@@ -16,6 +16,19 @@ html(lang="ko")
                         i.fas.fa-times
                 div.dialog-body
                     block
+        mixin Stage(id, label, w, h, x, y)
+            div.stage(id=id style=`width:${w}px; height:${h}px; left:${x}px; top:${y}px; background-image: url(assets/img/stages/${id}.png);`)
+                div.stageLabel= label
+                block
+        div#map
+            div#mapLabel= "세계: 우주"
+            +Stage('earth', '지구', 300, 300, 10, 50)
+            +Stage('immune', '면역의 땅', 300, 300, 150, 350)
+            +Stage('eternal_prison', '영원한 감옥', 300, 300, 600, 250)
+            +Stage('harbinger_of_end', '종말의 전조', 500, 600, 1000, 50)
+
+            +Stage('arkcube_piece', '???', 250, 250, 400, 800)
+            +Stage('loard_down_benzene', '???', 1000, 1000, 1800, 50)
         div#itemTooltip
             div#itemTooltip-top
                 div#itemTooltip-nameGroup

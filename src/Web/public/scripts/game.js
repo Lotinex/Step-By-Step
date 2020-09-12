@@ -1,13 +1,49 @@
 const CONFIG = {
     STAR_LIMIT : 7
 } //나중에 분리하자.
-const my = {}; //내 정보 (스탯 등)
+var my = {}; //내 정보 (스탯 등)
 
 const ws = new Socket();
 
-ws.on('enter', myData => {
-    console.log(myData); //TEST
+ws.on('enter', data => {
+    my = data;
+    console.log(my)
+    dragMap()
+    drag($("#Inventory"))
+
+    $.get(`/inventory?id=${my.id}`, res => { //테스트
+        const items = JSON.parse(res);
+        renderItem(items)
+    })
 })
+function dragMap(){
+    let position = { top: 0, left: 0, x: 0, y: 0 };
+
+    const mouseDown = e => {
+        position = {
+            top: document.getElementById("map").scrollTop,
+            left: document.getElementById("map").scrollLeft,
+            x: e.pageX,
+            y: e.pageY
+        }
+        $(document).on('mousemove', mouseMove)
+        $(document).on('mouseup', mouseUp)
+    }
+    const mouseMove = e => {
+        const dx = e.pageX - position.x;
+
+        const dy = e.pageY - position.y;
+        document.getElementById("map").scrollTop = position.top - dy
+        document.getElementById("map").scrollLeft = position.left - dx
+    }
+    const mouseUp = e => {
+        $(document).off('mousemove', mouseMove)
+        $(document).off('mouseup', mouseUp)
+    }
+
+    $("#map").on('mousedown', mouseDown)
+
+}
 function drag(dialog) {
     dialog.children(".dialog-head").on('mousedown', e => {
       var offsetX = e.clientX - parseInt(dialog.css("left"))
@@ -27,7 +63,6 @@ function drag(dialog) {
       window.addEventListener('mouseup', reset);
     });
 }
-drag($("#Inventory"));
 let tooltip = false;
 function renderItem(itemObject){
     for(let item in itemObject){
@@ -91,8 +126,7 @@ $(window).on("mousemove", e => {
         $("#itemTooltip").css("top", e.pageY - 50)
     }
 })
-$.get("/inventory?id=asdfasdf", res => { //테스트
-    const items = JSON.parse(res);
-    renderItem(items)
-})
-$("#Inventory").show(); //테스트
+
+
+
+

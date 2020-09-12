@@ -1,6 +1,7 @@
 @font-face { font-family: N; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff'); font-weight: normal; font-style: normal; }
 html, body {
     font-family: N;
+    margin: 0;
 }
 .dialog {
     position: fixed;
@@ -176,3 +177,57 @@ html, body {
     }
 
 /* 아이템 툴팁 끝 */
+
+#map {
+    position: absolute;
+    background: rgba(0,0,0,0.9);
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    cursor: grab;
+    overflow: auto;
+}
+#mapLabel {
+    user-select: none;
+    z-index: 5;
+}
+#map::-webkit-scrollbar { width: 0 ! important }
+.stage {
+    user-select: none;
+    position: absolute;
+    background-size: contain;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.stage:hover {
+    transform: scale(1.2);
+
+}
+.stageLabel {
+    background: linear-gradient(to right, rgba(255,255,255,0.01),rgba(255,255,255,0.2), rgba(255,255,255,0.4),rgba(255,255,255,0.6),rgba(255,255,255,0.8), rgba(255,255,255,1),rgba(255,255,255,0.8),rgba(255,255,255,0.6), rgba(255,255,255,0.4), rgba(255,255,255,0.2),rgba(255,255,255,0.01));
+    color: black;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 250px;
+    position: absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    margin:auto;
+    margin-bottom: 50px;
+}
+#mapLabel {
+    position: fixed;
+    padding: 5px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    color: black;
+    width: 300px;
+    height: 20px;
+    background: linear-gradient(to right, rgba(255,255,255,1), rgba(255,255,255,0.9), rgba(255,255,255,0.8),rgba(255,255,255,0.6), rgba(255,255,255,0.5), rgba(255,255,255,0.4), rgba(255,255,255,0.2), rgba(255,255,255,0.1), rgba(255,255,255,0.01));
+}
