@@ -11,7 +11,7 @@ class Server {
             mainWindow.webContents.send('log', data.toString());
         })
         this.process.stderr.on('data', data => {
-			console.error(data.toString());
+			mainWindow.webContents.send('log', data.toString());
         })
         this.process.on('close', () => {
             mainWindow.webContents.send(`${this.type} Server closed.`)

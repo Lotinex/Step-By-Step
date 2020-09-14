@@ -8,7 +8,7 @@ class L {
         const base = TABLE[key];
         if(base === undefined) return `$${key}$`; // 표에서 적절한 문자열을 찾지 못했을 때
 
-        return base; // 우선 여기까지
+        return base; 
 
 
 

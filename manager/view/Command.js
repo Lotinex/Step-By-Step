@@ -67,17 +67,15 @@ class Command {
 }
 new Command("effect").next({
     "give" : () => {
-        console.log(3)
         return {
-            "<targetID> as number" : () => {
-                console.log(2)
+            "<targetID> as string" : () => {
+
             }
         }
     },
     "clear" : () => {
         return {
             "<targetID> as number" : () => {
-                console.log(2)
             }
         }
     }

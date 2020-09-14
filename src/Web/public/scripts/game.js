@@ -15,6 +15,16 @@ ws.on('enter', data => {
         const items = JSON.parse(res);
         renderItem(items)
     })
+    $("#stage").attr("width", window.innerWidth)
+    $("#stage").attr("height", window.innerHeight)
+
+    const StageRenderer = new GraphicRenderer(document.getElementById("stage"));
+
+    const testMob = new Enemy('test', 100, 100, 100, 100);
+    testMob.setTexture('assets/img/burning_heart.png');
+
+    StageRenderer.addEntity(testMob);
+
 })
 function dragMap(){
     let position = { top: 0, left: 0, x: 0, y: 0 };

@@ -2,9 +2,10 @@ html(lang="ko")
     include base.pug
     head
         meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
         title 스바스(Step by Step)
-        link(rel="stylesheet", href="styles/game.css")
+        link(rel="stylesheet" href="styles/game.css")
+        link(rel="icon" href="assets/img/trace_of_the_void.png")
         script(src="scripts/lib/ws.min.js")
         script(src="scripts/lib/socket.js")
     body
@@ -29,6 +30,7 @@ html(lang="ko")
 
             +Stage('arkcube_piece', '???', 250, 250, 400, 800)
             +Stage('loard_down_benzene', '???', 1000, 1000, 1800, 50)
+        canvas#stage
         div#itemTooltip
             div#itemTooltip-top
                 div#itemTooltip-nameGroup

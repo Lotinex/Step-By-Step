@@ -7,23 +7,24 @@ class GraphicRenderer {
          * @type {CanvasRenderingContext2D}
          */
         this.ctx = canvas.getContext("2d");
+        this.canvas = canvas;
         this.w = canvas.width;
         this.h = canvas.height;
         this.entities = {};
+        this.UpdateRequest = this.UpdateRequest.bind(this);
 
         window.requestAnimationFrame(this.UpdateRequest)
-
         canvas.addEventListener("click", e => {
             for(let id in this.entities){
                 const entity = this.entities[id];
-
-                const checkMinX = e.pageX >= entity.x - entity.w / 2;
-                const checkMaxX = e.pageX <= entity.x + entity.w / 2;
-                const checkMinY = e.pageY >= entity.y - entity.h / 2;
-                const checkMaxY = e.pageY <= entity.y + entity.h / 2;
-
-                if(checkMinX && checkMaxX && checkMinY && checkMaxY){
-                    entity.onClick(e.pageX, e.pageY)
+                const x = e.clientX - canvas.getBoundingClientRect().left
+                const y = e.clientY - canvas.getBoundingClientRect().top
+                const horizontalMinCheck = x >= (entity.x - (entity.w / 2)); //최소 x값을 넘기는지
+                const horizontalMaxCheck = x <= (entity.x + (entity.w / 2)); //최대 x값을 안 넘기는지
+                const verticalMinCheck = y >= (entity.y - (entity.h / 2)); //최소 y값을 넘기는지
+                const verticalMaxCheck = y <= (entity.y + (entity.h / 2)); //최대 y값을 안 넘기는지
+                if(horizontalMinCheck && horizontalMaxCheck && verticalMinCheck && verticalMaxCheck){
+                    entity.onClick(e.clientX, e.clientY)
                 }
             }
         })
@@ -46,6 +47,8 @@ class GraphicRenderer {
          * 엔티티는 render 메서드를 필수로 구현해야 한다.
          * 모든 엔티티는 공통적으로 render 메서드가 호출되면서 화면에 그려지게 된다.
          */
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
         for(let id in this.entities){
             if(this.entities[id].hasOwnProperty('_animatedTexture')){
                 this.entities[id].updateAnimatedTexture()
@@ -53,9 +56,16 @@ class GraphicRenderer {
             this.entities[id].render(this.ctx)
         }
     }
+    /**
+     * @deprecated
+     */
     execute(id, action){
         if(!this.entities.hasOwnProperty(id)) return;
         action(this.entities[id], this.entities[id].x, this.entities[id].y)
+    }
+    addEntity(entity){
+        this.entities[entity.id] = entity;
+        return entity;
     }
 }
 /**
@@ -114,7 +124,7 @@ class Entity {
     }
     /**
      * 렌더링 중 연산을 최소화하기 위해 set_animatedTexture에서 
-     * this._animatedText  ure에 미리 Image 인스턴스를 넣어두는 작업을 한다.
+     * this._animatedTexture에 미리 Image 인스턴스를 넣어두는 작업을 한다.
      */
     updateAnimatedTexture(){ //줄 수 있다.
         this.img = this._animatedTexture[this._animatedCount];
