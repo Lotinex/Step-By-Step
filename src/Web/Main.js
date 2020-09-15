@@ -115,10 +115,6 @@ const inventory = {
     "burning_heart" : burning_heart //테스트
 }
 
-DB.TABLE.users.update([ { id : "asdfasdf" } ], [ { inventory :  inventory } ]) //테스트
+//DB.TABLE.users.update([ { id : "asdfasdf" } ], [ { inventory :  inventory } ]) 
 
 
-App.get("/inventory", async (req, res) => { //테스트
-    const foundUser = await DB.TABLE.users.find({ id : req.query.id })
-    res.send(foundUser[0].inventory)
-})

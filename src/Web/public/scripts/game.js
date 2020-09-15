@@ -11,10 +11,11 @@ ws.on('enter', data => {
     dragMap()
     drag($("#Inventory"))
 
-    $.get(`/inventory?id=${my.id}`, res => { //테스트
+   /** $.get(`/inventory?id=${my.id}`, res => { //테스트
         const items = JSON.parse(res);
         renderItem(items)
     })
+    **/
     $("#stage").attr("width", window.innerWidth)
     $("#stage").attr("height", window.innerHeight)
 
@@ -136,7 +137,5 @@ $(window).on("mousemove", e => {
         $("#itemTooltip").css("top", e.pageY - 50)
     }
 })
-
-
 
 
