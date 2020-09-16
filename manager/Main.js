@@ -52,7 +52,6 @@ function Engine(){
             ]
         }
     ]))
-    mainWindow.webContents.openDevTools()
 
 }
 function stopServers(){

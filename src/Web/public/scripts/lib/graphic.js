@@ -11,6 +11,7 @@ class GraphicRenderer {
         this.w = canvas.width;
         this.h = canvas.height;
         this.entities = {};
+        this.damages = [];
         this.UpdateRequest = this.UpdateRequest.bind(this);
 
         window.requestAnimationFrame(this.UpdateRequest)
@@ -24,7 +25,7 @@ class GraphicRenderer {
                 const verticalMinCheck = y >= (entity.y - (entity.h / 2)); //최소 y값을 넘기는지
                 const verticalMaxCheck = y <= (entity.y + (entity.h / 2)); //최대 y값을 안 넘기는지
                 if(horizontalMinCheck && horizontalMaxCheck && verticalMinCheck && verticalMaxCheck){
-                    entity.onClick(e.clientX, e.clientY)
+                    entity.onClick(e)
                 }
             }
         })
@@ -38,25 +39,37 @@ class GraphicRenderer {
     UpdateRequest(){
         this.update()
         this.render()
+        this.renderDamages()
         window.requestAnimationFrame(this.UpdateRequest)
     }
+    renderDamages(){
+        for(const damage of this.damages){
+            damage.render(this.ctx)
+        }
+    }
+    addDamage(damage){
+        this.damages.push(damage)
+    }
     update(){
-        /**
-         * Implement this
-         */
+        for(const damage of this.damages){
+            for(const text of damage.data){
+                text.y -= 1;
+            }
+        }
     }
     render(){
         /**
          * 엔티티는 render 메서드를 필수로 구현해야 한다.
          * 모든 엔티티는 공통적으로 render 메서드가 호출되면서 화면에 그려지게 된다.
          */
-        this.clear()
-
+        this.ctx.clearRect(0, 0, this.w, this.h)
         for(let id in this.entities){
+            this.ctx.beginPath()
             if(this.entities[id].hasOwnProperty('_animatedTexture')){
                 this.entities[id].updateAnimatedTexture()
             }
             this.entities[id].render(this.ctx)
+            this.ctx.closePath()
         }
     }
     /**

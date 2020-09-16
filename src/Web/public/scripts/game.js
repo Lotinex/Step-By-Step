@@ -3,8 +3,10 @@ const CONFIG = {
 } //나중에 분리하자.
 var my = {}; //내 정보 (스탯 등)
 
+var testMobHp = 1000;
 const ws = new Socket();
-
+const bossBar = new Bossbar("bossbar", 10000);
+const StageRenderer = new GraphicRenderer(document.getElementById("stage"));
 ws.on('enter', data => {
     my = data;
     console.log(my)
@@ -19,14 +21,17 @@ ws.on('enter', data => {
     $("#stage").attr("width", window.innerWidth)
     $("#stage").attr("height", window.innerHeight)
 
-    const StageRenderer = new GraphicRenderer(document.getElementById("stage"));
 
     const testMob = new Enemy('test', 100, 100, 100, 100);
     testMob.setTexture('assets/img/burning_heart.png');
 
     StageRenderer.addEntity(testMob);
+    setInterval(() => {
+        testMob.x += 1;
+    }, 50)
 
 })
+
 function dragMap(){
     let position = { top: 0, left: 0, x: 0, y: 0 };
 

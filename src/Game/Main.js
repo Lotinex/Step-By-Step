@@ -45,3 +45,4 @@ ws.on('connection', async socket => {
 Server.listen(GLOBAL.WS_PORT, () => {
     Logger.trace(`Game Server opened : ${GLOBAL.WS_PORT}`)
 })
+

@@ -21,6 +21,10 @@ html(lang="ko")
             div.stage(id=id style=`width:${w}px; height:${h}px; left:${x}px; top:${y}px; background-image: url(assets/img/stages/${id}.png);`)
                 div.stageLabel= label
                 block
+        div#bossbar
+            div.bossbarName 허의 영혼
+            div.bossbarBg
+            div.bossbarGage(style="width:800px; height:35px;")
         div#map
             div#mapLabel= "세계: 우주"
             +Stage('earth', '지구', 300, 300, 10, 50)
@@ -52,10 +56,14 @@ html(lang="ko")
 
         +Dialog("Inventory", "인벤토리", 610, 340)
             div#inventory-box
-    
-    script(src="scripts/game.js")
+
+
+    script(src="scripts/lib/bossbar.js")
     script(src="scripts/lib/graphic.js")
+    script(src="scripts/lib/damage.js")
     script(src="scripts/lib/enemy.js")
+    script(src="scripts/game.js")
+
     
 
 
