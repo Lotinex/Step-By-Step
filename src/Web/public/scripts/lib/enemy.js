@@ -18,7 +18,7 @@ class Enemy extends Entity {
          * 버그 1. 화면 상단 왼쪽을 보면 하얀색으로 상자가 하나 존재한다.
          * 버그 2. 데미지 텍스트 아래에 검은색으로 길 비스무리한것이 쭉 남는다.
          */
-        StageRenderer.addDamage(new DamageText(1235812369, e))
+        StageRenderer.addDamage(new DamageText(Util.random(10974927582671261, 10974927582671262), e))
     }
 
 }

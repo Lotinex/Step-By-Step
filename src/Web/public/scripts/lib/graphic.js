@@ -34,7 +34,7 @@ class GraphicRenderer {
      * 최적화를 위해 변경된 부분만 지우는 작업이 필요할 듯 하다.
      */
     clear(){
-        this.ctx.clearRect(0, 0, this.w, this.h)
+        this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     }
     UpdateRequest(){
         this.update()
@@ -52,6 +52,11 @@ class GraphicRenderer {
     }
     update(){
         for(const damage of this.damages){
+            if(damage.life <= 0){
+                damage.startDying = true;
+                continue;
+            }
+            damage.life -= 1;
             for(const text of damage.data){
                 text.y -= 1;
             }
@@ -62,14 +67,12 @@ class GraphicRenderer {
          * 엔티티는 render 메서드를 필수로 구현해야 한다.
          * 모든 엔티티는 공통적으로 render 메서드가 호출되면서 화면에 그려지게 된다.
          */
-        this.ctx.clearRect(0, 0, this.w, this.h)
+        this.clear()
         for(let id in this.entities){
-            this.ctx.beginPath()
             if(this.entities[id].hasOwnProperty('_animatedTexture')){
                 this.entities[id].updateAnimatedTexture()
             }
             this.entities[id].render(this.ctx)
-            this.ctx.closePath()
         }
     }
     /**

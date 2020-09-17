@@ -1,8 +1,14 @@
 class DamageText {
+    static HANGUL_X_INCREASE = 75;
+    static NUMBER_X_INCREASE = 45;
+    static HANGUL_Y_DECREASE = 15;
     constructor(damage, e){
         this.damage = DamageText.toKorean(damage);
         this.event = e;
         this.data = [];
+        this.life = 200;
+        this.startDying = false;
+        this.alpha = 1;
 
         let xCounter = this.event.pageX;
 
@@ -13,10 +19,10 @@ class DamageText {
                 this.data.push({
                     number: !isNaN(text),
                     img: image,
-                    x: !isNaN(text) ? xCounter: xCounter,
-                    y: !isNaN(text) ? this.event.pageY : this.event.pageY - 15
+                    x: xCounter,
+                    y: !isNaN(text) ? this.event.pageY : this.event.pageY - DamageText.HANGUL_Y_DECREASE,
                 })
-                xCounter += !isNaN(text) ? 45 : 75
+                xCounter += !isNaN(text) ? DamageText.NUMBER_X_INCREASE : DamageText.HANGUL_X_INCREASE;
             }
         })
     }
@@ -45,7 +51,21 @@ class DamageText {
     }
     render(ctx){
         for(const text of this.data){
+            if(this.alpha <= 0){
+                let index = StageRenderer.damages.indexOf(this)
+                StageRenderer.damages.splice(index, 1)
+                break;
+            }
+            if(this.startDying){
+                ctx.save()
+                ctx.globalAlpha = this.alpha;
+            }
             ctx.drawImage(text.img, text.x, text.y)
+
+            if(this.startDying){
+                ctx.restore()
+                this.alpha -= 0.01;
+            }
         }
     }
 }

@@ -22,15 +22,22 @@ ws.on('enter', data => {
     $("#stage").attr("height", window.innerHeight)
 
 
-    const testMob = new Enemy('test', 100, 100, 100, 100);
+    const testMob = new Enemy('test', 500, 500, 100, 100);
     testMob.setTexture('assets/img/burning_heart.png');
-
     StageRenderer.addEntity(testMob);
-    setInterval(() => {
-        testMob.x += 1;
-    }, 50)
+
+    let x;
+    let y;
+    document.addEventListener("mousemove", e => {
+        x = e.pageX;
+        y = e.pageY;
+    })
+    document.addEventListener("keydown", e => {
+        testMob.onClick({pageX : x, pageY : y})
+    })
 
 })
+
 
 function dragMap(){
     let position = { top: 0, left: 0, x: 0, y: 0 };
@@ -142,5 +149,3 @@ $(window).on("mousemove", e => {
         $("#itemTooltip").css("top", e.pageY - 50)
     }
 })
-
-
