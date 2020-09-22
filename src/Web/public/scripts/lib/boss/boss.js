@@ -1,0 +1,81 @@
+class Unliving extends Entity {
+    constructor(id, x, y){
+        super(id, x, y)
+    }
+    remove(){
+        ObjectRenderer.removeEntity(this.id)
+    }
+}
+class Living extends Entity {
+    constructor(id, x, y){
+        super(id, x, y)
+    }
+    remove(){
+        StageRenderer.removeEntity(this.id)
+    }
+}
+class Effect extends Entity {
+    constructor(id, type, x, y){
+        super(id, x, y)
+        this.type = type;
+    }
+    remove(){
+        if(this.type === "enemy"){
+            EnemyEffectRenderer.removeEntity(this.id)
+        } else if (this.type === "my"){
+            MyEffectRenderer.removeEntity(this.id)
+        }
+    }
+}
+/**
+ * @abstract
+ */
+class Boss extends Entity {
+    static TEXTURE_NUM_TABLE = {
+        'Alycia' : 30
+    }
+    constructor(id, x, y, health){
+        super(id, x, y)
+        this.health = health;
+    }
+    /**
+     * @abstract
+     */
+    action(){}
+    /**
+     * @abstract
+     */
+    render(){}
+    /**
+     * 살아있는(죽일 수 있는) 엔티티를 만든다.
+     * @param {*} attributes 
+     */
+    createEntity(attributes){
+
+    }
+    /**
+     * 무생물인(돌, 용암, 가시 등) 상호작용 가능한 엔티티를 만든다.
+     * @param {*} attributes 
+     */
+    createObject(attributes){
+
+    }
+    /**
+     * 무생물이면서 플레이어에게 데미지를 주거나 단순히 시각적 효과만 주는 엔티티를 만든다. (불, 전기, 토네이도 등)
+     * @param {*} attributes 
+     */
+    createEffect(attributes){
+
+    }
+    spawn(){
+        this.setAnimatedTexture({
+            template: `boss/${this.id}/shape`,
+            type: 'png',
+            limit: Boss.TEXTURE_NUM_TABLE[this.id]
+        })
+    }
+    die(){
+
+    }
+
+}

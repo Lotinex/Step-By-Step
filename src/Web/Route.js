@@ -3,6 +3,7 @@ const Login = require("./Login");
 const DB = require("../DB/Database");
 const TABLE = require("./json/lang-ko.json");
 const Logger = require("../Tools/Lognex");
+const Request = require("./Request");
 
 module.exports = function(){
     const Router = Express.Router();
@@ -24,6 +25,8 @@ module.exports = function(){
         res.send(`window.LANGUAGE_TABLE = ${JSON.stringify(TABLE)};`);
     })
     
+    Request(Router)
+
     return Router;
 }
 

@@ -1,3 +1,6 @@
+/**
+ * @final
+ */
 class DamageText {
     static HANGUL_X_INCREASE = 75;
     static NUMBER_X_INCREASE = 45;
@@ -57,13 +60,13 @@ class DamageText {
                 break;
             }
             if(this.startDying){
-                ctx.save()
+                ctx.save() //globalAlpha가 다른 렌더링에
                 ctx.globalAlpha = this.alpha;
             }
             ctx.drawImage(text.img, text.x, text.y)
 
             if(this.startDying){
-                ctx.restore()
+                ctx.restore() //영향을 주지 않게 하기 위함
                 this.alpha -= 0.01;
             }
         }

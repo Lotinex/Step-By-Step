@@ -5,11 +5,16 @@ var my = {}; //내 정보 (스탯 등)
 
 var testMobHp = 1000;
 const ws = new Socket();
-const bossBar = new Bossbar("bossbar", 10000);
-const StageRenderer = new GraphicRenderer(document.getElementById("stage"));
-ws.on('enter', data => {
+const bossBar = new Bossbar(10000);
+
+const StageRenderer = new GraphicRenderer("stage");
+const DamageRenderer = new GraphicDamageRenderer("damage-text");
+const ObjectRenderer = new GraphicRenderer("objects");
+const EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
+const MyEffectRenderer = new GraphicRenderer("my-effect");
+
+ws.on('enter', data => { //여기서 초기화
     my = data;
-    console.log(my)
     dragMap()
     drag($("#Inventory"))
 
@@ -22,8 +27,8 @@ ws.on('enter', data => {
     $("#stage").attr("height", window.innerHeight)
 
 
-    const testMob = new Enemy('test', 500, 500, 100, 100);
-    testMob.setTexture('assets/img/burning_heart.png');
+    const testMob = new Enemy('test', 750, 350, 300, 200);
+    testMob.setTexture('assets/img/image.png');
     StageRenderer.addEntity(testMob);
 
     let x;
@@ -32,9 +37,22 @@ ws.on('enter', data => {
         x = e.pageX;
         y = e.pageY;
     })
-    document.addEventListener("keydown", e => {
-        testMob.onClick({pageX : x, pageY : y})
+
+   $(document).on("keydown", e => {
+        if(e.key == "m"){
+            if($("#map").css("display") == "none"){
+                $("#map").show()
+            } else $("#map").hide()
+        }
     })
+    $(".stage").on('click', e => {
+        const stage = $(e.currentTarget).attr('id');
+        XHR.POST('/stageChange', { stage }).then(res => {
+            if(res.success) my.stage = stage;
+            else console.error('Server response error')
+        })
+    })
+
 
 })
 

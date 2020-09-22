@@ -1,6 +1,7 @@
 const MySQL = require("mysql")
 const CONFIG = require("./config.json")
 
+
 const DB = MySQL.createConnection({
     host : CONFIG.HOST,
     port : CONFIG.PORT,
@@ -11,6 +12,13 @@ const DB = MySQL.createConnection({
 class Table {
     constructor(table){
         this.table = table;
+    }
+    static TYPE_TABLE = {
+        'users' : {
+            id : 'STRING',
+            level : 'NUMBER'
+
+        }
     }
     static parseExpression(expressionArr){
         let parseArr = []

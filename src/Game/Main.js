@@ -15,8 +15,9 @@ const Logger = new Lognex("GAME", "blue");
 
 const Clients = {};
 
+
 ws.on('connection', async socket => {
-    const sid = socket.id;
+    const SID = socket.id;
     const address = socket.handshake.headers.host.split(':')[0];
     if(address === GLOBAL.INTERNAL_WS_URL){
         Logger.trace("Web server connected.")
@@ -30,7 +31,6 @@ ws.on('connection', async socket => {
     } else { 
         Logger.trace(`Client ${socket.id} connected.`);
 
-        Clients[sid] = new User(socket, sid);
 
         const sidCookie = Cookie.parse(socket.handshake.headers.cookie)['connect.sid'];
         const sessionID = CookieParser.signedCookie(sidCookie, LoginConfig.SESSION_SECRET);
@@ -38,10 +38,23 @@ ws.on('connection', async socket => {
         const userID = await DB.TABLE.session.findOne([{id: sessionID}]).id;
         const user = await DB.TABLE.users.findOne([{id: userID}])
 
-        Clients[sid].send("enter", user);
+        Clients[SID] = new User(socket, sid, userID);
+
+        Clients[SID].send("enter", user);
+
+        onUserSocketRequest(socket)
 
     }
 })
+/**
+ * 
+ * @param {SocketIO.Socket} socket 
+ */
+function onUserSocketRequest(socket){
+    const SID = socket.id;
+
+}
+
 Server.listen(GLOBAL.WS_PORT, () => {
     Logger.trace(`Game Server opened : ${GLOBAL.WS_PORT}`)
 })

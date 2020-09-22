@@ -16,6 +16,8 @@ Login.init(App);
 
 App.use(Express.static(`${__dirname}/public`))
 
+App.use(Express.json())
+
 App.set('views', `${__dirname}/views`)
 App.set('view engine', 'pug')
 

@@ -1,17 +1,21 @@
+/**
+ * deprecated: damage text rendering (=> GraphicDamageRenderer class)
+ */
 class GraphicRenderer {
     /**
      * @param {HTMLCanvasElement} canvas 
      */
-    constructor(canvas){
+    constructor(canvasID){
         /**
          * @type {CanvasRenderingContext2D}
          */
+        const canvas = document.getElementById(canvasID);
+
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
         this.w = canvas.width;
         this.h = canvas.height;
         this.entities = {};
-        this.damages = [];
         this.UpdateRequest = this.UpdateRequest.bind(this);
 
         window.requestAnimationFrame(this.UpdateRequest)
@@ -39,28 +43,12 @@ class GraphicRenderer {
     UpdateRequest(){
         this.update()
         this.render()
-        this.renderDamages()
         window.requestAnimationFrame(this.UpdateRequest)
     }
-    renderDamages(){
-        for(const damage of this.damages){
-            damage.render(this.ctx)
-        }
-    }
-    addDamage(damage){
-        this.damages.push(damage)
-    }
     update(){
-        for(const damage of this.damages){
-            if(damage.life <= 0){
-                damage.startDying = true;
-                continue;
-            }
-            damage.life -= 1;
-            for(const text of damage.data){
-                text.y -= 1;
-            }
-        }
+        /**
+         * ...
+         */
     }
     render(){
         /**
@@ -85,6 +73,46 @@ class GraphicRenderer {
     addEntity(entity){
         this.entities[entity.id] = entity;
         return entity;
+    }
+    removeEntity(id){
+        delete this.entities[id];
+    }
+}
+/**
+ * 데미지 텍스트는 인스턴스 구조상 일반 엔티티와 렌더링 시 방식이 달라
+ * 별개의 클래스를 사용한다.
+ */
+class GraphicDamageRenderer extends GraphicRenderer {
+    constructor(canvas){
+        super(canvas)
+        this.damages = [];
+    }
+    /**
+     * @override
+     */
+    render(){
+        this.clear()
+        for(const damage of this.damages){
+            damage.render(this.ctx)
+        }
+    }
+    /**
+     * @override
+     */
+    update(){
+        for(const damage of this.damages){
+            if(damage.life <= 0){
+                damage.startDying = true;
+                continue;
+            }
+            damage.life--;
+            for(const text of damage.data){
+                text.y--;
+            }
+        }
+    }
+    addDamage(damage){
+        this.damages.push(damage)
     }
 }
 /**
@@ -132,7 +160,7 @@ class Entity {
 
         for(let i=1; i<expression.limit + 1;) {
             const texture = new Image();
-            texture.src = `${expression.template}-${i}.${expression.type}`; //필수
+            texture.src = `assets/img/${expression.template}-${i}.${expression.type}`; //필수
             if(expression.width) texture.width = expression.width; //필수는
             if(expression.height) texture.height = expression.height; //아니다.
 
