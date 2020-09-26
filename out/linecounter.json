@@ -1,0 +1,489 @@
+{
+    "extension": "linecounter",
+    "version": "0.2.7",
+    "workspace": "c:\\Users\\loard\\OneDrive\\바탕 화면\\프로젝트\\step-by-step",
+    "linecount": [
+        {
+            "version": "0.2.7",
+            "counttime": "2020-09-22 19:03:18",
+            "filesum": 68,
+            "codesum": 3257,
+            "commentsum": 171,
+            "blanksum": 173,
+            "statistics": {
+                ".code-workspace": {
+                    "code": 8,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".md": {
+                    "code": 20,
+                    "comment": 0,
+                    "blank": 5
+                },
+                ".json": {
+                    "code": 1595,
+                    "comment": 0,
+                    "blank": 0
+                },
+                "": {
+                    "code": 5,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".js": {
+                    "code": 1047,
+                    "comment": 168,
+                    "blank": 134
+                },
+                ".css": {
+                    "code": 472,
+                    "comment": 3,
+                    "blank": 15
+                },
+                ".html": {
+                    "code": 17,
+                    "comment": 0,
+                    "blank": 0
+                },
+                ".pug": {
+                    "code": 93,
+                    "comment": 0,
+                    "blank": 19
+                }
+            },
+            "filelist": [
+                {
+                    "blank": 0,
+                    "code": 5,
+                    "comment": 0,
+                    "filename": ".gitignore"
+                },
+                {
+                    "blank": 6,
+                    "code": 60,
+                    "comment": 0,
+                    "filename": "manager\\Main.js"
+                },
+                {
+                    "blank": 9,
+                    "code": 72,
+                    "comment": 4,
+                    "filename": "manager\\view\\Command.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 27,
+                    "comment": 1,
+                    "filename": "manager\\view\\Front.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 17,
+                    "comment": 0,
+                    "filename": "manager\\view\\manager.html"
+                },
+                {
+                    "blank": 1,
+                    "code": 64,
+                    "comment": 0,
+                    "filename": "manager\\view\\style.css"
+                },
+                {
+                    "blank": 0,
+                    "code": 1544,
+                    "comment": 0,
+                    "filename": "package-lock.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 27,
+                    "comment": 0,
+                    "filename": "package.json"
+                },
+                {
+                    "blank": 5,
+                    "code": 20,
+                    "comment": 0,
+                    "filename": "README.md"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "src\\DB\\config.json"
+                },
+                {
+                    "blank": 7,
+                    "code": 96,
+                    "comment": 0,
+                    "filename": "src\\DB\\Database.js"
+                },
+                {
+                    "blank": 14,
+                    "code": 41,
+                    "comment": 6,
+                    "filename": "src\\Game\\Main.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 11,
+                    "comment": 0,
+                    "filename": "src\\Game\\User.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "src\\global-config.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "src\\Tools\\const.js"
+                },
+                {
+                    "blank": 3,
+                    "code": 18,
+                    "comment": 10,
+                    "filename": "src\\Tools\\Language.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 13,
+                    "comment": 6,
+                    "filename": "src\\Tools\\Lognex.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "src\\Tools\\Utils.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 7,
+                    "comment": 0,
+                    "filename": "src\\Web\\json\\lang-ko.json"
+                },
+                {
+                    "blank": 0,
+                    "code": 6,
+                    "comment": 0,
+                    "filename": "src\\Web\\json\\login.json"
+                },
+                {
+                    "blank": 8,
+                    "code": 46,
+                    "comment": 0,
+                    "filename": "src\\Web\\Login.js"
+                },
+                {
+                    "blank": 20,
+                    "code": 100,
+                    "comment": 4,
+                    "filename": "src\\Web\\Main.js"
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\burning_heart.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\0.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\1.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\2.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\3.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\4.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\5.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\6.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\7.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\8.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\9.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\경.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\만.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\억.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\damage\\조.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\image.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\lava_pendant.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\stages\\earth.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\stages\\immune.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\stages\\loard_down_benzene.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\trace_of_the_void.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "filename": "src\\Web\\public\\assets\\img\\wooden_sword.png",
+                    "isbinaryfile": true,
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0
+                },
+                {
+                    "blank": 22,
+                    "code": 142,
+                    "comment": 13,
+                    "filename": "src\\Web\\public\\scripts\\game.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\index.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\boss\\Alycia\\Adelheid.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\boss\\Alycia\\Alycia.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 55,
+                    "comment": 21,
+                    "filename": "src\\Web\\public\\scripts\\lib\\boss\\boss.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 0,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\boss\\Charlotte\\Charlotte.js"
+                },
+                {
+                    "blank": 4,
+                    "code": 48,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\bossbar.js"
+                },
+                {
+                    "blank": 6,
+                    "code": 65,
+                    "comment": 5,
+                    "filename": "src\\Web\\public\\scripts\\lib\\damage.js"
+                },
+                {
+                    "blank": 1,
+                    "code": 17,
+                    "comment": 3,
+                    "filename": "src\\Web\\public\\scripts\\lib\\enemy.js"
+                },
+                {
+                    "blank": 7,
+                    "code": 123,
+                    "comment": 73,
+                    "filename": "src\\Web\\public\\scripts\\lib\\graphic.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 1,
+                    "comment": 2,
+                    "filename": "src\\Web\\public\\scripts\\lib\\jquery.min.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 10,
+                    "comment": 10,
+                    "filename": "src\\Web\\public\\scripts\\lib\\language.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 13,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\socket.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 5,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\util.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 3,
+                    "comment": 7,
+                    "filename": "src\\Web\\public\\scripts\\lib\\ws.min.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 12,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\scripts\\lib\\xhr.js"
+                },
+                {
+                    "blank": 11,
+                    "code": 307,
+                    "comment": 3,
+                    "filename": "src\\Web\\public\\styles\\game.css"
+                },
+                {
+                    "blank": 3,
+                    "code": 101,
+                    "comment": 0,
+                    "filename": "src\\Web\\public\\styles\\index.css"
+                },
+                {
+                    "blank": 3,
+                    "code": 24,
+                    "comment": 3,
+                    "filename": "src\\Web\\Request.js"
+                },
+                {
+                    "blank": 5,
+                    "code": 27,
+                    "comment": 0,
+                    "filename": "src\\Web\\Route.js"
+                },
+                {
+                    "blank": 0,
+                    "code": 4,
+                    "comment": 0,
+                    "filename": "src\\Web\\views\\base.pug"
+                },
+                {
+                    "blank": 14,
+                    "code": 71,
+                    "comment": 0,
+                    "filename": "src\\Web\\views\\game.pug"
+                },
+                {
+                    "blank": 5,
+                    "code": 18,
+                    "comment": 0,
+                    "filename": "src\\Web\\views\\index.pug"
+                },
+                {
+                    "blank": 0,
+                    "code": 8,
+                    "comment": 0,
+                    "filename": "step-by-step.code-workspace"
+                }
+            ]
+        }
+    ]
+}

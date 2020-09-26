@@ -12,7 +12,7 @@ class Enemy extends Entity {
         ctx.drawImage(this.img, this.x  - this.w / 2, this.y - this.h / 2, this.w, this.h)
     }
     onClick(e){
-        let damage = Util.random(100, 999)
+        let damage = Util.random(0, 2)
         bossBar.quake();
         bossBar.addValue(-damage);
         DamageRenderer.addDamage(new DamageText(damage, e))

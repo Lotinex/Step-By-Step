@@ -15,8 +15,8 @@ module.exports = function(){
         if(req.session){
             const mySession = await DB.TABLE.session.findOne([{id: req.session.id}]);
             if(new Date() - mySession.createdAt > 3000000){
-                req.session.destroy();
                 await DB.TABLE.session.delete([{id: req.session.id}]);
+                req.session.destroy();
             }
         }
         res.render("index");

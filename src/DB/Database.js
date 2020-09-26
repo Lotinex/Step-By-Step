@@ -54,10 +54,9 @@ class Table {
     findOne(...conditions){
         return new Promise((rs, rj) => {
             let conditionsArr = Table.parseExpression(conditions)
-
-            DB.query(`SELECT * FROM ${this.table} WHERE ${conditionsArr.join(' , ')} LIMIT 1;`, (err, res) => {
+            DB.query(`SELECT * FROM ${this.table} WHERE ${conditionsArr.join(' , ')}`, (err, res) => {
                 if(err) rj(err);
-                else rs(res);
+                else rs(res[0]); //? 사실 이럴 일이 없어야 한다. 왜 배열이 나오지?  -> LIMIT 1 deprecated
             })
         })
     }
@@ -98,6 +97,7 @@ module.exports = {
     TABLE : {
         users : new Table("users"),
         item : new Table("item"),
-        session : new Table("session")
+        session : new Table("session"),
+        mobs : new Table("mobs")
     }
 }

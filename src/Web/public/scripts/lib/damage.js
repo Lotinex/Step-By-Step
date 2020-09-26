@@ -55,8 +55,8 @@ class DamageText {
     render(ctx){
         for(const text of this.data){
             if(this.alpha <= 0){
-                let index = StageRenderer.damages.indexOf(this)
-                StageRenderer.damages.splice(index, 1)
+                let index = DamageRenderer.damages.indexOf(this);
+                DamageRenderer.damages.splice(index, 1)
                 break;
             }
             if(this.startDying){

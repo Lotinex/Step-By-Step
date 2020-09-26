@@ -80,7 +80,7 @@ class GraphicRenderer {
 }
 /**
  * 데미지 텍스트는 인스턴스 구조상 일반 엔티티와 렌더링 시 방식이 달라
- * 별개의 클래스를 사용한다.
+ * 별개의 서브클래스를 사용한다.
  */
 class GraphicDamageRenderer extends GraphicRenderer {
     constructor(canvas){

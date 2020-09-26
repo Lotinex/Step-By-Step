@@ -17,7 +17,7 @@ Login.init(App);
 App.use(Express.static(`${__dirname}/public`))
 
 App.use(Express.json())
-
+ 
 App.set('views', `${__dirname}/views`)
 App.set('view engine', 'pug')
 
@@ -117,6 +117,6 @@ const inventory = {
     "burning_heart" : burning_heart //테스트
 }
 
-//DB.TABLE.users.update([ { id : "asdfasdf" } ], [ { inventory :  inventory } ]) 
+DB.TABLE.users.update([ { id : "105756069170813376039" } ], [ { inventory :  inventory } ]) 
 
 

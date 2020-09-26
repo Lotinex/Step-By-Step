@@ -8,6 +8,7 @@ const Cookie = require("cookie");
 const CookieParser = require("cookie-parser");
 const LoginConfig = require("../Web/json/login.json");
 const DB = require("../DB/Database");
+const Util = require("../Tools/Utils");
 
 const Server = Http.createServer();
 const ws = Socket(Server);
@@ -34,12 +35,13 @@ ws.on('connection', async socket => {
 
         const sidCookie = Cookie.parse(socket.handshake.headers.cookie)['connect.sid'];
         const sessionID = CookieParser.signedCookie(sidCookie, LoginConfig.SESSION_SECRET);
+
+        const userID = JSON.parse((await DB.TABLE.session.findOne({id: sessionID})).profile).id;
+        const user = await DB.TABLE.users.findOne({id: userID});
+
+        user.inventory = JSON.parse(user.inventory);
         
-        const userID = await DB.TABLE.session.findOne([{id: sessionID}]).id;
-        const user = await DB.TABLE.users.findOne([{id: userID}])
-
-        Clients[SID] = new User(socket, sid, userID);
-
+        Clients[SID] = new User(socket, SID, userID);
         Clients[SID].send("enter", user);
 
         onUserSocketRequest(socket)
@@ -52,6 +54,12 @@ ws.on('connection', async socket => {
  */
 function onUserSocketRequest(socket){
     const SID = socket.id;
+
+    socket.on('searchMob', async () => {
+        const stage = (await DB.TABLE.users.findOne({id: Clients[SID].userID})).stage;
+        const mobs = await DB.TABLE.mobs.find({stage});
+        Clients[SID].send("detectMob", mobs[Util.random(0, mobs.length - 1)])
+    })
 
 }
 

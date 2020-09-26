@@ -3,9 +3,7 @@ const CONFIG = {
 } //나중에 분리하자.
 var my = {}; //내 정보 (스탯 등)
 
-var testMobHp = 1000;
 const ws = new Socket();
-const bossBar = new Bossbar(10000);
 
 const StageRenderer = new GraphicRenderer("stage");
 const DamageRenderer = new GraphicDamageRenderer("damage-text");
@@ -15,48 +13,67 @@ const MyEffectRenderer = new GraphicRenderer("my-effect");
 
 ws.on('enter', data => { //여기서 초기화
     my = data;
+    my.skills = {};
+
+    my.skills["detection"] = new ActiveSkill("detection", "p");
+    my.skills["detection"].use = () => {
+        ws.send("searchMob")
+    };
+
     dragMap()
+    $("#Inventory").show()
     drag($("#Inventory"))
-
-   /** $.get(`/inventory?id=${my.id}`, res => { //테스트
-        const items = JSON.parse(res);
-        renderItem(items)
-    })
-    **/
-    $("#stage").attr("width", window.innerWidth)
-    $("#stage").attr("height", window.innerHeight)
+    renderItem(my.inventory)
 
 
-    const testMob = new Enemy('test', 750, 350, 300, 200);
-    testMob.setTexture('assets/img/image.png');
-    StageRenderer.addEntity(testMob);
-
-    let x;
-    let y;
-    document.addEventListener("mousemove", e => {
-        x = e.pageX;
-        y = e.pageY;
-    })
-
-   $(document).on("keydown", e => {
-        if(e.key == "m"){
-            if($("#map").css("display") == "none"){
-                $("#map").show()
-            } else $("#map").hide()
-        }
-    })
-    $(".stage").on('click', e => {
-        const stage = $(e.currentTarget).attr('id');
-        XHR.POST('/stageChange', { stage }).then(res => {
-            if(res.success) my.stage = stage;
-            else console.error('Server response error')
-        })
-    })
-
+    $(".renderer").attr("width", window.innerWidth)
+    $(".renderer").attr("height", window.innerHeight)
 
 })
-
-
+ws.on("detectMob", mob => {
+    console.log(mob) // test
+})
+$(".stage").on('click', e => {
+    const stage = $(e.currentTarget).attr('id');
+    XHR.POST('/changeStage', { stage }).then(res => {
+        if(res.success) my.stage = stage;
+    }).catch(e => {
+        console.error(e)
+    })
+})
+$(document).on("keydown", e => {
+    switch(e.key){
+        case 'm':
+            if($("#map").css("display") === "none"){
+                $("#map").show()
+            } else $("#map").hide()
+            break;
+        case 'k':
+            if($("#skill").css("margin-bottom") === "-130px"){
+                $("#skill").animate({
+                    "margin-bottom": 30
+                }, 300)
+            } else {
+                $("#skill").animate({
+                    "margin-bottom": -130
+                }, 300)
+            }
+            break;
+    }
+})
+function spawnMob(mob){
+    const newMob = new Enemy(mob.id, 300, 300, 100, 100, parseInt(mob.hp));
+    newMob.setAnimatedTexture({
+        template: `mobs/${mob.id}`,
+        type: 'png',
+        limit: mob.frame
+    })
+    StageRenderer.addEntity(newMob)
+}
+function setSkillOnBox(targetBoxIndex, skillID){
+    const skillBox = $("#skill").children[targetBoxIndex];
+    skillBox.append($("<img>").addClass("skillBoxImage").attr("src", `assets/img/skills/${skillID}.png`))
+}
 function dragMap(){
     let position = { top: 0, left: 0, x: 0, y: 0 };
 
@@ -110,7 +127,7 @@ function renderItem(itemObject){
         const itemData = itemObject[item];
         const itemBox = 
             $("<div>").addClass("item-box")
-                .append($("<img>").addClass("item-img").attr("src", `assets/img/${item}.png`))
+                .append($("<img>").addClass("item-img").attr("src", `assets/img/items/${item}.png`))
         itemBox.hover(e => {
             $("#itemTooltip").show();
             let itemNameColor;
@@ -150,7 +167,7 @@ function renderItem(itemObject){
             }
 
             $("#itemTooltip-star").text(star)
-            $("#itemTooltip-img").attr("src", `assets/img/${item}.png`) //이미지를 나중에 분류해놓자.
+            $("#itemTooltip-img").attr("src", `assets/img/items/${item}.png`) //이미지를 나중에 분류해놓자.
             $("#itemTooltip-description").text(itemData.description);
             $("#itemTooltip-abilities").text("잠겨 있습니다.") //구현할지 모른다.
             tooltip = true; //테스트
