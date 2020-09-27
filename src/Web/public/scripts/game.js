@@ -31,7 +31,8 @@ ws.on('enter', data => { //여기서 초기화
 
 })
 ws.on("detectMob", mob => {
-    console.log(mob) // test
+    fightAlert()
+    spawnMob(mob)
 })
 $(".stage").on('click', e => {
     const stage = $(e.currentTarget).attr('id');
@@ -40,6 +41,9 @@ $(".stage").on('click', e => {
     }).catch(e => {
         console.error(e)
     })
+})
+$(".dialog-close").on("click", e => {
+    $(e.currentTarget).parent().parent().hide()
 })
 $(document).on("keydown", e => {
     switch(e.key){
@@ -61,13 +65,50 @@ $(document).on("keydown", e => {
             break;
     }
 })
+function fightAlert(){
+    let bgEffectAlpha = 0;
+    const disappear = () => {
+        $("#fightAlert").animate({
+            "opacity": "0"
+        }, {
+            step : () => {
+                $("#fightAlert").css("transform", "scale(1.1)")
+                $("#stageBackImage").css("background", `rgba(0,0,0,${bgEffectAlpha})`)
+                bgEffectAlpha -= 0.1;
+            },
+            duration : 400,
+            complete : () => {
+                setTimeout(() => {
+                    $("#fightAlert").hide()
+                    $("#fightAlert").css("transform", `scale(1)`)
+                }, 100)
+            }
+        })
+    }
+    $("#fightAlert").css("display", "flex")
+    $("#fightAlert").animate({
+        "opacity": "1"
+    }, {
+        step : () => {
+            $("#fightAlert").css("transform", `scale(1.6)`)
+            $("#stageBackImage").css("background", `rgba(0,0,0,${bgEffectAlpha})`)
+            bgEffectAlpha += 0.1;
+        },
+        duration : 300,
+        complete : () => {
+            $("#fightAlert").css("transform", `scale(1)`)
+            setTimeout(disappear, 500)
+        }
+    })
+}
 function spawnMob(mob){
     const newMob = new Enemy(mob.id, 300, 300, 100, 100, parseInt(mob.hp));
-    newMob.setAnimatedTexture({
-        template: `mobs/${mob.id}`,
+   /*newMob.setAnimatedTexture({
+        template: `mobs/${mob.id}/${mob.id}`,
         type: 'png',
         limit: mob.frame
-    })
+    })   */ // 오류로 인해 보류
+    newMob.setTexture(`assets/img/mobs/${mob.id}/${mob.id}-1.png`)
     StageRenderer.addEntity(newMob)
 }
 function setSkillOnBox(targetBoxIndex, skillID){

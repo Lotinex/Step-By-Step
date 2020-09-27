@@ -57,9 +57,6 @@ class GraphicRenderer {
          */
         this.clear()
         for(let id in this.entities){
-            if(this.entities[id].hasOwnProperty('_animatedTexture')){
-                this.entities[id].updateAnimatedTexture()
-            }
             this.entities[id].render(this.ctx)
         }
     }
