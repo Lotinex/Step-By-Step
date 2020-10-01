@@ -1,11 +1,15 @@
 # Step-By-Step
 
+**이 프로젝트는 JavaScript에서 TypeScript 기반으로 옮겨졌습니다.**
+
 + 사용됨:
   + Socket.io
   + Express
   + jQuery
   + MySQL
   + FontAwesome
+  + TypeScript
+  + Webpack
 
 > 진행도
 
