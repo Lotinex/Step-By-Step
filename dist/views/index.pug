@@ -1,0 +1,23 @@
+html
+    include base.pug
+    link(rel="stylesheet", href="styles/index.css")
+    head
+        title 스바스(Step by Step)
+    body
+        div#title Step By Step
+
+        div#loginArea
+            div#loginTitle 로그인
+            div#login
+                button.loginButton#google-login(onclick="location.href='/auth/google'") 구글 계정으로 로그인
+        
+        div#profileArea
+            div#profileTitle 내 정보
+            div#profile
+                img#profile-img(src=profileImgSrc)
+                div#profile-name= profileName
+                div#profile-level= profileLevel
+
+
+
+        script(src="pages/index.js")
