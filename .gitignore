@@ -1,6 +1,6 @@
 node_modules/
 step-by-step.code-workspace
 src/Back/DB/config.json
-src/Back/Web/json/
+src/Back/Web/json/login.json
 .VSCodeCounter/
 out/
