@@ -15,12 +15,12 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
         this.table = table;
     }
     static parseExpression(expressionArr: Array<{[key: string]: any}>){
-        let parseArr: string[] = []
+        const parseArr: string[] = []
         expressionArr.forEach(expression => {
             const push = (value: string | number) => parseArr.push(`${key}=${value}`)
 
-            let key = Object.keys(expression)[0]
-            let value = expression[key];
+            const key = Object.keys(expression)[0]
+            const value = expression[key];
             switch(typeof value){
                 case 'string':
                     push(`"${value}"`)
@@ -37,7 +37,7 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
     }
     find(...conditions: Array<{[key: string]: any}>): Promise<Database.Units[T][]>{
         return new Promise((rs, rj) => {
-            let conditionsArr = Table.parseExpression(conditions)
+            const conditionsArr = Table.parseExpression(conditions)
 
             DB.query(`SELECT * FROM ${this.table} WHERE ${conditionsArr.join(' , ')}`, (err, res) => {
                 if(err) rj(err);
@@ -47,7 +47,7 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
     }
     findOne(...conditions: Array<{[key: string]: any}>): Promise<Database.Units[T]>{
         return new Promise((rs, rj) => {
-            let conditionsArr = Table.parseExpression(conditions)
+            const conditionsArr = Table.parseExpression(conditions)
             DB.query(`SELECT * FROM ${this.table} WHERE ${conditionsArr.join(' , ')}`, (err, res) => {
                 if(err) rj(err);
                 else rs(res[0]); //? 사실 이럴 일이 없어야 한다. 왜 배열이 나오지?  -> LIMIT 1 deprecated
@@ -56,7 +56,7 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
     }
     add(...values: any[]){
         return new Promise((rs, rj) => {
-            let valueArr = values.map(v => {
+            const valueArr = values.map(v => {
                 if(typeof v == 'object') return `'${JSON.stringify(v)}'`;
                 return `"${v}"`;
             });
@@ -68,8 +68,8 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
     }
     update(conditions: Array<{[key: string]: any}>, valueExpression: Array<{[key: string]: any}>){
         return new Promise((rs, rj) => {
-            let conditionsArr = Table.parseExpression(conditions)
-            let valueArr = Table.parseExpression(valueExpression)
+            const conditionsArr = Table.parseExpression(conditions)
+            const valueArr = Table.parseExpression(valueExpression)
 
             DB.query(`UPDATE ${this.table} SET ${valueArr.join(' , ')} WHERE ${conditionsArr.join(' ')}`, err => {
                 if(err) rj(err);
@@ -79,7 +79,7 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
     }
     delete(conditions: Array<{[key: string]: any}>){
         return new Promise((rs, rj) => {
-            let conditionsArr = Table.parseExpression(conditions)
+            const conditionsArr = Table.parseExpression(conditions)
             DB.query(`DELETE FROM ${this.table} WHERE ${conditionsArr.join(' ')}`, err => {
                 if(err) rj(err);
                 else rs();

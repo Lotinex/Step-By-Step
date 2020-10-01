@@ -1,19 +1,16 @@
 
-import Electron from 'electron';
-import * as Child_process from 'child_process';
-
+const Electron = require("electron");
+const Child_process = require("child_process");
 const Path = require("path");
-let mainWindow: Electron.BrowserWindow;
+let mainWindow;
 
-let Web: Server;
-let Game: Server;
+let Web;
+let Game;
 
-type ServerType = "GAME" | "WEB";
 class Server {
-    public type: ServerType;
-    public process: Child_process.ChildProcessWithoutNullStreams;
 
-    constructor(type: ServerType, path: string){
+
+    constructor(type, path){
         this.type = type;
         this.process = Child_process.spawn("node", [ path ]);
 
@@ -43,7 +40,7 @@ function Engine(){
         resizable: false
     });
 
-    mainWindow.loadURL(__dirname + '/view/manager.html');
+    mainWindow.loadURL(Path.resolve(__dirname, '../view/manager.html'));
 
     Electron.Menu.setApplicationMenu(Electron.Menu.buildFromTemplate([
         {
@@ -61,6 +58,8 @@ function Engine(){
         }
     ]))
 
+    mainWindow.webContents.openDevTools()
+
 }
 function stopServers(){
     if(Web) Web.kill();
@@ -68,7 +67,7 @@ function stopServers(){
 }
 function startServers(){
    if(Web && Game) stopServers();
-    Game = new Server("GAME", `${Path.resolve(__dirname, '../src/Game/Main.js')}`);
-    Web = new Server("WEB", `${Path.resolve(__dirname, '../src/Web/Main.js')}`);
+    Game = new Server("GAME", `${Path.resolve(__dirname, '../../dist/game.js')}`);
+    Web = new Server("WEB", `${Path.resolve(__dirname, '../../dist/web.js')}`);
 }
 Electron.app.whenReady().then(Engine);

@@ -1,7 +1,7 @@
 
-import Electron from 'electron';
-import Socket from 'socket.io-client';
-import Command from './Command';
+const Electron = require("electron");
+const Socket = require("socket.io-client");
+//const Command = require("./Command");
 
 const ws = Socket(`ws://127.0.0.3:7010`);
 
@@ -27,7 +27,8 @@ document.addEventListener('keydown', e => {
         }
     }
 })
+/**
 document.getElementById("command").addEventListener("input", e => {
-    const input = document.getElementById("command") as HTMLInputElement;
+    const input = document.getElementById("command");
     Command.apply(input.value.slice(1))
-})
+})*/

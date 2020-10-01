@@ -2,25 +2,23 @@
  * 버그가 좀 많다..
  * 피드백은 나중에 구현하도록 하자
  */
-export default class Command {
-    public cmd: string;
-    public tree: any;
+class Command {
     
     static TABLE = {};
     static DYNAMIC_ARGS_TYPE = {
-        "string" : (arg: any) => typeof arg === "string",
-        "number" : (arg: any) => !isNaN(arg)
+        "string" : (arg) => typeof arg === "string",
+        "number" : (arg) => !isNaN(arg)
     };
-    constructor(cmd: string){
+    constructor(cmd){
         this.cmd = cmd;
         this.tree = null;
     }
-    static apply(text: string){
+    static apply(text){
         for(let commandName in Command.TABLE){
             Command.TABLE[commandName].execute(text)
         }
     }
-    flow(parsedText: string[], currentTree: {[key:string]: () => any}, argCounter = 1){
+    flow(parsedText, currentTree, argCounter = 1){
         for(let branch in currentTree){
             const argsType = Object.keys(Command.DYNAMIC_ARGS_TYPE).join('|')
 
@@ -47,23 +45,23 @@ export default class Command {
             }
         }
     }
-    next(tree: {[key: string]: () => any}){
+    next(tree){
         this.tree = tree;
         Command.TABLE[this.cmd] = this;
     }
-    execute(text: string){
+    execute(text){
         const parsedText = text.split(' ');
         if(parsedText[0] !== this.cmd) return;
         return this.flow(parsedText, this.tree);
 
     }
-    onTypeError(branch: string, expected: string, current: string){
+    onTypeError(branch, expected, current){
         console.log(1)
         document.getElementById("command_tip").innerText = `${branch} 에서, ${expected} 형식이 필요하지만 ${current} 가 입력되었습니다.`
         document.getElementById("command_tip").style.display = 'block';
         
     }
-    onValueError(expected: string, current: string){
+    onValueError(expected, current){
         document.getElementById("command_tip").innerText = `${current} 는 ${expected} 에 맞지 않습니다.`
         document.getElementById("command_tip").style.display = 'block';
     }

@@ -6,10 +6,11 @@ import Enemy from './lib/enemy';
 import $ from 'jquery';
 
 const CONFIG = {
-    STAR_LIMIT : 7
+    STAR_LIMIT : 7,
+    test: 1
 }
 
-var my : Partial<{
+let my : Partial<{
     skills: {
         [skillName: string]: ActiveSkill
     },
@@ -163,8 +164,8 @@ function dragMap(){
 }
 function drag(dialog: JQuery) {
     dialog.children(".dialog-head").on('mousedown', e => {
-      var offsetX = e.clientX - parseInt(dialog.css("left"))
-      var offsetY = e.clientY - parseInt(dialog.css("top"))
+      const offsetX = e.clientX - parseInt(dialog.css("left"))
+      const offsetY = e.clientY - parseInt(dialog.css("top"))
       
       function mouseMoveHandler(e: JQuery.MouseMoveEvent<any>) {
         dialog.css("left", (e.clientX - offsetX))
@@ -182,7 +183,7 @@ function drag(dialog: JQuery) {
 }
 let tooltip = false;
 function renderItem(itemObject: any){
-    for(let item in itemObject){
+    for(const item in itemObject){
         const itemData = itemObject[item];
         const itemBox = 
             $("<div>").addClass("item-box")
@@ -214,7 +215,7 @@ function renderItem(itemObject: any){
             $("#itemTooltip-level").text(`Lv.${itemData.level.value}`);
             $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
             $("#itemTooltip-stat").html('');
-            for(let stat in itemData.stat){
+            for(const stat in itemData.stat){
                 $("#itemTooltip-stat").append(`${stat} ${itemData.stat[stat]}<br>`)
             }
             let star = '';

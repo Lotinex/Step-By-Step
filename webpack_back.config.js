@@ -19,6 +19,19 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
+                enforce: "pre",
+                use: [
+                  {
+                    loader: "eslint-loader",
+                    options: {
+                      emitError: true,
+                      fix: true
+                    }
+                  }
+                ]
+            },
+            {
+                test: /\.ts$/,
                 use: [
                   {
                     loader: "ts-loader"

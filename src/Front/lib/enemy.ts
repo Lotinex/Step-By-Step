@@ -2,7 +2,7 @@ import {Entity, GraphicDamageRenderer} from './graphic';
 import DamageText from './damage';
 import Util from './util';
 
-declare var DamageRenderer: GraphicDamageRenderer;
+declare let DamageRenderer: GraphicDamageRenderer;
 
 export default class Enemy extends Entity {
     public hp: number;
@@ -23,7 +23,7 @@ export default class Enemy extends Entity {
     onClick(e: MouseEvent){
         this.targeted = !this.targeted;
 
-        let damage = Util.random(0, 2)
+        const damage = Util.random(0, 2)
         /*bossBar.quake();
         bossBar.addValue(-damage);*/
         DamageRenderer.addDamage(new DamageText(damage, e))

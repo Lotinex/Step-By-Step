@@ -1,6 +1,6 @@
 import {GraphicDamageRenderer} from './graphic';
 
-declare var DamageRenderer: GraphicDamageRenderer;
+declare let DamageRenderer: GraphicDamageRenderer;
 
 export default class DamageText {
     public damage: string;
@@ -44,22 +44,22 @@ export default class DamageText {
         })
     }
     static toKorean(number: number){
-        var inputNumber  = number < 0 ? false : number;
-        var unitWords    = ['', '만', '억', '조', '경'];
-        var splitUnit    = 10000;
-        var splitCount   = unitWords.length;
-        var resultArray  = [];
-        var resultString = '';
+        const inputNumber  = number < 0 ? false : number;
+        const unitWords    = ['', '만', '억', '조', '경'];
+        const splitUnit    = 10000;
+        const splitCount   = unitWords.length;
+        const resultArray  = [];
+        let resultString = '';
     
-        for (var i = 0; i < splitCount; i++){
-             var unitResult = (inputNumber as number % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
+        for (let i = 0; i < splitCount; i++){
+             let unitResult = (inputNumber as number % Math.pow(splitUnit, i + 1)) / Math.pow(splitUnit, i);
             unitResult = Math.floor(unitResult);
             if (unitResult > 0){
                 resultArray[i] = unitResult;
             }
         }
     
-        for (var i = 0; i < resultArray.length; i++){
+        for (let i = 0; i < resultArray.length; i++){
             if(!resultArray[i]) continue;
             resultString = String(resultArray[i]) + unitWords[i] + resultString;
         }
@@ -69,7 +69,7 @@ export default class DamageText {
     render(ctx: CanvasRenderingContext2D){
         for(const text of this.data){
             if(this.alpha <= 0){
-                let index = DamageRenderer.damages.indexOf(this);
+                const index = DamageRenderer.damages.indexOf(this);
                 DamageRenderer.damages.splice(index, 1)
                 break;
             }

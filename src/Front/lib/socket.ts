@@ -4,7 +4,7 @@ export default class SocketClient {
     ws: SocketIOClient.Socket;
     static PORT = 7010;
     constructor(url?: string){
-        let connectURL = url || `${window.location.origin}:${SocketClient.PORT}`
+        const connectURL = url || `${window.location.origin}:${SocketClient.PORT}`
         this.ws = io(connectURL);
     }
     send(event: string, ...data: any[]){

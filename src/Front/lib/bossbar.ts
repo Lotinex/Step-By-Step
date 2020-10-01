@@ -23,7 +23,7 @@ export default class Bossbar {
     }
     setValue(value: number){
         this.current = value;
-        let R = this.current * (100 / this.limit);
+        const R = this.current * (100 / this.limit);
         
         setTimeout(() => {
             $("#bossbarDmg").animate({
@@ -40,7 +40,7 @@ export default class Bossbar {
     }
     addValue(value: number){
         this.current = this.current + value;
-        let R = this.current * (100 / this.limit);
+        const R = this.current * (100 / this.limit);
         
         setTimeout(() => {
             $("#bossbarDmg").animate({

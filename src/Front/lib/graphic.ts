@@ -24,7 +24,7 @@ export class GraphicRenderer {
 
         window.requestAnimationFrame(this.UpdateRequest)
         canvas.addEventListener("click", e => {
-            for(let id in this.entities){
+            for(const id in this.entities){
                 const entity = this.entities[id];
                 const x = e.clientX - canvas.getBoundingClientRect().left
                 const y = e.clientY - canvas.getBoundingClientRect().top
@@ -60,7 +60,7 @@ export class GraphicRenderer {
          * 모든 엔티티는 공통적으로 render 메서드가 호출되면서 화면에 그려지게 된다.
          */
         this.clear()
-        for(let id in this.entities){
+        for(const id in this.entities){
             this.entities[id].render(this.ctx)
         }
     }
