@@ -8,8 +8,6 @@ let Web;
 let Game;
 
 class Server {
-
-
     constructor(type, path){
         this.type = type;
         this.process = Child_process.spawn("node", [ path ]);
@@ -29,7 +27,11 @@ class Server {
     }
 }
 
-
+function runTerminalCommand(command){
+    return new Promise(rs => {
+        Child_process.exec(`start cmd.exe /K ${command}`, rs)
+    })
+}
 function Engine(){
     mainWindow = new Electron.BrowserWindow({
         width: 800,
@@ -65,9 +67,9 @@ function stopServers(){
     if(Web) Web.kill();
     if(Game) Game.kill();
 }
-function startServers(){
+async function startServers(){
    if(Web && Game) stopServers();
-    Game = new Server("GAME", `${Path.resolve(__dirname, '../../dist/game.js')}`);
-    Web = new Server("WEB", `${Path.resolve(__dirname, '../../dist/web.js')}`);
+   Game = new Server("GAME", `${Path.resolve(__dirname, '../../dist/game.js')}`);
+   Web = new Server("WEB", `${Path.resolve(__dirname, '../../dist/web.js')}`);
 }
 Electron.app.whenReady().then(Engine);

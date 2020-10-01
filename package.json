@@ -4,9 +4,9 @@
   "description": "",
   "main": "manager/scripts/Main.js",
   "scripts": {
-    "start": "electron .",
-    "watch-front": "webpack --watch",
-    "watch-back": "webpack --config webpack_back.config.js --watch"
+    "start": "webpack --watch --production",
+    "start-manager": "electron .",
+    "watch-back": "webpack --config webpack_back.config.js --watch --production"
   },
   "author": "",
   "license": "ISC",

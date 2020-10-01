@@ -4,6 +4,7 @@ import Util from './util';
 
 declare let DamageRenderer: GraphicDamageRenderer;
 
+const testImnida = "wa";
 export default class Enemy extends Entity {
     public hp: number;
     public targeted: boolean;

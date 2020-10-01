@@ -1,4 +1,6 @@
 const Path = require("path");
+const webpack = require("webpack");
+const Child_process = require("child_process");
 
 module.exports = {
     entry: {
@@ -8,7 +10,15 @@ module.exports = {
     output: {
         path: Path.resolve(__dirname, 'dist/assets/pages')
     },
-    devtool: 'inline-source-map',
+    plugins: [
+      {
+        apply: (compiler) => {
+          compiler.hooks.afterEmit.tap('AfterEmitPlugin', () => {
+            Child_process.exec('start cmd.exe /K npm run watch-back')
+          })
+        }
+      }
+    ],
     resolve: {
         extensions: ['.ts', '.js', '.json']
     },

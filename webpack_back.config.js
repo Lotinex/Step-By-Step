@@ -1,10 +1,21 @@
 const Path = require("path");
 const NodeExternals = require("webpack-node-externals");
+const Child_process = require("child_process");
+
 module.exports = {
     entry: {
         web: Path.resolve(__dirname, 'src/Back/Web/Main.ts'),
         game: Path.resolve(__dirname, 'src/Back/Game/Main.ts')
     },
+    plugins: [
+        {
+          apply: (compiler) => {
+            compiler.hooks.afterEmit.tap('AfterEmitPlugin', () => {
+              Child_process.exec('npm run start-manager')
+            })
+          }
+        }
+    ],
     output: {
         path: Path.resolve(__dirname, 'dist')
     },
@@ -42,5 +53,5 @@ module.exports = {
     },
     externals: [
         NodeExternals()
-      ]
+    ]
 }
