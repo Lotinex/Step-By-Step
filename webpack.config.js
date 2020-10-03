@@ -10,6 +10,8 @@ module.exports = {
     output: {
         path: Path.resolve(__dirname, 'dist/assets/pages')
     },
+    devtool: 'source-map',
+    /*
     plugins: [
       {
         apply: (compiler) => {
@@ -18,7 +20,7 @@ module.exports = {
           })
         }
       }
-    ],
+    ],*/
     resolve: {
         extensions: ['.ts', '.js', '.json']
     },

@@ -7,6 +7,7 @@ module.exports = {
         web: Path.resolve(__dirname, 'src/Back/Web/Main.ts'),
         game: Path.resolve(__dirname, 'src/Back/Game/Main.ts')
     },
+    /*
     plugins: [
         {
           apply: (compiler) => {
@@ -15,7 +16,7 @@ module.exports = {
             })
           }
         }
-    ],
+    ],*/
     output: {
         path: Path.resolve(__dirname, 'dist')
     },

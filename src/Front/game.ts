@@ -2,8 +2,9 @@ import SocketClient from './lib/socket';
 import ActiveSkill from './lib/skill';
 import XHR from './lib/xhr';
 import {GraphicRenderer, GraphicDamageRenderer} from './lib/graphic';
-import Enemy from './lib/enemy';
 import $ from 'jquery';
+import EnemyClasses from './lib/mobs';
+import Enemy from './lib/enemy';
 
 const CONFIG = {
     STAR_LIMIT : 7,
@@ -23,11 +24,11 @@ let my : Partial<{
 
 const ws = new SocketClient();
 
-const StageRenderer = new GraphicRenderer("stage");
-const DamageRenderer = new GraphicDamageRenderer("damage-text");
-const ObjectRenderer = new GraphicRenderer("objects");
-const EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
-const MyEffectRenderer = new GraphicRenderer("my-effect");
+export const StageRenderer = new GraphicRenderer("stage");
+export const DamageRenderer = new GraphicDamageRenderer("damage-text");
+export const ObjectRenderer = new GraphicRenderer("objects");
+export const EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
+export const MyEffectRenderer = new GraphicRenderer("my-effect");
 
 ws.on('enter', data => { //여기서 초기화
     my = data;
@@ -81,6 +82,9 @@ $(document).on("keydown", e => {
                 }, 300)
             }
             break;
+        case 'Shift':
+            attack()
+            break;
     }
 })
 function fightAlert(){
@@ -119,14 +123,12 @@ function fightAlert(){
         }
     })
 }
-function spawnMob(mob: {id: string, hp: string}){
-    const newMob = new Enemy(mob.id, 300, 300, 100, 100, parseInt(mob.hp));
-   /*newMob.setAnimatedTexture({
-        template: `mobs/${mob.id}/${mob.id}`,
-        type: 'png',
-        limit: mob.frame
-    })   */ // 오류로 인해 보류
+function spawnMob(mob: {id: keyof typeof EnemyClasses, hp: string}){
+    const newMob = new EnemyClasses[mob.id](mob.id, 300, 300, 300, 300);
+
+    newMob.setHp(parseInt(mob.hp))
     newMob.setTexture(`img/mobs/${mob.id}/${mob.id}-1.png`)
+    newMob.action()
     StageRenderer.addEntity(newMob)
 }/*
 function setSkillOnBox(targetBoxIndex: number, skillID: string){
@@ -134,6 +136,9 @@ function setSkillOnBox(targetBoxIndex: number, skillID: string){
     skillBox.append($("<img>").addClass("skillBoxImage").attr("src", `assets/img/skills/${skillID}.png`))
 }
 */
+function attack(){
+    
+}
 function dragMap(){
     let position = { top: 0, left: 0, x: 0, y: 0 };
 

@@ -196,13 +196,8 @@ export abstract class Entity {
             this.frameCount = 1;
         } else (this.frameCount as number)++;
     }
-    /**
-     * @abstract
-     */
-    render(ctx: CanvasRenderingContext2D){}
-    /**
-     * @abstract
-     */
+    abstract render(ctx: CanvasRenderingContext2D): void;
     onClick(e: MouseEvent){}
+   // abstract update(): void;
 }
 

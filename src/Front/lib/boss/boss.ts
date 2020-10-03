@@ -4,7 +4,7 @@ declare var ObjectRenderer: GraphicRenderer;
 declare var StageRenderer: GraphicRenderer;
 declare var EnemyEffectRenderer: GraphicRenderer;
 declare var MyEffectRenderer: GraphicRenderer;
-
+/*
 class Unliving extends Entity {
     constructor(id: string, x: number, y: number){
         super(id, x, y)
@@ -35,11 +35,9 @@ class Effect extends Entity {
             MyEffectRenderer.removeEntity(this.id)
         }
     }
-}
-/**
- * @abstract
- */
-class Boss extends Entity {
+}*/
+
+abstract class Boss extends Entity {
     public health: number;
 
     static TEXTURE_NUM_TABLE = {
