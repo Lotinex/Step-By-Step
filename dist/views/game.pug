@@ -21,12 +21,12 @@ html(lang="ko")
             div.stage(id=id style=`width:${w}px; height:${h}px; left:${x}px; top:${y}px; background-image: url(assets/img/stages/${id}.png);`)
                 div.stageLabel= label
                 block
-        div#bossbar
-            div#bossbarName Entity_Boss
-            div#bossbarBg
-            div#bossbarDmg
-            div#bossbarHeal
-            div#bossbarGage(style="width:800px; height:35px;")
+        div#hpbar
+            div#hpbarName Entity_Boss
+            div#hpbarBg
+            div#hpbarDmg
+            div#hpbarHeal
+            div#hpbarGage(style="width:800px; height:35px;")
         div#map
             div#mapLabel= "세계: 우주"
             +Stage('earth', '지구', 300, 300, 10, 50)

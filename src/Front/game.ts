@@ -4,24 +4,38 @@ import XHR from './lib/xhr';
 import {GraphicRenderer, GraphicDamageRenderer} from './lib/graphic';
 import $ from 'jquery';
 import EnemyClasses from './lib/mobs';
-import Enemy from './lib/enemy';
+import {Enemy, Projectile} from './lib/enemy';
+import Hpbar from './lib/hpbar';
 
 const CONFIG = {
     STAR_LIMIT : 7,
     test: 1
 }
 
-let my : Partial<{
+export let my : Partial<{
     skills: {
         [skillName: string]: ActiveSkill
     },
     inventory: {
         [itemName: string]: any;
     },
-    stage: string // fix me
-}> = {};
+    stage: string // fix me,
+    currentTarget: {
+        id: string;
+        x: number;
+        y: number;
+        w?: number;
+        h?: number;
+    },
+    cursorPosition: {
+        x: number;
+        y: number;
+    },
+    projectileCounter: number;
+}> = {
 
-
+};
+let currentEnemyHpbar: Hpbar;
 const ws = new SocketClient();
 
 export const StageRenderer = new GraphicRenderer("stage");
@@ -33,14 +47,13 @@ export const MyEffectRenderer = new GraphicRenderer("my-effect");
 ws.on('enter', data => { //여기서 초기화
     my = data;
     my.skills = {};
-
+    my.projectileCounter = 0;
     my.skills["detection"] = new ActiveSkill("detection", "p");
     my.skills["detection"].use = () => {
         ws.send("searchMob")
     };
 
     dragMap()
-    $("#Inventory").show()
     drag($("#Inventory"))
     renderItem(my.inventory)
 
@@ -67,9 +80,7 @@ $(".dialog-close").on("click", e => {
 $(document).on("keydown", e => {
     switch(e.key){
         case 'm':
-            if($("#map").css("display") === "none"){
-                $("#map").show()
-            } else $("#map").hide()
+            toggle($("#map"))
             break;
         case 'k':
             if($("#skill").css("margin-bottom") === "-130px"){
@@ -82,11 +93,25 @@ $(document).on("keydown", e => {
                 }, 300)
             }
             break;
+        case 'i':
+            toggle($("#Inventory"))
         case 'Shift':
             attack()
             break;
     }
 })
+$(document).on("mousemove", e => {
+    my.cursorPosition = {
+        x: e.pageX,
+        y: e.pageY
+    }
+})
+function toggle(target: JQuery){
+    if(target.css("display") === "none"){
+        target.show()
+    } else target.hide()
+    return target;
+}
 function fightAlert(){
     let bgEffectAlpha = 0;
     const disappear = () => {
@@ -125,7 +150,7 @@ function fightAlert(){
 }
 function spawnMob(mob: {id: keyof typeof EnemyClasses, hp: string}){
     const newMob = new EnemyClasses[mob.id](mob.id, 300, 300, 300, 300);
-
+    displayEnemyHpbar(mob.id, parseInt(mob.hp))
     newMob.setHp(parseInt(mob.hp))
     newMob.setTexture(`img/mobs/${mob.id}/${mob.id}-1.png`)
     newMob.action()
@@ -136,8 +161,21 @@ function setSkillOnBox(targetBoxIndex: number, skillID: string){
     skillBox.append($("<img>").addClass("skillBoxImage").attr("src", `assets/img/skills/${skillID}.png`))
 }
 */
+function displayEnemyHpbar(name: string, limit: number){
+    currentEnemyHpbar = new Hpbar(name, limit);
+}
 function attack(){
-    
+    if(!my.currentTarget) return; //타겟팅이 어무것도 안 되어 있을 때
+    console.log(`@cursor: ${my.cursorPosition?.x} ${my.cursorPosition?.y}`)
+    console.log(`@target: ${my.currentTarget.x} ${my.currentTarget.y}`)
+    console.log(my.projectileCounter as number)
+    const projectile = new Projectile(`my-projectile-${my.projectileCounter}`, my.cursorPosition?.x as number, my.cursorPosition?.y as number);
+    projectile.setTexture('img/items/trace_of_the_void.png')
+    MyEffectRenderer.addEntity(projectile)
+    projectile.move(my.currentTarget.x, my.currentTarget.y, 50);
+
+    (my.projectileCounter as number)++;
+
 }
 function dragMap(){
     let position = { top: 0, left: 0, x: 0, y: 0 };

@@ -1,17 +1,20 @@
 import $ from 'jquery';
 
-export default class Bossbar {
+export default class Hpbar {
     public limit: number;
     public current: number;
     public quakeLevel: number;
-
-    constructor(limit: number, quakeLevel= 40){
+    public name: string;
+    constructor(name: string,limit: number, quakeLevel= 40){
+        this.name = name;
         this.limit = limit;
         this.current = limit;
         this.quakeLevel = quakeLevel;
+        $('#hpbarName').text(this.name)
+        $("#hpbar").show()
     }
     quake(level= this.quakeLevel){
-        const bar = $("#bossbar")
+        const bar = $("#hpbar")
         if(level <= 30) return bar.css("margin-top", 30)
         bar.css("margin-top", level)
         setTimeout(() => {
@@ -26,15 +29,15 @@ export default class Bossbar {
         const R = this.current * (100 / this.limit);
         
         setTimeout(() => {
-            $("#bossbarDmg").animate({
+            $("#hpbarDmg").animate({
                 'width': R + "%"
             }, 700)
         }, 500)
 
-        $("#bossbarGage").animate({
+        $("#hpbarGage").animate({
             'width': R + "%"
         }, 500)
-        $("#bossbarHeal").animate({
+        $("#hpbarHeal").animate({
             'width': R + "%"
         }, 300);
     }
@@ -43,15 +46,15 @@ export default class Bossbar {
         const R = this.current * (100 / this.limit);
         
         setTimeout(() => {
-            $("#bossbarDmg").animate({
+            $("#hpbarDmg").animate({
                 'width': R + "%"
             }, 700)
         }, 500)
 
-        $("#bossbarGage").animate({
+        $("#hpbarGage").animate({
             'width': R + "%"
         }, 500)
-        $("#bossbarHeal").animate({
+        $("#hpbarHeal").animate({
             'width': R + "%"
         }, 300)
     }

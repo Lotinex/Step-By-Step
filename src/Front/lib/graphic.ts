@@ -50,9 +50,9 @@ export class GraphicRenderer {
         window.requestAnimationFrame(this.UpdateRequest)
     }
     update(){
-        /**
-         * ...
-         */
+        for(const id in this.entities){
+            if(!this.entities[id].alive) delete this.entities[id];
+        }
     }
     render(){
         /**
@@ -61,6 +61,7 @@ export class GraphicRenderer {
          */
         this.clear()
         for(const id in this.entities){
+            this.entities[id].update()
             this.entities[id].render(this.ctx)
         }
     }
@@ -129,11 +130,13 @@ export abstract class Entity {
     protected animatedTexture?: Array<HTMLImageElement>;
     protected frameCountLimit?: number;
     protected frameCount?: number;
+    public alive: boolean; //렌더링에서 사라지고 싶을 때 false화 하자.
 
     constructor(id: string, x: number, y: number){
         this.id = id;
         this.x = x;
         this.y = y;
+        this.alive = true;
     }
     setTexture(expression: {src: string; width?: number, height?: number} | string){
         if(typeof expression === 'object'){
@@ -196,8 +199,9 @@ export abstract class Entity {
             this.frameCount = 1;
         } else (this.frameCount as number)++;
     }
+    public update(){}
     abstract render(ctx: CanvasRenderingContext2D): void;
-    onClick(e: MouseEvent){}
+    public onClick(e: MouseEvent){}
    // abstract update(): void;
 }
 

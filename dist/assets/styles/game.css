@@ -259,8 +259,9 @@ html, body {
 }
 /** 여기서부터 보스바 **/
 
-#bossbar {
+#hpbar {
     user-select: none;
+    display: none;
     width: 800px;
     height: 35px;
     position: fixed;
@@ -273,19 +274,19 @@ html, body {
     border: 3px solid black;
     box-shadow: 1px 3px 6px rgb(155,155,155);
 }
-#bossbarDmg {
+#hpbarDmg {
     position: absolute;
     width: 100%;
     height: 100%;
     background: rgb(255, 0, 55)
 }
-#bossbarHeal {
+#hpbarHeal {
     position: absolute;
     width: 100%;
     height: 100%;
     background: limegreen;
 }
-#bossbarBg {
+#hpbarBg {
     background: repeating-linear-gradient(
         45deg,
         gray,
@@ -293,26 +294,26 @@ html, body {
         black 10px,
         black 20px
     );
-    animation: 50s bossbarBgEffect linear infinite;
+    animation: 50s hpbarBgEffect linear infinite;
     color: transparent;
     background-size: 400% 100%;
     width: 100%;
     height: 100%;
     position: absolute;
 }
-@keyframes bossbarBgEffect {
+@keyframes hpbarBgEffect {
     100% {
         background-position: 100% 100%;
       }
 }
-#bossbarGage {
+#hpbarGage {
     position: absolute;
     background: linear-gradient(to right, rgb(100, 0, 100), rgb(110,0,100), rgb(120,0,100), rgb(130,0,100), rgb(140,0,100), rgb(150,0,100), rgb(160,0,100), rgb(170,0,100), rgb(180,0,100), rgb(190,0,100), rgb(200,0,100), rgb(210,0,100), rgb(220,0,100)) /** animate this **/;
-    animation: 3s bossbarEffect ease-in-out infinite;
+    animation: 3s hpbarEffect ease-in-out infinite;
     background-size: 400% 100%;
     color: transparent;
 }
-@keyframes bossbarEffect {
+@keyframes hpbarEffect {
     0%,100% {
         background-position: 0 0;
     }
@@ -321,7 +322,7 @@ html, body {
     }
 }
 
-#bossbarName {
+#hpbarName {
     position: absolute;
     margin-top: -30px;
     font-weight: bold;
@@ -362,7 +363,7 @@ html, body {
         black 10px,
         black 20px
     );
-    animation: 100s bossbarBgEffect linear infinite;
+    animation: 100s hpbarBgEffect linear infinite;
     color: transparent;
     background-size: 300% 100%;
     height: 100px;
