@@ -53,8 +53,10 @@
 통신 끝.
 
 
-> 서버 매니저 시작
+> 서버 시작 (Development)
 ```
+npm run watch-front
+npm run watch-back
 npm start
 ```
 > 주의사항
