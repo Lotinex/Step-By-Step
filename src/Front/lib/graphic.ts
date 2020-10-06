@@ -44,9 +44,9 @@ export class GraphicRenderer {
     clear(){
         this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     }
-    UpdateRequest(){
+    UpdateRequest(time: number){
         this.update()
-        this.render()
+        this.render(time)
         window.requestAnimationFrame(this.UpdateRequest)
     }
     update(){
@@ -54,14 +54,14 @@ export class GraphicRenderer {
             if(!this.entities[id].alive) delete this.entities[id];
         }
     }
-    render(){
+    render(time: number){
         /**
          * 엔티티는 render 메서드를 필수로 구현해야 한다.
          * 모든 엔티티는 공통적으로 render 메서드가 호출되면서 화면에 그려지게 된다.
          */
         this.clear()
         for(const id in this.entities){
-            this.entities[id].update()
+            this.entities[id].update(time)
             this.entities[id].render(this.ctx)
         }
     }
@@ -199,9 +199,29 @@ export abstract class Entity {
             this.frameCount = 1;
         } else (this.frameCount as number)++;
     }
-    public update(){}
+    public update(time: number){}
     abstract render(ctx: CanvasRenderingContext2D): void;
     public onClick(e: MouseEvent){}
    // abstract update(): void;
 }
 
+export class Vector {
+    public x: number;
+    public y: number;
+    public static distanceBetweenPoints(firstPoint: PurePoint, secondPoint: PurePoint){
+        const lowerBase = secondPoint.x - firstPoint.x;
+        const height = secondPoint.y - firstPoint.y;
+
+        return Math.sqrt(lowerBase ** 2 + height ** 2);
+    }
+    public static angleBetweenPoints(firstPoint: PurePoint, secondPoint: PurePoint){
+        const lowerBase = secondPoint.x - firstPoint.x;
+        const height = secondPoint.y - firstPoint.y;
+        return Math.atan2(height, lowerBase) * 180 / Math.PI;
+    }
+    constructor(value: number, angle: number){
+        const radian = (angle * Math.PI) / 180;
+        this.x = value * Math.cos(radian);
+        this.y = value * Math.sin(radian);
+    }
+}

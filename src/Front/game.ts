@@ -4,7 +4,8 @@ import XHR from './lib/xhr';
 import {GraphicRenderer, GraphicDamageRenderer} from './lib/graphic';
 import $ from 'jquery';
 import EnemyClasses from './lib/mobs';
-import {Enemy, Projectile} from './lib/enemy';
+import {Enemy} from './lib/enemy';
+import Projectile from './lib/projectile';
 import Hpbar from './lib/hpbar';
 
 const CONFIG = {
@@ -166,13 +167,10 @@ function displayEnemyHpbar(name: string, limit: number){
 }
 function attack(){
     if(!my.currentTarget) return; //타겟팅이 어무것도 안 되어 있을 때
-    console.log(`@cursor: ${my.cursorPosition?.x} ${my.cursorPosition?.y}`)
-    console.log(`@target: ${my.currentTarget.x} ${my.currentTarget.y}`)
-    console.log(my.projectileCounter as number)
-    const projectile = new Projectile(`my-projectile-${my.projectileCounter}`, my.cursorPosition?.x as number, my.cursorPosition?.y as number);
+    const projectile = new Projectile(`my-projectile-${my.projectileCounter}`, 100, 100);
     projectile.setTexture('img/items/trace_of_the_void.png')
     MyEffectRenderer.addEntity(projectile)
-    projectile.move(my.currentTarget.x, my.currentTarget.y, 50);
+    projectile.moveTo(500, 500, 0.5);
 
     (my.projectileCounter as number)++;
 
