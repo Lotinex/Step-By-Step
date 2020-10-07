@@ -24,38 +24,34 @@ export default class Hpbar {
             }, 50)
         }, 50)
     }
+    changeBarWidth(R: number): void {
+        /*setTimeout(() => {
+            $("#hpbarDmg").animate({
+                'width': R + "%"
+            }, 50)
+        }, 200)
+
+        $("#hpbarHeal").animate({
+            'width': R + "%"
+        }, 50);*/
+
+        /*$("#hpbarGage").animate({
+            'width': R + "%"
+        }, 0)*/
+        $("#hpbarDmg").css("width", `${R}%`)
+        $("#hpbarHeal").css("width", `${R}%`)
+        $("#hpbarGage").css("width", `${R}%`)
+    }
     setValue(value: number){
         this.current = value;
         const R = this.current * (100 / this.limit);
-        
-        setTimeout(() => {
-            $("#hpbarDmg").animate({
-                'width': R + "%"
-            }, 700)
-        }, 500)
 
-        $("#hpbarGage").animate({
-            'width': R + "%"
-        }, 500)
-        $("#hpbarHeal").animate({
-            'width': R + "%"
-        }, 300);
+        this.changeBarWidth(R)
     }
     addValue(value: number){
         this.current = this.current + value;
         const R = this.current * (100 / this.limit);
         
-        setTimeout(() => {
-            $("#hpbarDmg").animate({
-                'width': R + "%"
-            }, 700)
-        }, 500)
-
-        $("#hpbarGage").animate({
-            'width': R + "%"
-        }, 500)
-        $("#hpbarHeal").animate({
-            'width': R + "%"
-        }, 300)
+        this.changeBarWidth(R)
     }
 }

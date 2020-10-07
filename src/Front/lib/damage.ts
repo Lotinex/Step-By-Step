@@ -1,10 +1,9 @@
 import {GraphicDamageRenderer} from './graphic';
-
-declare let DamageRenderer: GraphicDamageRenderer;
+import {DamageRenderer} from '../game';
 
 export default class DamageText {
     public damage: string;
-    public event: MouseEvent;
+    public coord: PurePoint;
     public data: Array<{
         number: boolean;
         img: HTMLImageElement;
@@ -19,25 +18,25 @@ export default class DamageText {
     static HANGUL_X_INCREASE = 75;
     static NUMBER_X_INCREASE = 45;
     static HANGUL_Y_DECREASE = 15;
-    constructor(damage: number, e: MouseEvent){
+    constructor(damage: number, coord: PurePoint){
         this.damage = DamageText.toKorean(damage);
-        this.event = e;
+        this.coord = coord;
         this.data = [];
         this.life = 200;
         this.startDying = false;
         this.alpha = 1;
 
-        let xCounter = this.event.pageX;
-
+        let xCounter = this.coord.x;
         this.damage.split('').forEach(text => {
-            const image = new Image()
-            image.src = `assets/img/damage/${text}.png`
+            const image = new Image();
+            image.src = `img/damage/${text}.png`
+            console.log(image.src)
             image.onload = () => {
                 this.data.push({
                     number: !isNaN(parseInt(text)),
                     img: image,
                     x: xCounter,
-                    y: !isNaN(parseInt(text)) ? this.event.pageY : this.event.pageY - DamageText.HANGUL_Y_DECREASE,
+                    y: !isNaN(parseInt(text)) ? this.coord.y : this.coord.y - DamageText.HANGUL_Y_DECREASE,
                 })
                 xCounter += !isNaN(parseInt(text)) ? DamageText.NUMBER_X_INCREASE : DamageText.HANGUL_X_INCREASE;
             }

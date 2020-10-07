@@ -6,17 +6,9 @@ class Slime extends Enemy {
         super(id, x, y, w, h)
     }
     async action(): Promise<void> {
-        /*
-        await Enemy.wait(1);
-        this.createVectorProjectile({
-            x: 400,
-            y: 400,
-            vectorX: 300,
-            vectorY: 300,
-            vectorValue: 50
-        })
+        await Enemy.wait(0.1);
+        this.x += 1;
         this.action()
-        */
     }
 }
 export default {

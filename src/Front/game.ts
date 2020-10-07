@@ -5,7 +5,7 @@ import {GraphicRenderer, GraphicDamageRenderer} from './lib/graphic';
 import $ from 'jquery';
 import EnemyClasses from './lib/mobs';
 import {Enemy} from './lib/enemy';
-import Projectile from './lib/projectile';
+import {PlayerAttackProjectile} from './lib/projectile';
 import Hpbar from './lib/hpbar';
 
 const CONFIG = {
@@ -16,10 +16,10 @@ const CONFIG = {
 export let my : Partial<{
     skills: {
         [skillName: string]: ActiveSkill
-    },
+    };
     inventory: {
         [itemName: string]: any;
-    },
+    };
     stage: string // fix me,
     currentTarget: {
         id: string;
@@ -27,19 +27,22 @@ export let my : Partial<{
         y: number;
         w?: number;
         h?: number;
-    },
+    };
     cursorPosition: {
         x: number;
         y: number;
-    },
+    };
     projectileCounter: number;
+    status: {
+        atk: number;
+    };
+    currentEnemyHpbar: Hpbar;
 }> = {
 
 };
-let currentEnemyHpbar: Hpbar;
 const ws = new SocketClient();
 
-export const StageRenderer = new GraphicRenderer("stage");
+export const StageRenderer = new GraphicRenderer<Enemy>("stage");
 export const DamageRenderer = new GraphicDamageRenderer("damage-text");
 export const ObjectRenderer = new GraphicRenderer("objects");
 export const EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
@@ -48,6 +51,9 @@ export const MyEffectRenderer = new GraphicRenderer("my-effect");
 ws.on('enter', data => { //여기서 초기화
     my = data;
     my.skills = {};
+    my.status = { //임시방편. DB에 빨리 파고 불러오자.
+        atk: 527292648
+    }
     my.projectileCounter = 0;
     my.skills["detection"] = new ActiveSkill("detection", "p");
     my.skills["detection"].use = () => {
@@ -151,6 +157,7 @@ function fightAlert(){
 }
 function spawnMob(mob: {id: keyof typeof EnemyClasses, hp: string}){
     const newMob = new EnemyClasses[mob.id](mob.id, 300, 300, 300, 300);
+    console.log(mob.hp)
     displayEnemyHpbar(mob.id, parseInt(mob.hp))
     newMob.setHp(parseInt(mob.hp))
     newMob.setTexture(`img/mobs/${mob.id}/${mob.id}-1.png`)
@@ -163,14 +170,18 @@ function setSkillOnBox(targetBoxIndex: number, skillID: string){
 }
 */
 function displayEnemyHpbar(name: string, limit: number){
-    currentEnemyHpbar = new Hpbar(name, limit);
+    my.currentEnemyHpbar = new Hpbar(name, limit);
 }
 function attack(){
+
     if(!my.currentTarget) return; //타겟팅이 어무것도 안 되어 있을 때
-    const projectile = new Projectile(`my-projectile-${my.projectileCounter}`, 100, 100);
+    const projectile = new PlayerAttackProjectile(`my-projectile-${my.projectileCounter}`, my.cursorPosition?.x as number, my.cursorPosition?.y as number);
+    projectile.setSize(10, 10)
+    projectile.setRenderer(MyEffectRenderer)
+    projectile.isSmooth = true;
     projectile.setTexture('img/items/trace_of_the_void.png')
     MyEffectRenderer.addEntity(projectile)
-    projectile.moveTo(500, 500, 0.5);
+    projectile.moveTo(my.currentTarget.x, my.currentTarget.y, 0.5);
 
     (my.projectileCounter as number)++;
 

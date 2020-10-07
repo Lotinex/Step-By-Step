@@ -1,7 +1,7 @@
 import {Entity, GraphicDamageRenderer} from './graphic';
 import DamageText from './damage';
 import Util from './util';
-import {EnemyEffectRenderer} from '../game';
+import {EnemyEffectRenderer, DamageRenderer} from '../game';
 import ActiveSkill from './skill';
 import {my} from '../game';
 import Projectile from './projectile';
@@ -34,6 +34,12 @@ export abstract class Enemy extends Entity {
     public onClick(e: MouseEvent){
         this.targeted = !this.targeted;
         if(!this.targeted) my.currentTarget = undefined;
+    }
+    public damage(coord: PurePoint): void {
+        const dmg = Util.random(my.status?.atk as number, (my.status?.atk as number) * 2); //임시. 스탯 반영은 나중에
+        DamageRenderer.addDamage(new DamageText(dmg as number, coord))
+        my.currentEnemyHpbar?.addValue(-(dmg as number)) 
+        my.currentEnemyHpbar?.quake()
     }
     /**
      * @override

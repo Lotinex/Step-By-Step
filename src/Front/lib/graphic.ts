@@ -3,13 +3,13 @@ import DamageText from './damage';
 /**
  * deprecated: damage text rendering (=> GraphicDamageRenderer class)
  */
-export class GraphicRenderer {
+export class GraphicRenderer<T extends Entity = Entity> {
     public ctx: CanvasRenderingContext2D;
     public canvas: HTMLCanvasElement;
     public w: number;
     public h: number;
     public entities: {
-        [entityID: string]: Entity;
+        [entityID: string]: T;
     }
     constructor(canvasID: string){
 
@@ -72,7 +72,7 @@ export class GraphicRenderer {
         if(!this.entities.hasOwnProperty(id)) return;
         action(this.entities[id], this.entities[id].x, this.entities[id].y)
     }
-    addEntity(entity: Entity){
+    addEntity<K extends T>(entity: K){
         this.entities[entity.id] = entity;
         return entity;
     }
@@ -212,7 +212,7 @@ export class Vector {
         const lowerBase = secondPoint.x - firstPoint.x;
         const height = secondPoint.y - firstPoint.y;
 
-        return Math.sqrt(lowerBase ** 2 + height ** 2);
+        return Math.sqrt(lowerBase * lowerBase + height * height);
     }
     public static angleBetweenPoints(firstPoint: PurePoint, secondPoint: PurePoint){
         const lowerBase = secondPoint.x - firstPoint.x;
