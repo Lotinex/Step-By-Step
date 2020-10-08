@@ -69,7 +69,13 @@ ws.on('enter', data => { //여기서 초기화
     $(".renderer").attr("height", window.innerHeight)
 
 })
-ws.on("detectMob", mob => {
+ws.on("detectMob", (mob: {
+    id: keyof typeof EnemyClasses;
+    stage: string;
+    level: string;
+    hp: string;
+    frame: string;
+}) => {
     fightAlert()
     spawnMob(mob)
 })
@@ -102,6 +108,7 @@ $(document).on("keydown", e => {
             break;
         case 'i':
             toggle($("#Inventory"))
+            break;
         case 'Shift':
             attack()
             break;
@@ -155,12 +162,20 @@ function fightAlert(){
         }
     })
 }
-function spawnMob(mob: {id: keyof typeof EnemyClasses, hp: string}){
-    const newMob = new EnemyClasses[mob.id](mob.id, 300, 300, 300, 300);
-    console.log(mob.hp)
+function spawnMob(mob: {
+    id: keyof typeof EnemyClasses
+    stage: string;
+    level: string;
+    hp: string;
+    frame: string;
+}){
+    const newMob = new EnemyClasses[mob.id](mob.id, 700, 300, 450, 450);
     displayEnemyHpbar(mob.id, parseInt(mob.hp))
     newMob.setHp(parseInt(mob.hp))
-    newMob.setTexture(`img/mobs/${mob.id}/${mob.id}-1.png`)
+    newMob.setAnimatedTexture({
+        template: `mobs/${mob.id}/${mob.id}`,
+        limit: parseInt(mob.frame)
+    })
     newMob.action()
     StageRenderer.addEntity(newMob)
 }/*
@@ -179,7 +194,11 @@ function attack(){
     projectile.setSize(10, 10)
     projectile.setRenderer(MyEffectRenderer)
     projectile.isSmooth = true;
-    projectile.setTexture('img/items/trace_of_the_void.png')
+    projectile.setTexture({
+        src: 'img/items/trace_of_the_void.png',
+        width: 5,
+        height: 5
+    })
     MyEffectRenderer.addEntity(projectile)
     projectile.moveTo(my.currentTarget.x, my.currentTarget.y, 0.5);
 

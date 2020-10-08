@@ -62,22 +62,21 @@ export default class Projectile extends Entity {
     }
     /**
      * Implement this when create instance
+     * Smooth 여부는 일시적으로 deprecated 되었다. 나중에 개편하면서 추가하자. 
+     * 구현 요소는 그대로 남아있다.
      */
     public crashAction(): void {}
     protected motionUpdate(time: number): void {
         const elapsedTime = time - this.lastProcess;
         this.lastProcess = time;
-        let distance = this.distance;
-
-        if(this.smooth) distance = Vector.distanceBetweenPoints({
+        const distance = Vector.distanceBetweenPoints({
             x: this.x,
             y: this.y
         }, {
             x: this.arvX,
             y: this.arvY 
         });
-
-        if(distance <= 5){
+        if(distance <= 10){
             this.crashAction()
             return void setTimeout(this.remove, this.fadeoutWait);
         }
@@ -89,7 +88,7 @@ export default class Projectile extends Entity {
             x: this.arvX,
             y: this.arvY 
         });
-        const velocity = distance / this.reqTime;
+        const velocity = this.distance / this.reqTime;
         const targetPointVector = new Vector(velocity, angle);
         const elapsedSec = elapsedTime / 1000;
         this.x += targetPointVector.x * elapsedSec;

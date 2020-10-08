@@ -1,3 +1,4 @@
+import { text } from 'express';
 import DamageText from './damage';
 
 /**
@@ -61,8 +62,9 @@ export class GraphicRenderer<T extends Entity = Entity> {
          */
         this.clear()
         for(const id in this.entities){
-            this.entities[id].update(time)
-            this.entities[id].render(this.ctx)
+            const entity = this.entities[id];
+            entity.update(time)
+            entity.render(this.ctx)
         }
     }
     /**
@@ -121,24 +123,31 @@ export class GraphicDamageRenderer extends GraphicRenderer {
 }
 
 export abstract class Entity {
+    public static ANIMATE_UPDATE_DELAY = 100;
     public id: string;
     public x: number;
     public y: number;
     public w?: number;
     public h?: number;
     public img?: HTMLImageElement;
-    protected animatedTexture?: Array<HTMLImageElement>;
+    protected animatedTexture?: HTMLImageElement[];
     protected frameCountLimit?: number;
     protected frameCount?: number;
     public alive: boolean; //렌더링에서 사라지고 싶을 때 false화 하자.
+    public animated: boolean;
+    private lastTextureUpdate: number;
 
     constructor(id: string, x: number, y: number){
         this.id = id;
         this.x = x;
         this.y = y;
         this.alive = true;
+        this.frameCount = 0;
+        this.animated = false;
+        this.lastTextureUpdate = 0;
+        this.updateAnimatedTexture = this.updateAnimatedTexture.bind(this);
     }
-    setTexture(expression: {src: string; width?: number, height?: number} | string){
+    public setTexture(expression: {src: string; width?: number, height?: number} | string){
         if(typeof expression === 'object'){
             const texture = new Image();
             texture.src = expression.src; //필수
@@ -169,35 +178,47 @@ export abstract class Entity {
      * })
      * 
      */
-    setAnimatedTexture(expression: {
+    public setAnimatedTexture(expression: {
         limit: number;
         template: string;
         width?: number;
         height?: number;
-        type: 'png' | 'jpg';
+        type?: 'png' | 'jpg';
     }){ //성능에 다소 영향을
+
+        this.frameCountLimit = expression.limit - 1;
+        const firstFrame = new Image();
+        firstFrame.src = `img/${expression.template}-0.${expression.type || 'png'}`;
+        this.img = firstFrame;
         this.animatedTexture = [];
 
-        for(let i=1; i<expression.limit + 1;) {
-            const texture = new Image();
-            texture.src = `assets/img/${expression.template}-${i}.${expression.type}`; //필수
-            if(expression.width) texture.width = expression.width; //필수는
-            if(expression.height) texture.height = expression.height; //아니다.
-
-            this.animatedTexture.push(texture)
+        for(let i=0; i<expression.limit; i++) {
+            const image = new Image();
+            image.src = `img/${expression.template}-${i}.${expression.type || 'png'}`;
+            this.animatedTexture.push(image)
         }
-        this.frameCount = 1;
-        this.frameCountLimit = expression.limit;
+
+        this.animated = true;
+        
+        requestAnimationFrame(this.updateAnimatedTexture)
     }
     /**
      * 렌더링 중 연산을 최소화하기 위해 setanimatedTexture에서 
      * this.animatedTexture에 미리 Image 인스턴스를 넣어두는 작업을 한다.
      */
-    updateAnimatedTexture(){ //줄 수 있다.
+    public updateAnimatedTexture(time: number): void { //줄 수 있다.
+        if((time - this.lastTextureUpdate) < Entity.ANIMATE_UPDATE_DELAY) {
+            return void requestAnimationFrame(this.updateAnimatedTexture)
+        }
+        this.lastTextureUpdate = time;
+
         this.img = (this.animatedTexture as HTMLImageElement[])[this.frameCount as number];
         if(this.frameCount == this.frameCountLimit){
-            this.frameCount = 1;
+            this.frameCount = 0;
         } else (this.frameCount as number)++;
+
+        requestAnimationFrame(this.updateAnimatedTexture)
+
     }
     public update(time: number){}
     abstract render(ctx: CanvasRenderingContext2D): void;

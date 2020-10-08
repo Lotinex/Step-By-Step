@@ -8,7 +8,6 @@ import Projectile from './projectile';
 export abstract class Enemy extends Entity {
     public hp: number;
     public targeted: boolean;
-    public img?: HTMLImageElement;
     public w?: number;
     public h?: number;
     protected projectileCounter: number;
@@ -35,11 +34,32 @@ export abstract class Enemy extends Entity {
         this.targeted = !this.targeted;
         if(!this.targeted) my.currentTarget = undefined;
     }
+    public loopFor(number: number, sec: number, action: () => void): Promise<void> {
+        return new Promise(rs => {
+            let counter = 0;
+            const func = () => {
+                if(counter == number){
+                    clearInterval(interval);
+                    rs();
+                }
+                action()
+                counter++;
+            }
+            const interval = setInterval(func, sec * 1000);
+        })
+    }
+    public move(x: number, y: number): Promise<void> {
+        return new Promise(rs => {
+            this.x += x;
+            this.y += y;
+            rs()
+        })
+    }
     public damage(coord: PurePoint): void {
         const dmg = Util.random(my.status?.atk as number, (my.status?.atk as number) * 2); //임시. 스탯 반영은 나중에
         DamageRenderer.addDamage(new DamageText(dmg as number, coord))
         my.currentEnemyHpbar?.addValue(-(dmg as number)) 
-        my.currentEnemyHpbar?.quake()
+       // my.currentEnemyHpbar?.quake() 나중에 고쳐서 다시 활성화.
     }
     /**
      * @override
@@ -53,20 +73,20 @@ export abstract class Enemy extends Entity {
             };
         }
     }
-    public createVectorProjectile(options: {
+    public createProjectile(options: {
         x: number;
         y: number;
-        vectorX: number;
-        vectorY: number;
-        vectorValue: number;
-        imgSrc?: string; //?
+        tx: number;
+        ty: number;
+        reqTime: number;
+        imgSrc: string; //?
     }): void {
-        /*
         const projectile = new Projectile(`${this.constructor.name}-projectile-${this.projectileCounter}`, options.x, options.y)
-        projectile.setTexture('img/items/trace_of_the_void.png')
+        projectile.setTexture(options.imgSrc)
+        projectile.setRenderer(EnemyEffectRenderer)
         EnemyEffectRenderer.addEntity(projectile)
-        projectile.move(options.vectorX, options.vectorY, options.vectorValue)
-        this.projectileCounter++;*/
+        projectile.moveTo(options.tx, options.ty, options.reqTime)
+        this.projectileCounter++;
     }
     abstract async action(): Promise<void>;
 
