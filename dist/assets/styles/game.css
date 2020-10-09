@@ -9,6 +9,7 @@ html, body {
     background: rgba(0,0,0,0.8);
     border-radius: 7px;
     cursor: pointer;
+    display: none;
 }
 .dialog-head {
     font-weight: bold;
@@ -53,6 +54,10 @@ html, body {
     margin: 3px;
     cursor: help;
 }
+.item-box-equiped {
+    border: 1px solid gold;
+    background: rgba(0,0,0,0.35);
+}
 .item-img {
     width: 50px;
     height: 50px;
@@ -64,6 +69,7 @@ html, body {
     z-index: 3;
     background: rgba(0,0,0,0.8);
     border-radius: 7px;
+    border: 1px solid white;
     user-select: none;
     width: 300px;
     height: 600px;
@@ -385,4 +391,35 @@ html, body {
     position: absolute;
     user-select: none;
     z-index: -5;
+}
+
+
+.stat {
+    height: 30px;
+    margin: 5px;
+    border-bottom: 1px solid white;
+    padding: 1px;
+}
+.stat-title {
+    padding: 3px;
+    display: inline-block;
+    color: yellow;
+    cursor: help;
+    text-shadow: 0px 0px 2px yellow;
+    font-weight: bold;
+    background: rgba(0,0,0,0.7);
+}
+.stat-value {
+    display: inline-block;
+    margin-left: 25px;
+    color: white;
+}
+#normalTextTooltip {
+    background: rgba(0,0,0,0.85);
+    border: 1px solid white;
+    display: none; /* to inline-block */
+    color: white;
+    padding: 5px;
+    position: absolute;
+    z-index: 5;
 }

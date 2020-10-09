@@ -6,6 +6,8 @@ declare namespace Database {
             level: string;
             money: string;
             stage: string;
+            stat: string;
+            equip: string;
         };
         session: {
             id: string;

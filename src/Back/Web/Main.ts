@@ -9,6 +9,7 @@ import Socket from 'socket.io-client';
 import Lognex from '../Tools/Lognex';
 import * as GLOBAL from '../../global-config.json';
 import passport from 'passport';
+import * as bodyParser from 'body-parser';
 
 const App = Express();
 const ws = Socket(`ws://${GLOBAL.INTERNAL_WS_URL}:${GLOBAL.WS_PORT}`)
@@ -17,7 +18,8 @@ Login.init(passport, App);
 
 App.use(Express.static(Path.resolve(__dirname, 'assets')))
 
-App.use(Express.json())
+App.use(bodyParser.urlencoded({ extended: false }))
+App.use(bodyParser.json())
  
 App.set('views', Path.resolve(__dirname, 'views'))
 App.set('view engine', 'pug')

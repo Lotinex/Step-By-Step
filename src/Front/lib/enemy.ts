@@ -1,9 +1,9 @@
 import {Entity, GraphicDamageRenderer} from './graphic';
 import DamageText from './damage';
 import Util from './util';
-import {EnemyEffectRenderer, DamageRenderer} from '../game';
+import {EnemyEffectRenderer, DamageRenderer} from '../pages/game';
 import ActiveSkill from './skill';
-import {my} from '../game';
+import {my} from '../pages/game';
 import Projectile from './projectile';
 export abstract class Enemy extends Entity {
     public hp: number;
@@ -56,7 +56,7 @@ export abstract class Enemy extends Entity {
         })
     }
     public damage(coord: PurePoint): void {
-        const dmg = Util.random(my.status?.atk as number, (my.status?.atk as number) * 2); //임시. 스탯 반영은 나중에
+        const dmg = Util.random(my.stat?.atk as number, (my.stat?.atk as number) * 2); //임시. 스탯 반영은 나중에
         DamageRenderer.addDamage(new DamageText(dmg as number, coord))
         my.currentEnemyHpbar?.addValue(-(dmg as number)) 
        // my.currentEnemyHpbar?.quake() 나중에 고쳐서 다시 활성화.

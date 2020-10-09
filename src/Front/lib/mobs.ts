@@ -1,6 +1,6 @@
 import {Enemy} from './enemy';
 import Util from './util';
-import {my} from '../game';
+import {my} from '../pages/game';
 
 class Slime extends Enemy {
     constructor(id: string, x: number, y: number, w: number, h: number){

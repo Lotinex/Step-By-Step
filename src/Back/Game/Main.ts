@@ -43,7 +43,9 @@ ws.on('connection', async socket => {
         const user = await DB.TABLE.users.findOne({id: userID});
 
         user.inventory = JSON.parse(user.inventory);
-        
+        user.stat = JSON.parse(user.stat);
+        user.equip = JSON.parse(user.equip);
+
         Clients[SID] = new User(socket, SID, userID);
         Clients[SID].send("enter", user);
 
@@ -58,7 +60,25 @@ function onUserSocketRequest(socket: SocketIO.Socket){
         const stage = (await DB.TABLE.users.findOne({id: Clients[SID].userID})).stage;
         const mobs = await DB.TABLE.mobs.find({stage});
         Clients[SID].send("detectMob", mobs[Util.random(0, mobs.length - 1)])
+    })/*
+    socket.on('equipItem', async (item: string) => {
+        const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
+        const updatedEquip = JSON.parse(user.equip);
+        updatedEquip[item] = JSON.parse(user.inventory)[item];
+
+        await DB.TABLE.users.update([{id: Clients[SID]}], [{equip: updatedEquip}])
+
+        Clients[SID].send("equipOK")
     })
+    socket.on('equipOffItem', async (item: string) => {
+        const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
+        const updatedEquip = JSON.parse(user.equip);
+        delete updatedEquip[item];
+
+        await DB.TABLE.users.update([{id: Clients[SID].userID}], [{equip: updatedEquip}])
+
+        Clients[SID].send("equipOffOK")
+    })*/
 
 }
 

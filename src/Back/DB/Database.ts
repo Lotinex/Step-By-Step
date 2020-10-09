@@ -70,7 +70,6 @@ class Table<T extends "users" | "mobs" | "session" | "item"> {
         return new Promise((rs, rj) => {
             const conditionsArr = Table.parseExpression(conditions)
             const valueArr = Table.parseExpression(valueExpression)
-
             DB.query(`UPDATE ${this.table} SET ${valueArr.join(' , ')} WHERE ${conditionsArr.join(' ')}`, err => {
                 if(err) rj(err);
                 else rs();

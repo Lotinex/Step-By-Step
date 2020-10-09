@@ -1,5 +1,5 @@
 import {Entity, Vector, GraphicRenderer} from './graphic';
-import {my, StageRenderer} from '../game';
+import {my, StageRenderer} from '../pages/game';
 
 export default class Projectile extends Entity {
 

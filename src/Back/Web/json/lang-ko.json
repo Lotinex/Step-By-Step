@@ -3,5 +3,27 @@
         "Alycia" : "아리시아",
         "Adelheid" : "아델하이트",
         "Charlotte" : "샤를로테"
-    }
+    },
+    "playerstat_atk": "공격력",
+    "playerstat_health": "체력",
+    "playerstat_critical_chance": "치명타 확률",
+    "playerstat_critical_damage": "치명타 피해 배율",
+    "playerstat_atk_speed": "공격 속도",
+    "playerstat_def": "방어력",
+    "playerstat_accuracy": "정확도",
+    "playerstat_luck": "운",
+    "playerstat_ignore_protection": "방어력 무시",
+    "playerstat_multishot": "발사체 개수",
+
+    "statinfo_atk": "실질적으로 입히는 피해에 가장 크게 관여하는 최종 수치",
+    "statinfo_health": "플레이어의 체력",
+    "statinfo_critical_chance": "기본 공격 시 치명타로 더 강력한 피해를 입힐 확률",
+    "statinfo_critical_damage": "치명타 공격 시 공격력에 적용될 배율",
+    "statinfo_atk_speed": "기본 공격의 투사체 발사 속도",
+    "statinfo_def": "적으로부터 받는 피해를 무시하는 정도 (%)",
+    "statinfo_accuracy": "적이 공격을 회피하지 못하도록 하는 정도",
+    "statinfo_luck": "아이템, 골드 발견 등의 확률과 품질을 높여주는 정도",
+    "statinfo_ignore_protection": "적의 방어력을 무시하는 정도 (%)",
+    "statinfo_multishot": "기본 공격 시 생성하는 투사체의 개수"
+
 }

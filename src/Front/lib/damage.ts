@@ -1,5 +1,5 @@
 import {GraphicDamageRenderer} from './graphic';
-import {DamageRenderer} from '../game';
+import {DamageRenderer} from '../pages/game';
 
 export default class DamageText {
     public damage: string;

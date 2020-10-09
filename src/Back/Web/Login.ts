@@ -6,6 +6,7 @@ import * as MySQL from 'mysql';
 import * as CONFIG from './json/login.json';
 import { Application } from 'express';
 import {Strategy} from 'passport-google-oauth20';
+import {baseStat} from '../Tools/Data';
 
 export function init(passport: passport.PassportStatic, App: Application){
     
@@ -17,8 +18,9 @@ export function init(passport: passport.PassportStatic, App: Application){
         }, (req, accessToken, refreshToken, profile, done) => {
             process.nextTick(async () => {
                 const user = await DB.TABLE.users.findOne({ id : profile.id });
+                
                 if(!user){
-                    await DB.TABLE.users.add(profile.id, "{}", 1);
+                    await DB.TABLE.users.add(profile.id, "{}", 1, 0, "earth", baseStat, "{}");
                 }
                 (req.session as Express.Session).profile = {
                     id : profile.id

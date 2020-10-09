@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 export default class XHR {
     static POST(url: string, reqBody: any): Promise<{success: boolean}>{
         return new Promise((rs, rj) => {

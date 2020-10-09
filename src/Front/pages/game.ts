@@ -1,12 +1,13 @@
-import SocketClient from './lib/socket';
-import ActiveSkill from './lib/skill';
-import XHR from './lib/xhr';
-import {GraphicRenderer, GraphicDamageRenderer} from './lib/graphic';
+import SocketClient from '../lib/socket';
+import ActiveSkill from '../lib/skill';
+import XHR from '../lib/xhr';
+import {GraphicRenderer, GraphicDamageRenderer} from '../lib/graphic';
 import $ from 'jquery';
-import EnemyClasses from './lib/mobs';
-import {Enemy} from './lib/enemy';
-import {PlayerAttackProjectile} from './lib/projectile';
-import Hpbar from './lib/hpbar';
+import EnemyClasses from '../lib/mobs';
+import {Enemy} from '../lib/enemy';
+import {PlayerAttackProjectile} from '../lib/projectile';
+import Hpbar from '../lib/hpbar';
+import L from '../lib/language'
 
 const CONFIG = {
     STAR_LIMIT : 7,
@@ -33,10 +34,10 @@ export let my : Partial<{
         y: number;
     };
     projectileCounter: number;
-    status: {
-        atk: number;
-    };
+    stat: Player.stat;
     currentEnemyHpbar: Hpbar;
+    currentTooltip: JQuery;
+    equip: Player.equip;
 }> = {
 
 };
@@ -51,17 +52,15 @@ export const MyEffectRenderer = new GraphicRenderer("my-effect");
 ws.on('enter', data => { //여기서 초기화
     my = data;
     my.skills = {};
-    my.status = { //임시방편. DB에 빨리 파고 불러오자.
-        atk: 527292648
-    }
     my.projectileCounter = 0;
+    console.log(my.equip)
     my.skills["detection"] = new ActiveSkill("detection", "p");
     my.skills["detection"].use = () => {
         ws.send("searchMob")
     };
 
     dragMap()
-    drag($("#Inventory"))
+    drag()
     renderItem(my.inventory)
 
 
@@ -112,6 +111,9 @@ $(document).on("keydown", e => {
         case 'Shift':
             attack()
             break;
+        case 'l':
+            showStat()
+            break;
     }
 })
 $(document).on("mousemove", e => {
@@ -120,6 +122,36 @@ $(document).on("mousemove", e => {
         y: e.pageY
     }
 })
+function showStat(): void {
+    let key: keyof Player.stat;
+    if($("#Stat").css("display") == "none"){
+        $("#statBox").empty()
+        for(key in my.stat){
+            const currentStatInfo = L.process(`statinfo_${key}`)
+            $("#statBox").append(
+                $("<div>").addClass("stat")
+                    .append(
+                        $("<div>").addClass("stat-title").text(L.process(`playerstat_${key}`))
+                        .on('mouseenter', e => {
+                            my.currentTooltip = $("#normalTextTooltip");
+                            $("#normalTextTooltip").text(currentStatInfo)
+                            $("#normalTextTooltip").show()
+                        })
+                        .on('mouseleave', e => {
+                            my.currentTooltip = undefined;
+                            $("#normalTextTooltip").empty()
+                            $("#normalTextTooltip").hide()
+                        })
+                    )
+                    .append(
+                        $("<div>").addClass("stat-value").text((my.stat as Player.stat)[key] as number)
+                    )
+            )
+        }
+        $("#Stat").show()
+    }
+    else $("#Stat").hide()
+}
 function toggle(target: JQuery){
     if(target.css("display") === "none"){
         target.show()
@@ -233,8 +265,9 @@ function dragMap(){
     $("#map").on('mousedown', mouseDown)
 
 }
-function drag(dialog: JQuery) {
-    dialog.children(".dialog-head").on('mousedown', e => {
+function drag() {
+    $(".dialog-head").on('mousedown', e => {
+        const dialog = $(e.currentTarget).parent();
       const offsetX = e.clientX - parseInt(dialog.css("left"))
       const offsetY = e.clientY - parseInt(dialog.css("top"))
       
@@ -252,13 +285,43 @@ function drag(dialog: JQuery) {
       $(window).on('mouseup', reset)
     });
 }
-let tooltip = false;
 function renderItem(itemObject: any){
     for(const item in itemObject){
+        const id = item;
         const itemData = itemObject[item];
+
+        let equiped = (my.equip as Player.equip).hasOwnProperty(id);
+
         const itemBox = 
             $("<div>").addClass("item-box")
                 .append($("<img>").addClass("item-img").attr("src", `img/items/${item}.png`))
+                .attr("item", id)
+                .on('click', e => {
+                    if(equiped){
+                        XHR.POST('/equipOffItem', {
+                            item: id
+                        }).then(res => {
+                            if(res.success){
+                                delete (my.equip as Player.equip)[id];
+                                equiped = false;
+                                itemBox.removeClass("item-box-equiped");
+                            }
+                        })
+                    } else {
+                        if(Object.keys(my.equip as Player.equip).length === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
+                        XHR.POST('/equipItem', {
+                            item: id
+                        }).then(res => {
+                            if(res.success){
+                                (my.equip as Player.equip)[id] = itemData;
+                                equiped = true;
+                                itemBox.addClass("item-box-equiped");
+                            }
+                        })
+                    }
+                })
+        if(equiped) itemBox.addClass("item-box-equiped");
+
         itemBox.hover(e => {
             $("#itemTooltip").show();
             let itemNameColor;
@@ -301,17 +364,29 @@ function renderItem(itemObject: any){
             $("#itemTooltip-img").attr("src", `img/items/${item}.png`) //이미지를 나중에 분류해놓자.
             $("#itemTooltip-description").text(itemData.description);
             $("#itemTooltip-abilities").text("잠겨 있습니다.") //구현할지 모른다.
-            tooltip = true; //테스트
+            my.currentTooltip = $("#itemTooltip") //테스트
         }, e => {
-            tooltip = false; //테스트
+            my.currentTooltip = undefined; //테스트
             $("#itemTooltip").hide();
         })
         $("#inventory-box").append(itemBox)
     }
 }
 $(window).on("mousemove", e => {
-    if(tooltip){
-        $("#itemTooltip").css("left", e.pageX + 20)
-        $("#itemTooltip").css("top", e.pageY - 50)
+    if(my.currentTooltip){
+        let dx = 0;
+        let dy = 0;
+        switch(my.currentTooltip.attr('id')){
+            case "normalTextTooltip":
+                dx = 20;
+                dy = -15;
+                break;
+            case "itemTooltip":
+                dx = 20;
+                dy = -10;
+                break;
+        }
+        my.currentTooltip.css("left", e.pageX + dx)
+        my.currentTooltip.css("top", e.pageY + dy)
     }
 })

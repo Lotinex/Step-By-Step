@@ -4,8 +4,8 @@ const Child_process = require("child_process");
 
 module.exports = {
     entry: {
-        index: Path.resolve(__dirname, 'src/Front/index.ts'),
-        game: Path.resolve(__dirname, 'src/Front/game.ts')
+        index: Path.resolve(__dirname, 'src/Front/pages/index.ts'),
+        game: Path.resolve(__dirname, 'src/Front/pages/game.ts')
     },
     output: {
         path: Path.resolve(__dirname, 'dist/assets/pages')
