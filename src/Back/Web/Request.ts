@@ -31,15 +31,27 @@ export default function RequestHandler(Router: Router){
         const updatedEquip = JSON.parse(user.equip);
         updatedEquip[req.body.item] = JSON.parse(user.inventory)[req.body.item];
 
+        const updatedStat = JSON.parse(user.stat);
+        for(const stat in req.body.stat){
+            updatedStat[stat] += parseInt(req.body.stat[stat]);
+        }
         await DB.TABLE.users.update([{id: req.session!.profile.id}], [{equip: updatedEquip}]);
-        res.send({success: true})
+        await DB.TABLE.users.update([{id: req.session!.profile.id}], [{stat: updatedStat}]);
+        res.send({success: true, stat: updatedStat})
     })
+
     Router.post('/equipOffItem', async (req, res) => {
         const user = await DB.TABLE.users.findOne({id: req.session!.profile.id});
         const updatedEquip = JSON.parse(user.equip);
         delete updatedEquip[req.body.item];
 
-        await DB.TABLE.users.update([{id: req.session!.profile.id}], [{equip: updatedEquip}])
-        res.send({success: true})
+        const updatedStat = JSON.parse(user.stat);
+        for(const stat in req.body.stat){
+            updatedStat[stat] -= parseInt(req.body.stat[stat]);
+        }
+        await DB.TABLE.users.update([{id: req.session!.profile.id}], [{equip: updatedEquip}]);
+        await DB.TABLE.users.update([{id: req.session!.profile.id}], [{stat: updatedStat}]);
+        res.send({success: true, stat: updatedStat})
     })
 }
+

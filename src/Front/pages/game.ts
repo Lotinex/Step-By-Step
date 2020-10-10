@@ -80,7 +80,7 @@ ws.on("detectMob", (mob: {
 })
 $(".stage").on('click', e => {
     const stage = $(e.currentTarget).attr('id');
-    XHR.POST('/changeStage', { stage }).then((res: {success: boolean}) => {
+    XHR.POST('/changeStage', { stage }).then(res => {
         if(res.success) my.stage = stage;
     }).catch(e => {
         console.error(e)
@@ -122,32 +122,39 @@ $(document).on("mousemove", e => {
         y: e.pageY
     }
 })
+function renderStat(): void {
+    $("#statBox").empty()
+    let key: keyof Player.stat;
+    for(key in my.stat){
+        const currentStatInfo = L.process(`statinfo_${key}`)
+        $("#statBox").append(
+            $("<div>").addClass("stat")
+                .append(
+                    $("<img>").attr("src", `img/icons/${key}.png`).addClass("statIcon")
+                )
+                .append(
+                    $("<div>").addClass("stat-title").text(L.process(`playerstat_${key}`))
+                    .on('mouseenter', e => {
+                        my.currentTooltip = $("#normalTextTooltip");
+                        $("#normalTextTooltip").text(currentStatInfo)
+                        $("#normalTextTooltip").show()
+                    })
+                    .on('mouseleave', e => {
+                        my.currentTooltip = undefined;
+                        $("#normalTextTooltip").empty()
+                        $("#normalTextTooltip").hide()
+                    })
+                )
+                .append(
+                    $("<div>").addClass("stat-value").text((my.stat as Player.stat)[key] as number)
+                )
+        )
+    }
+}
 function showStat(): void {
     let key: keyof Player.stat;
     if($("#Stat").css("display") == "none"){
-        $("#statBox").empty()
-        for(key in my.stat){
-            const currentStatInfo = L.process(`statinfo_${key}`)
-            $("#statBox").append(
-                $("<div>").addClass("stat")
-                    .append(
-                        $("<div>").addClass("stat-title").text(L.process(`playerstat_${key}`))
-                        .on('mouseenter', e => {
-                            my.currentTooltip = $("#normalTextTooltip");
-                            $("#normalTextTooltip").text(currentStatInfo)
-                            $("#normalTextTooltip").show()
-                        })
-                        .on('mouseleave', e => {
-                            my.currentTooltip = undefined;
-                            $("#normalTextTooltip").empty()
-                            $("#normalTextTooltip").hide()
-                        })
-                    )
-                    .append(
-                        $("<div>").addClass("stat-value").text((my.stat as Player.stat)[key] as number)
-                    )
-            )
-        }
+        renderStat()
         $("#Stat").show()
     }
     else $("#Stat").hide()
@@ -299,9 +306,12 @@ function renderItem(itemObject: any){
                 .on('click', e => {
                     if(equiped){
                         XHR.POST('/equipOffItem', {
-                            item: id
+                            item: id,
+                            stat: itemData.stat
                         }).then(res => {
                             if(res.success){
+                                my.stat = res.stat;
+                                renderStat();
                                 delete (my.equip as Player.equip)[id];
                                 equiped = false;
                                 itemBox.removeClass("item-box-equiped");
@@ -309,10 +319,14 @@ function renderItem(itemObject: any){
                         })
                     } else {
                         if(Object.keys(my.equip as Player.equip).length === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
+                        console.log(itemData.stat)
                         XHR.POST('/equipItem', {
-                            item: id
+                            item: id,
+                            stat: itemData.stat
                         }).then(res => {
                             if(res.success){
+                                my.stat = res.stat;
+                                renderStat();
                                 (my.equip as Player.equip)[id] = itemData;
                                 equiped = true;
                                 itemBox.addClass("item-box-equiped");
@@ -348,9 +362,17 @@ function renderItem(itemObject: any){
             $("#itemTooltip-rare").text(itemData.rare).attr("class", `rare-${itemData.rare}`)
             $("#itemTooltip-level").text(`Lv.${itemData.level.value}`);
             $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
-            $("#itemTooltip-stat").html('');
+            $("#itemTooltip-statBox").html('');
             for(const stat in itemData.stat){
-                $("#itemTooltip-stat").append(`${stat} ${itemData.stat[stat]}<br>`)
+                $("#itemTooltip-statBox").append(
+                    $("<div>").addClass("itemTooltip-stat-value")
+                    .append(
+                        $("<img>").addClass("itemTooltip-stat-img").attr("src", `img/icons/${stat}.png`)
+                    )
+                    .append(
+                        $("<div>").addClass("itemTooltip-stat-text").text(itemData.stat[stat])
+                    )
+                )
             }
             let star = '';
             for(let i=0; i<itemData.level.star; i++){ //별을 반 개씩 카운트하는건 아직 만들지 않았다.
@@ -363,7 +385,6 @@ function renderItem(itemObject: any){
             $("#itemTooltip-star").text(star)
             $("#itemTooltip-img").attr("src", `img/items/${item}.png`) //이미지를 나중에 분류해놓자.
             $("#itemTooltip-description").text(itemData.description);
-            $("#itemTooltip-abilities").text("잠겨 있습니다.") //구현할지 모른다.
             my.currentTooltip = $("#itemTooltip") //테스트
         }, e => {
             my.currentTooltip = undefined; //테스트

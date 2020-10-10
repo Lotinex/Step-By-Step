@@ -57,7 +57,8 @@ export abstract class Enemy extends Entity {
     }
     public damage(coord: PurePoint): void {
         const dmg = Util.random(my.stat?.atk as number, (my.stat?.atk as number) * 2); //임시. 스탯 반영은 나중에
-        DamageRenderer.addDamage(new DamageText(dmg as number, coord))
+        const isCritical = Math.random() < ((my.stat?.critical_chance as number) / 100);
+        DamageRenderer.addDamage(new DamageText(dmg as number, coord, isCritical))
         my.currentEnemyHpbar?.addValue(-(dmg as number)) 
        // my.currentEnemyHpbar?.quake() 나중에 고쳐서 다시 활성화.
     }

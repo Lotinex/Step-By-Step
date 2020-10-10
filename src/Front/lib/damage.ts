@@ -18,7 +18,7 @@ export default class DamageText {
     static HANGUL_X_INCREASE = 75;
     static NUMBER_X_INCREASE = 45;
     static HANGUL_Y_DECREASE = 15;
-    constructor(damage: number, coord: PurePoint){
+    constructor(damage: number, coord: PurePoint, isCritical: boolean = false){
         this.damage = DamageText.toKorean(damage);
         this.coord = coord;
         this.data = [];
@@ -29,7 +29,7 @@ export default class DamageText {
         let xCounter = this.coord.x;
         this.damage.split('').forEach(text => {
             const image = new Image();
-            image.src = `img/damage/${text}.png`
+            image.src = `img/${isCritical ? 'critical' : 'damage'}/${text}.png`
             console.log(image.src)
             image.onload = () => {
                 this.data.push({

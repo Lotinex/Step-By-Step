@@ -91,13 +91,14 @@ html, body {
         text-align: center;
     }
     #itemTooltip-rare {
-        color: white;
+        color: black;
+        font-weight: bold;
         font-size: 13px;
         width: 100%;
         text-align: center;
     }
         .rare-normal {
-            color: white;
+            color: black;
             background: linear-gradient(to right, rgba(255,255,255,0.01),rgba(255,255,255,0.2), rgba(255,255,255,0.4),rgba(255,255,255,0.6),rgba(255,255,255,0.8), rgba(255,255,255,1),rgba(255,255,255,0.8),rgba(255,255,255,0.6), rgba(255,255,255,0.4), rgba(255,255,255,0.2),rgba(255,255,255,0.01));
         }
         .rare-rare {
@@ -140,52 +141,57 @@ html, body {
     border-bottom: 1px solid white;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
     #itemTooltip-img {
         width: 150px;
         height: 150px;
-        border: 2px solid white;
-        margin-left: 10px;
-    }
-    #itemTooltip-stat {
-        width: 120px;
-        margin-left: 10px;
-        height: 170px;
-        color: white;
     }
 
-#itemTooltip-power {
-    height: 70px;
+
+#itemTooltip-statBox {
+    height: 100px;
     border-bottom: 1px solid white;
-    display: flex;
-    align-items: center;
-    padding: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
-    #itemTooltip-powerText {
-        color: gray;
-        font-size: 20px;
-        margin-left: 30px;
-    }
-    #itemTooltip-powerValue {
-        color: white;
-        font-size: 40px;
-        margin-left: 30px;
-    }
 #itemTooltip-bottom {
     height: 250px;
     border-bottom: 1px solid white;
 }
     #itemTooltip-description {
         height: 150px;
-        border-bottom: 2px dotted gray;
         color: white;
         padding: 5px;
     }
-    #itemTooltip-abilities {
+    #itemTooltip-abilities { /*deprecated*/
         color: white;
         padding: 5px;
     }
 
+.itemTooltip-stat-value {
+    background: rgba(0,0,0,0.8);
+    display: inline-flex;
+    height: 20px;
+    padding: 5px;
+    align-items: center;
+    margin: 3px;
+}
+.itemTooltip-stat-img {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: rgba(0,0,0,0.8);
+}
+.itemTooltip-stat-text {
+    display: inline-flex;
+    text-align: center;
+    color: yellow;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    padding: 3px;
+}
 /* 아이템 툴팁 끝 */
 
 #map {
@@ -395,14 +401,22 @@ html, body {
 
 
 .stat {
-    height: 30px;
+    height: 35px;
     margin: 5px;
     border-bottom: 1px solid white;
     padding: 1px;
+    align-items: center;
+    display: flex;
 }
 .stat-title {
-    padding: 3px;
-    display: inline-block;
+    padding: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 20px;
+    max-height: 20px;
+
     color: yellow;
     cursor: help;
     text-shadow: 0px 0px 2px yellow;
@@ -422,4 +436,9 @@ html, body {
     padding: 5px;
     position: absolute;
     z-index: 5;
+}
+.statIcon {
+    width: 30px;
+    height: 30px;
+    background: rgba(0,0,0,0.7);
 }
