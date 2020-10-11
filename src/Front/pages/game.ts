@@ -53,7 +53,6 @@ ws.on('enter', data => { //여기서 초기화
     my = data;
     my.skills = {};
     my.projectileCounter = 0;
-    console.log(my.equip)
     my.skills["detection"] = new ActiveSkill("detection", "p");
     my.skills["detection"].use = () => {
         ws.send("searchMob")
@@ -272,6 +271,9 @@ function dragMap(){
     $("#map").on('mousedown', mouseDown)
 
 }
+function equipNumber(){
+    return Object.keys(my.equip as Player.equip).length;
+}
 function drag() {
     $(".dialog-head").on('mousedown', e => {
         const dialog = $(e.currentTarget).parent();
@@ -318,8 +320,7 @@ function renderItem(itemObject: any){
                             }
                         })
                     } else {
-                        if(Object.keys(my.equip as Player.equip).length === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
-                        console.log(itemData.stat)
+                        if(equipNumber() === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
                         XHR.POST('/equipItem', {
                             item: id,
                             stat: itemData.stat
