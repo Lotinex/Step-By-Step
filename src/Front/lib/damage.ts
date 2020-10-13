@@ -1,5 +1,5 @@
 import {GraphicDamageRenderer} from './graphic';
-import {DamageRenderer} from '../pages/game';
+import Player from '../pages/game';
 
 export default class DamageText {
     public damage: string;
@@ -68,8 +68,8 @@ export default class DamageText {
     render(ctx: CanvasRenderingContext2D){
         for(const text of this.data){
             if(this.alpha <= 0){
-                const index = DamageRenderer.damages.indexOf(this);
-                DamageRenderer.damages.splice(index, 1)
+                const index = Player.DamageRenderer.damages.indexOf(this);
+                Player.DamageRenderer.damages.splice(index, 1)
                 break;
             }
             if(this.startDying){

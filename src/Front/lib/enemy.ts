@@ -1,9 +1,8 @@
 import {Entity, GraphicDamageRenderer} from './graphic';
 import DamageText from './damage';
 import Util from './util';
-import {EnemyEffectRenderer, DamageRenderer} from '../pages/game';
+import Player from '../pages/game';
 import ActiveSkill from './skill';
-import {my} from '../pages/game';
 import Projectile from './projectile';
 export abstract class Enemy extends Entity {
     public hp: number;
@@ -32,7 +31,7 @@ export abstract class Enemy extends Entity {
     }
     public onClick(e: MouseEvent){
         this.targeted = !this.targeted;
-        if(!this.targeted) my.currentTarget = undefined;
+        if(!this.targeted) Player.CurrentTarget = undefined;
     }
     public loopFor(number: number, sec: number, action: () => void): Promise<void> {
         return new Promise(rs => {
@@ -56,13 +55,13 @@ export abstract class Enemy extends Entity {
         })
     }
     public damage(coord: PurePoint): void {
-        const isCritical = Math.random() < ((my.stat?.critical_chance as number) / 100);
-        let dmg = my.stat?.atk;
+        const isCritical = Math.random() < ((Player.Stat?.critical_chance as number) / 100);
+        const dmg = Player.Stat?.atk;
         if(isCritical){
-            (dmg as number) *= (my.stat?.critical_damage as number)
+            (dmg as number) *= (Player.Stat?.critical_damage as number)
         }
-        DamageRenderer.addDamage(new DamageText(dmg as number, coord, isCritical))
-        my.currentEnemyHpbar?.addValue(-(dmg as number)) 
+        Player.DamageRenderer.addDamage(new DamageText(dmg as number, coord, isCritical))
+        Player.Common.currentEnemyHpbar?.addValue(-(dmg as number)) 
        // my.currentEnemyHpbar?.quake() 나중에 고쳐서 다시 활성화.
     }  
     /**
@@ -87,8 +86,8 @@ export abstract class Enemy extends Entity {
     }): void {
         const projectile = new Projectile(`${this.constructor.name}-projectile-${this.projectileCounter}`, options.x, options.y)
         projectile.setTexture(options.imgSrc)
-        projectile.setRenderer(EnemyEffectRenderer)
-        EnemyEffectRenderer.addEntity(projectile)
+        projectile.setRenderer(Player.EnemyEffectRenderer)
+        Player.EnemyEffectRenderer.addEntity(projectile)
         projectile.moveTo(options.tx, options.ty, options.reqTime)
         this.projectileCounter++;
     }

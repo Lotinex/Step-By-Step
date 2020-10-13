@@ -45,6 +45,7 @@ ws.on('connection', async socket => {
         user.inventory = JSON.parse(user.inventory);
         user.stat = JSON.parse(user.stat);
         user.equip = JSON.parse(user.equip);
+        console.log(user.level)
 
         Clients[SID] = new User(socket, SID, userID);
         Clients[SID].send("enter", user);

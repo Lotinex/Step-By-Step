@@ -9,406 +9,406 @@ import {PlayerAttackProjectile} from '../lib/projectile';
 import Hpbar from '../lib/hpbar';
 import L from '../lib/language'
 
-const CONFIG = {
-    STAR_LIMIT : 7,
-    test: 1
-}
-
-export let my : Partial<{
-    skills: {
-        [skillName: string]: ActiveSkill
-    };
-    inventory: {
-        [itemName: string]: any;
-    };
-    stage: string // fix me,
-    currentTarget: {
-        id: string;
-        x: number;
-        y: number;
-        w?: number;
-        h?: number;
-    };
-    cursorPosition: {
-        x: number;
-        y: number;
-    };
-    projectileCounter: number;
-    stat: Player.stat;
-    currentEnemyHpbar: Hpbar;
-    currentTooltip: JQuery;
-    equip: Player.equip;
-}> = {
-
-};
-const ws = new SocketClient();
-
-export const StageRenderer = new GraphicRenderer<Enemy>("stage");
-export const DamageRenderer = new GraphicDamageRenderer("damage-text");
-export const ObjectRenderer = new GraphicRenderer("objects");
-export const EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
-export const MyEffectRenderer = new GraphicRenderer("my-effect");
-
-ws.on('enter', data => { //여기서 초기화
-    my = data;
-    my.skills = {};
-    my.projectileCounter = 0;
-    my.skills["detection"] = new ActiveSkill("detection", "p");
-    my.skills["detection"].use = () => {
-        ws.send("searchMob")
+export default class Player {
+    public static CONFIG = {
+        STAR_LIMIT : 7,
+        test: 1
     };
 
-    dragMap()
-    drag()
-    renderItem(my.inventory)
+    public static Inventory: PlayerData.Inventory = {};
+    public static Common: Partial<PlayerData.Common> = {};
+    public static Stat: Partial<PlayerData.Stat> = {};
+    public static Equip: PlayerData.Equip = {};
+    public static CurrentTarget?: Partial<PlayerData.CurrentTarget> = {};
+    public static CursorPosition: PlayerData.CursorPosition = {
+        x: 0,
+        y: 0
+    };
+    public static Skills: PlayerData.Skills = {};
 
+    public static StageRenderer = new GraphicRenderer<Enemy>("stage");
+    public static DamageRenderer = new GraphicDamageRenderer("damage-text");
+    public static ObjectRenderer = new GraphicRenderer("objects");
+    public static EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
+    public static MyEffectRenderer = new GraphicRenderer("my-effect");
+    public static ws = new SocketClient();
 
-    $(".renderer").attr("width", window.innerWidth)
-    $(".renderer").attr("height", window.innerHeight)
+    public static Init(): void {
+        Player.onEnter()
+        Player.onSocketMessage()
+        $(document).on("keydown", event => Player.onKeyboardEvent(event.key))
+        $(document).on("mousemove", Player.onMouseMove)
+        $(".dialog-close").on("click", e => {
+            $(e.currentTarget).parent().parent().hide()
+        })
 
-})
-ws.on("detectMob", (mob: {
-    id: keyof typeof EnemyClasses;
-    stage: string;
-    level: string;
-    hp: string;
-    frame: string;
-}) => {
-    fightAlert()
-    spawnMob(mob)
-})
-$(".stage").on('click', e => {
-    const stage = $(e.currentTarget).attr('id');
-    XHR.POST('/changeStage', { stage }).then(res => {
-        if(res.success) my.stage = stage;
-    }).catch(e => {
-        console.error(e)
-    })
-})
-$(".dialog-close").on("click", e => {
-    $(e.currentTarget).parent().parent().hide()
-})
-$(document).on("keydown", e => {
-    switch(e.key){
-        case 'm':
-            toggle($("#map"))
-            break;
-        case 'k':
-            if($("#skill").css("margin-bottom") === "-130px"){
-                $("#skill").animate({
-                    "margin-bottom": 30
-                }, 300)
-            } else {
-                $("#skill").animate({
-                    "margin-bottom": -130
-                }, 300)
+    }
+    public static equipNumber(): number {
+        return Object.keys(Player.Equip).length;
+    }
+    public static drag(): void {
+        $(".dialog-head").on('mousedown', e => {
+            const dialog = $(e.currentTarget).parent();
+          const offsetX = e.clientX - parseInt(dialog.css("left"))
+          const offsetY = e.clientY - parseInt(dialog.css("top"))
+          
+          function mouseMoveHandler(e: JQuery.MouseMoveEvent<any>) {
+            dialog.css("left", (e.clientX - offsetX))
+            dialog.css("top", (e.clientY - offsetY))
+          }
+      
+          function reset() {
+            $(window).off('mousemove', mouseMoveHandler)
+            $(window).off('mouseup', reset)
+          }
+        })
+    }
+    public static renderStat(): void {
+        $("#statBox").empty()
+        let key: keyof PlayerData.Stat;
+        for(key in Player.Stat){
+            const currentStatInfo = L.process(`statinfo_${key}`)
+            $("#statBox").append(
+                $("<div>").addClass("stat")
+                    .append(
+                        $("<img>").attr("src", `img/icons/${key}.png`).addClass("statIcon")
+                    )
+                    .append(
+                        $("<div>").addClass("stat-title").text(L.process(`playerstat_${key}`))
+                        .on('mouseenter', e => {
+                            Player.Common.currentTooltip = $("#normalTextTooltip");
+                            $("#normalTextTooltip").text(currentStatInfo)
+                            $("#normalTextTooltip").show()
+                        })
+                        .on('mouseleave', e => {
+                            Player.Common.currentTooltip = undefined;
+                            $("#normalTextTooltip").empty()
+                            $("#normalTextTooltip").hide()
+                        })
+                    )
+                    .append(
+                        $("<div>").addClass("stat-value").text(Player.Stat[key] as number)
+                    )
+            )
+        }
+    }
+    public static dragMap(): void {
+        let position = { top: 0, left: 0, x: 0, y: 0 };
+    
+        const mouseDown = (e: JQuery.MouseDownEvent<any>) => {
+            position = {
+                top: $("#map").scrollTop() as number,
+                left: $("#map").scrollLeft() as number,
+                x: e.pageX,
+                y: e.pageY
             }
-            break;
-        case 'i':
-            toggle($("#Inventory"))
-            break;
-        case 'Shift':
-            attack()
-            break;
-        case 'l':
-            showStat()
-            break;
+            $(document).on('mousemove', mouseMove)
+            $(document).on('mouseup', mouseUp)
+        }
+        const mouseMove = (e: JQuery.MouseMoveEvent<any>) => {
+            const dx = e.pageX - position.x;
+            const dy = e.pageY - position.y;
+    
+            $("#map").scrollTop(position.top - dy)
+            $("#map").scrollLeft(position.left - dx)
+        }
+        const mouseUp = (e: JQuery.MouseUpEvent<any>) => {
+            $(document).off('mousemove', mouseMove)
+            $(document).off('mouseup', mouseUp)
+        }
+    
+        $("#map").on('mousedown', mouseDown)
+    
     }
-})
-$(document).on("mousemove", e => {
-    my.cursorPosition = {
-        x: e.pageX,
-        y: e.pageY
+    public static updateMyHealth(value: number): void {
+        Player.Common.health = value;
+        $("#profile-hpbarGage").css("width", `${Player.Common.health as number * (100 / Player.Stat.health!)}%`)
     }
-})
-function renderStat(): void {
-    $("#statBox").empty()
-    let key: keyof Player.stat;
-    for(key in my.stat){
-        const currentStatInfo = L.process(`statinfo_${key}`)
-        $("#statBox").append(
-            $("<div>").addClass("stat")
-                .append(
-                    $("<img>").attr("src", `img/icons/${key}.png`).addClass("statIcon")
-                )
-                .append(
-                    $("<div>").addClass("stat-title").text(L.process(`playerstat_${key}`))
-                    .on('mouseenter', e => {
-                        my.currentTooltip = $("#normalTextTooltip");
-                        $("#normalTextTooltip").text(currentStatInfo)
-                        $("#normalTextTooltip").show()
-                    })
-                    .on('mouseleave', e => {
-                        my.currentTooltip = undefined;
-                        $("#normalTextTooltip").empty()
-                        $("#normalTextTooltip").hide()
-                    })
-                )
-                .append(
-                    $("<div>").addClass("stat-value").text((my.stat as Player.stat)[key] as number)
-                )
-        )
+    public static showStat(): void {
+        let key: keyof PlayerData.Stat;
+        if($("#Stat").css("display") == "none"){
+            Player.renderStat()
+            $("#Stat").show()
+        }
+        else $("#Stat").hide()
     }
-}
-function showStat(): void {
-    let key: keyof Player.stat;
-    if($("#Stat").css("display") == "none"){
-        renderStat()
-        $("#Stat").show()
+    public static displayEnemyHpbar(name: string, limit: number): void {
+        Player.Common.currentEnemyHpbar = new Hpbar(name, limit);
     }
-    else $("#Stat").hide()
-}
-function toggle(target: JQuery){
-    if(target.css("display") === "none"){
-        target.show()
-    } else target.hide()
-    return target;
-}
-function fightAlert(){
-    let bgEffectAlpha = 0;
-    const disappear = () => {
+    public static spawnMob(mob: {
+        id: keyof typeof EnemyClasses
+        stage: string;
+        level: string;
+        hp: string;
+        frame: string;
+    }): void {
+        const newMob = new EnemyClasses[mob.id](mob.id, 700, 300, 450, 450);
+        Player.displayEnemyHpbar(mob.id, parseInt(mob.hp))
+        newMob.setHp(parseInt(mob.hp))
+        newMob.setAnimatedTexture({
+            template: `mobs/${mob.id}/${mob.id}`,
+            limit: parseInt(mob.frame)
+        })
+        newMob.action()
+        Player.StageRenderer.addEntity(newMob)
+    }
+    public static fightAlert(): void {
+        let bgEffectAlpha = 0;
+        const disappear = () => {
+            $("#fightAlert").animate({
+                "opacity": "0"
+            }, {
+                step : () => {
+                    $("#fightAlert").css("transform", "scale(1.1)")
+                    $("#stageBackImage").css("background", `rgba(0,0,0,${bgEffectAlpha})`)
+                    bgEffectAlpha -= 0.1;
+                },
+                duration : 400,
+                complete : () => {
+                    setTimeout(() => {
+                        $("#fightAlert").hide()
+                        $("#fightAlert").css("transform", `scale(1)`)
+                    }, 100)
+                }
+            })
+        }
+        $("#fightAlert").css("display", "flex")
         $("#fightAlert").animate({
-            "opacity": "0"
+            "opacity": "1"
         }, {
             step : () => {
-                $("#fightAlert").css("transform", "scale(1.1)")
+                $("#fightAlert").css("transform", `scale(1.6)`)
                 $("#stageBackImage").css("background", `rgba(0,0,0,${bgEffectAlpha})`)
-                bgEffectAlpha -= 0.1;
+                bgEffectAlpha += 0.1;
             },
-            duration : 400,
+            duration : 300,
             complete : () => {
-                setTimeout(() => {
-                    $("#fightAlert").hide()
-                    $("#fightAlert").css("transform", `scale(1)`)
-                }, 100)
+                $("#fightAlert").css("transform", `scale(1)`)
+                setTimeout(disappear, 500)
             }
         })
     }
-    $("#fightAlert").css("display", "flex")
-    $("#fightAlert").animate({
-        "opacity": "1"
-    }, {
-        step : () => {
-            $("#fightAlert").css("transform", `scale(1.6)`)
-            $("#stageBackImage").css("background", `rgba(0,0,0,${bgEffectAlpha})`)
-            bgEffectAlpha += 0.1;
-        },
-        duration : 300,
-        complete : () => {
-            $("#fightAlert").css("transform", `scale(1)`)
-            setTimeout(disappear, 500)
+    public static toggle(target: JQuery): JQuery<HTMLElement> {
+        if(target.css("display") === "none"){
+            target.show()
+        } else target.hide()
+        return target;
+    }
+    public static onMouseMove(event: JQuery.MouseMoveEvent<Document, undefined, Document, Document>): void {
+        Player.CursorPosition = {
+            x: event.pageX,
+            y: event.pageY
         }
-    })
-}
-function spawnMob(mob: {
-    id: keyof typeof EnemyClasses
-    stage: string;
-    level: string;
-    hp: string;
-    frame: string;
-}){
-    const newMob = new EnemyClasses[mob.id](mob.id, 700, 300, 450, 450);
-    displayEnemyHpbar(mob.id, parseInt(mob.hp))
-    newMob.setHp(parseInt(mob.hp))
-    newMob.setAnimatedTexture({
-        template: `mobs/${mob.id}/${mob.id}`,
-        limit: parseInt(mob.frame)
-    })
-    newMob.action()
-    StageRenderer.addEntity(newMob)
-}/*
-function setSkillOnBox(targetBoxIndex: number, skillID: string){
-    const skillBox = $("#skill").children()[targetBoxIndex] as JQuery<HTMLElement>;
-    skillBox.append($("<img>").addClass("skillBoxImage").attr("src", `assets/img/skills/${skillID}.png`))
-}
-*/
-function displayEnemyHpbar(name: string, limit: number){
-    my.currentEnemyHpbar = new Hpbar(name, limit);
-}
-function attack(){
-
-    if(!my.currentTarget) return; //타겟팅이 어무것도 안 되어 있을 때
-    const projectile = new PlayerAttackProjectile(`my-projectile-${my.projectileCounter}`, my.cursorPosition?.x as number, my.cursorPosition?.y as number);
-    projectile.setSize(10, 10)
-    projectile.setRenderer(MyEffectRenderer)
-    projectile.isSmooth = true;
-    projectile.setTexture({
-        src: 'img/items/trace_of_the_void.png',
-        width: 5,
-        height: 5
-    })
-    MyEffectRenderer.addEntity(projectile)
-    projectile.moveTo(my.currentTarget.x, my.currentTarget.y, 0.5);
-
-    (my.projectileCounter as number)++;
-
-}
-function dragMap(){
-    let position = { top: 0, left: 0, x: 0, y: 0 };
-
-    const mouseDown = (e: JQuery.MouseDownEvent<any>) => {
-        position = {
-            top: $("#map").scrollTop() as number,
-            left: $("#map").scrollLeft() as number,
-            x: e.pageX,
-            y: e.pageY
+        if(Player.Common.currentTooltip){
+            let dx = 0;
+            let dy = 0;
+            switch(Player.Common.currentTooltip.attr('id')){
+                case "normalTextTooltip":
+                    dx = 20;
+                    dy = -15;
+                    break;
+                case "itemTooltip":
+                    dx = 20;
+                    dy = -10;
+                    break;
+            }
+            Player.Common.currentTooltip.css("left", event.pageX + dx)
+            Player.Common.currentTooltip.css("top", event.pageY + dy)
         }
-        $(document).on('mousemove', mouseMove)
-        $(document).on('mouseup', mouseUp)
     }
-    const mouseMove = (e: JQuery.MouseMoveEvent<any>) => {
-        const dx = e.pageX - position.x;
-        const dy = e.pageY - position.y;
+    public static attack(){
 
-        $("#map").scrollTop(position.top - dy)
-        $("#map").scrollLeft(position.left - dx)
-    }
-    const mouseUp = (e: JQuery.MouseUpEvent<any>) => {
-        $(document).off('mousemove', mouseMove)
-        $(document).off('mouseup', mouseUp)
-    }
-
-    $("#map").on('mousedown', mouseDown)
-
-}
-function equipNumber(){
-    return Object.keys(my.equip as Player.equip).length;
-}
-function drag() {
-    $(".dialog-head").on('mousedown', e => {
-        const dialog = $(e.currentTarget).parent();
-      const offsetX = e.clientX - parseInt(dialog.css("left"))
-      const offsetY = e.clientY - parseInt(dialog.css("top"))
-      
-      function mouseMoveHandler(e: JQuery.MouseMoveEvent<any>) {
-        dialog.css("left", (e.clientX - offsetX))
-        dialog.css("top", (e.clientY - offsetY))
-      }
-  
-      function reset() {
-        $(window).off('mousemove', mouseMoveHandler)
-        $(window).off('mouseup', reset)
-      }
-  
-      $(window).on('mousemove', mouseMoveHandler)
-      $(window).on('mouseup', reset)
-    });
-}
-function renderItem(itemObject: any){
-    for(const item in itemObject){
-        const id = item;
-        const itemData = itemObject[item];
-
-        let equiped = (my.equip as Player.equip).hasOwnProperty(id);
-
-        const itemBox = 
-            $("<div>").addClass("item-box")
-                .append($("<img>").addClass("item-img").attr("src", `img/items/${item}.png`))
-                .attr("item", id)
-                .on('click', e => {
-                    if(equiped){
-                        XHR.POST('/equipOffItem', {
-                            item: id,
-                            stat: itemData.stat
-                        }).then(res => {
-                            if(res.success){
-                                my.stat = res.stat;
-                                renderStat();
-                                delete (my.equip as Player.equip)[id];
-                                equiped = false;
-                                itemBox.removeClass("item-box-equiped");
-                            }
-                        })
-                    } else {
-                        if(equipNumber() === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
-                        XHR.POST('/equipItem', {
-                            item: id,
-                            stat: itemData.stat
-                        }).then(res => {
-                            if(res.success){
-                                my.stat = res.stat;
-                                renderStat();
-                                (my.equip as Player.equip)[id] = itemData;
-                                equiped = true;
-                                itemBox.addClass("item-box-equiped");
-                            }
-                        })
-                    }
-                })
-        if(equiped) itemBox.addClass("item-box-equiped");
-
-        itemBox.hover(e => {
-            $("#itemTooltip").show();
-            let itemNameColor;
-            switch(itemData.rare){
-                case 'normal':
-                    itemNameColor = 'gray';
-                    break;
-                case 'rare':
-                    itemNameColor = 'lightgreen';
-                    break;
-                case 'epic':
-                    itemNameColor = 'lightblue';
-                    break;
-                case 'legendary':
-                    itemNameColor = 'gold';
-                    break;
-                case 'mythic':
-                    itemNameColor = 'red';
-                    break;
-
-
-            }
-            $("#itemTooltip-name").html(`<span style="color:${itemNameColor};">${itemData.name}</span>`);
-            $("#itemTooltip-rare").text(itemData.rare).attr("class", `rare-${itemData.rare}`)
-            $("#itemTooltip-level").text(`Lv.${itemData.level.value}`);
-            $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
-            $("#itemTooltip-statBox").html('');
-            for(const stat in itemData.stat){
-                $("#itemTooltip-statBox").append(
-                    $("<div>").addClass("itemTooltip-stat-value")
-                    .append(
-                        $("<img>").addClass("itemTooltip-stat-img").attr("src", `img/icons/${stat}.png`)
-                    )
-                    .append(
-                        $("<div>").addClass("itemTooltip-stat-text").text(itemData.stat[stat])
-                    )
-                )
-            }
-            let star = '';
-            for(let i=0; i<itemData.level.star; i++){ //별을 반 개씩 카운트하는건 아직 만들지 않았다.
-                star += "★";
-            }
-            for(let i=0; i<CONFIG.STAR_LIMIT - itemData.level.star; i++){
-                star += "☆";
-            }
-
-            $("#itemTooltip-star").text(star)
-            $("#itemTooltip-img").attr("src", `img/items/${item}.png`) //이미지를 나중에 분류해놓자.
-            $("#itemTooltip-description").text(itemData.description);
-            my.currentTooltip = $("#itemTooltip") //테스트
-        }, e => {
-            my.currentTooltip = undefined; //테스트
-            $("#itemTooltip").hide();
+        if(!Player.CurrentTarget) return; //타겟팅이 어무것도 안 되어 있을 때
+        const projectile = new PlayerAttackProjectile(`my-projectile-${Player.Common.projectileCounter}`, Player.CursorPosition?.x as number, Player.CursorPosition?.y as number);
+        projectile.setSize(10, 10)
+        projectile.setRenderer(Player.MyEffectRenderer)
+        projectile.isSmooth = true;
+        projectile.setTexture({
+            src: 'img/items/trace_of_the_void.png',
+            width: 5,
+            height: 5
         })
-        $("#inventory-box").append(itemBox)
+        Player.MyEffectRenderer.addEntity(projectile)
+        projectile.moveTo(Player.CurrentTarget.x as number, Player.CurrentTarget.y as number, 0.5);
+    
+        (Player.Common.projectileCounter as number)++;
+    
     }
-}
-$(window).on("mousemove", e => {
-    if(my.currentTooltip){
-        let dx = 0;
-        let dy = 0;
-        switch(my.currentTooltip.attr('id')){
-            case "normalTextTooltip":
-                dx = 20;
-                dy = -15;
+    public static onKeyboardEvent(key: string): void {
+        switch(key){
+            case 'm':
+                Player.toggle($("#map"))
                 break;
-            case "itemTooltip":
-                dx = 20;
-                dy = -10;
+            case 'k':
+                if($("#skill").css("margin-bottom") === "-130px"){
+                    $("#skill").animate({
+                        "margin-bottom": 30
+                    }, 300)
+                } else {
+                    $("#skill").animate({
+                        "margin-bottom": -130
+                    }, 300)
+                }
+                break;
+            case 'i':
+                Player.toggle($("#Inventory"))
+                break;
+            case 'Shift':
+                Player.attack()
+                break;
+            case 'l':
+                Player.showStat()
                 break;
         }
-        my.currentTooltip.css("left", e.pageX + dx)
-        my.currentTooltip.css("top", e.pageY + dy)
     }
-})
+    public static renderItem(itemObject: any): void {
+        for(const item in itemObject){
+            const id = item;
+            const itemData = itemObject[item];
+    
+            let equiped = (Player.Equip as PlayerData.Equip).hasOwnProperty(id);
+    
+            const itemBox = 
+                $("<div>").addClass("item-box")
+                    .append($("<img>").addClass("item-img").attr("src", `img/items/${item}.png`))
+                    .attr("item", id)
+                    .on('click', e => {
+                        if(equiped){
+                            XHR.POST('/equipOffItem', {
+                                item: id,
+                                stat: itemData.stat
+                            }).then(res => {
+                                if(res.success){
+                                    Player.Stat = res.stat;
+                                    Player.renderStat()
+                                    delete (Player.Equip as PlayerData.Equip)[id];
+                                    equiped = false;
+                                    itemBox.removeClass("item-box-equiped");
+                                }
+                            })
+                        } else {
+                            if(Player.equipNumber() === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
+                            XHR.POST('/equipItem', {
+                                item: id,
+                                stat: itemData.stat
+                            }).then(res => {
+                                if(res.success){
+                                    Player.Stat = res.stat;
+                                    Player.renderStat();
+                                    (Player.Equip as PlayerData.Equip)[id] = itemData;
+                                    equiped = true;
+                                    itemBox.addClass("item-box-equiped");
+                                }
+                            })
+                        }
+                    })
+            if(equiped) itemBox.addClass("item-box-equiped");
+    
+            itemBox.hover(e => {
+                $("#itemTooltip").show();
+                let itemNameColor;
+                switch(itemData.rare){
+                    case 'normal':
+                        itemNameColor = 'gray';
+                        break;
+                    case 'rare':
+                        itemNameColor = 'lightgreen';
+                        break;
+                    case 'epic':
+                        itemNameColor = 'lightblue';
+                        break;
+                    case 'legendary':
+                        itemNameColor = 'gold';
+                        break;
+                    case 'mythic':
+                        itemNameColor = 'red';
+                        break;
+    
+    
+                }
+                $("#itemTooltip-name").html(`<span style="color:${itemNameColor};">${itemData.name}</span>`);
+                $("#itemTooltip-rare").text(itemData.rare).attr("class", `rare-${itemData.rare}`)
+                $("#itemTooltip-level").text(`Lv.${itemData.level.value}`);
+                $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
+                $("#itemTooltip-statBox").html('');
+                for(const stat in itemData.stat){
+                    $("#itemTooltip-statBox").append(
+                        $("<div>").addClass("itemTooltip-stat-value")
+                        .append(
+                            $("<img>").addClass("itemTooltip-stat-img").attr("src", `img/icons/${stat}.png`)
+                        )
+                        .append(
+                            $("<div>").addClass("itemTooltip-stat-text").text(itemData.stat[stat])
+                        )
+                    )
+                }
+                let star = '';
+                for(let i=0; i<itemData.level.star; i++){ //별을 반 개씩 카운트하는건 아직 만들지 않았다.
+                    star += "★";
+                }
+                for(let i=0; i<Player.CONFIG.STAR_LIMIT - itemData.level.star; i++){
+                    star += "☆";
+                }
+    
+                $("#itemTooltip-star").text(star)
+                $("#itemTooltip-img").attr("src", `img/items/${item}.png`) //이미지를 나중에 분류해놓자.
+                $("#itemTooltip-description").text(itemData.description);
+                Player.Common.currentTooltip = $("#itemTooltip") //테스트
+            }, e => {
+                Player.Common.currentTooltip = undefined; //테스트
+                $("#itemTooltip").hide();
+            })
+            $("#inventory-box").append(itemBox)
+        }
+    }
+    public static onEnter(): void {
+        Player.ws.on('enter', data => {
+            Player.Equip = data.equip;
+            Player.Inventory = data.inventory;
+            Player.Stat = data.stat;
+            Player.Common.projectileCounter = 0;
+            Player.Skills["detection"] = new ActiveSkill("detection", "p");
+            Player.Skills["detection"].use = () => {
+                Player.ws.send("searchMob")
+            };
+        
+            Player.dragMap()
+            Player.drag()
+            Player.renderItem(Player.Inventory)
+        
+        
+            $(".renderer").attr("width", window.innerWidth)
+            $(".renderer").attr("height", window.innerHeight)
+            $("#profile-name").text(Player.Common.nickname as string)
+            $("#profile-level").text(`Lv.${Player.Common.level as number}`)
+        
+            $("#profile-hpbarGage").css("width", `${Player.Common.health as number * (100 / Player.Stat!.health!)}%`)
+        
+            Player.updateMyHealth(40)
+        
+        })
+    }
+    public static onSocketMessage(): void {
+        Player.ws.on("detectMob", (mob: {
+            id: keyof typeof EnemyClasses;
+            stage: string;
+            level: string;
+            hp: string;
+            frame: string;
+        }) => {
+            Player.fightAlert()
+            Player.spawnMob(mob)
+        })
+        $(".stage").on('click', e => {
+            const stage = $(e.currentTarget).attr('id');
+            XHR.POST('/changeStage', { stage }).then(res => {
+                if(res.success) Player.Common.stage = stage;
+            }).catch(e => {
+                console.error(e)
+            })
+        })
+        $(".dialog-close").on("click", e => {
+            $(e.currentTarget).parent().parent().hide()
+        })
+    }
+}
