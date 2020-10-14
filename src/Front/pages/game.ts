@@ -366,7 +366,12 @@ export default class Player {
             Player.Equip = data.equip;
             Player.Inventory = data.inventory;
             Player.Stat = data.stat;
+            Player.Common.nickname = data.nickname;
+            Player.Common.health = data.health;
+            Player.Common.stage = data.stage;
             Player.Common.projectileCounter = 0;
+            Player.Common.level = data.level;
+            
             Player.Skills["detection"] = new ActiveSkill("detection", "p");
             Player.Skills["detection"].use = () => {
                 Player.ws.send("searchMob")
@@ -412,3 +417,4 @@ export default class Player {
         })
     }
 }
+Player.Init(); //Entry 

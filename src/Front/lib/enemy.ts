@@ -10,6 +10,7 @@ export abstract class Enemy extends Entity {
     public w?: number;
     public h?: number;
     protected projectileCounter: number;
+
     constructor(id: string, x: number, y: number, w: number, h: number){ // 리팩토링 다시하자 나중에 (인자 개수좀 쳐줄여라)
         super(id, x, y);
         this.w = w;
@@ -69,7 +70,7 @@ export abstract class Enemy extends Entity {
      */
     public update(){
         if(this.targeted){
-            my.currentTarget = {
+            Player.CurrentTarget = {
                 id: this.id,
                 x: this.x,
                 y: this.y

@@ -1,5 +1,5 @@
 import {Entity, Vector, GraphicRenderer} from './graphic';
-import {my, StageRenderer} from '../pages/game';
+import Player from '../pages/game';
 
 export default class Projectile extends Entity {
 
@@ -103,7 +103,7 @@ export class PlayerAttackProjectile extends Projectile {
     }
     /**do not override OK? */
     public crashAction(): void {
-        StageRenderer.entities[my.currentTarget?.id as string].damage({
+        Player.StageRenderer.entities[Player.CurrentTarget?.id as string].damage({
             x: this.x,
             y: this.y
         })
@@ -116,8 +116,8 @@ export class PlayerAttackProjectile extends Projectile {
             x: this.x,
             y: this.y
         }, {
-            x: my.currentTarget?.x as number,
-            y: my.currentTarget?.y as number 
+            x: Player.CurrentTarget?.x as number,
+            y: Player.CurrentTarget?.y as number 
         });
         if(distance <= 10){
             this.crashAction()
@@ -128,8 +128,8 @@ export class PlayerAttackProjectile extends Projectile {
             x: this.x,
             y: this.y
         }, {
-            x: my.currentTarget?.x as number,
-            y: my.currentTarget?.y as number 
+            x: Player.CurrentTarget?.x as number,
+            y: Player.CurrentTarget?.y as number 
         });
         const velocity = this.distance / this.reqTime;
         const targetPointVector = new Vector(velocity, angle);

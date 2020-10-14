@@ -1,6 +1,6 @@
 import {Enemy} from './enemy';
 import Util from './util';
-import {my} from '../pages/game';
+import Player from '../pages/game';
 
 class Slime extends Enemy {
     constructor(id: string, x: number, y: number, w: number, h: number){
@@ -16,8 +16,8 @@ class Slime extends Enemy {
             this.createProjectile({
                 x: xCounter,
                 y: 10,
-                tx: my.cursorPosition?.x as number + Util.random(-50, 50),
-                ty: my.cursorPosition?.y as number + Util.random(-50, 50),
+                tx: Player.CursorPosition?.x as number + Util.random(-50, 50),
+                ty: Player.CursorPosition?.y as number + Util.random(-50, 50),
                 reqTime: 2.5,
                 imgSrc: 'img/effects/slime-attack.png'
             })

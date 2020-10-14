@@ -42,20 +42,20 @@ export class GraphicRenderer<T extends Entity = Entity> {
     /**
      * 최적화를 위해 변경된 부분만 지우는 작업이 필요할 듯 하다.
      */
-    clear(){
+    public clear(){
         this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     }
-    UpdateRequest(time: number){
+    public UpdateRequest(time: number){
         this.update()
         this.render(time)
         window.requestAnimationFrame(this.UpdateRequest)
     }
-    update(){
+    public update(){
         for(const id in this.entities){
             if(!this.entities[id].alive) delete this.entities[id];
         }
     }
-    render(time: number){
+    public render(time: number){
         /**
          * 엔티티는 render 메서드를 필수로 구현해야 한다.
          * 모든 엔티티는 공통적으로 render 메서드가 호출되면서 화면에 그려지게 된다.
@@ -70,15 +70,15 @@ export class GraphicRenderer<T extends Entity = Entity> {
     /**
      * @deprecated
      */
-    execute(id: string, action: (...args: any[]) => void){
+    public execute(id: string, action: (...args: any[]) => void){
         if(!this.entities.hasOwnProperty(id)) return;
         action(this.entities[id], this.entities[id].x, this.entities[id].y)
     }
-    addEntity<K extends T>(entity: K){
+    public addEntity<K extends T>(entity: K): K {
         this.entities[entity.id] = entity;
         return entity;
     }
-    removeEntity(id: string){
+    public removeEntity(id: string){
         delete this.entities[id];
     }
 }
@@ -121,7 +121,20 @@ export class GraphicDamageRenderer extends GraphicRenderer {
         this.damages.push(damage)
     }
 }
-
+/**
+ * @deprecated 일단 사용 안 됨
+ */
+class EntityController {
+    public renderer: GraphicRenderer;
+    public id: string;
+    constructor(renderer: GraphicRenderer, id: string){
+        this.renderer = renderer;
+        this.id = id;
+    }
+    public kill(): void {
+        this.renderer.removeEntity(this.id)
+    }
+}
 export abstract class Entity {
     public static ANIMATE_UPDATE_DELAY = 100;
     public id: string;
@@ -136,7 +149,12 @@ export abstract class Entity {
     public alive: boolean; //렌더링에서 사라지고 싶을 때 false화 하자.
     public animated: boolean;
     private lastTextureUpdate: number;
-
+    public hitBox?: {
+        x1: number;
+        x2: number;
+        y1: number;
+        y2: number;
+    };
     constructor(id: string, x: number, y: number){
         this.id = id;
         this.x = x;
@@ -146,6 +164,29 @@ export abstract class Entity {
         this.animated = false;
         this.lastTextureUpdate = 0;
         this.updateAnimatedTexture = this.updateAnimatedTexture.bind(this);
+    }
+    public setHitbox(width: number, height: number): void {
+        const xValue = width / 2;
+        const yValue = height / 2;
+
+        this.hitBox = {
+            x1: this.x - xValue,
+            x2: this.x + xValue,
+            y1: this.y - yValue,
+            y2: this.y + yValue
+        };
+    }
+    public checkHit(x: number, y: number){
+        const $hitBox = this.hitBox!;
+
+        if(
+            x >= $hitBox.x1 &&
+            x <= $hitBox.x2 &&
+            y >= $hitBox.y1 &&
+            y <= $hitBox.y2
+        ) {
+            return this.id;
+        }
     }
     public setTexture(expression: {src: string; width?: number, height?: number} | string){
         if(typeof expression === 'object'){
