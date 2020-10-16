@@ -17,6 +17,8 @@ module.exports = {
           }
         }
     ],*/
+    devtool: 'source-map',
+
     output: {
         path: Path.resolve(__dirname, 'dist')
     },
@@ -29,6 +31,11 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+              test: /\.ts$/,
+              loader: 'source-map-loader',
+              enforce: 'pre' 
+            },
             {
                 test: /\.ts$/,
                 enforce: "pre",

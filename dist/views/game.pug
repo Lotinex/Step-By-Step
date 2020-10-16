@@ -63,7 +63,6 @@ html(lang="ko")
             div#itemTooltip-statBox
             div#itemTooltip-bottom
                 div#itemTooltip-description 이예에
-
         div#profile
             div#profile-name GUEST
             div#profile-level Lv.1
@@ -73,8 +72,18 @@ html(lang="ko")
         div#normalTextTooltip
         +Dialog("Inventory", "인벤토리", 610, 340)
             div#inventory-box
+            div#inventory-bottom-menu
+                div#upgradeButton.inventoryMenu
+                    i.fas.fa-hammer
         +Dialog("Stat", "스탯", 300, 500)
             div#statBox
+        +Dialog("Alert", "알림", 300, 100)
+            div#alert-box
+        +Dialog("Confirm", "확인", 300, 150)
+            div#confirm-box
+            div#confirm-buttons
+                div#confirm-ok.confirmButton 확인
+                div#confirm-no.confirmButton 취소
 
     
     script(src="pages/game.js")

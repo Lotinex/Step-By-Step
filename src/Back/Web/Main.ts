@@ -83,14 +83,14 @@ const trace_of_the_void  = {
         star : 7
     },
     stat : {
-        atk: 1765000
-
-
+        atk: 100,
+        def: 10
     },
+    upgradeLv: 0,
+    upgradedStat: {},
     description : "알 수 없는 공간에서 한 연구원이 떼어 온 공허(보이드) 의 흔적이다.\n주변 공간을 일그러뜨리고 있다.",
     atk_type : "buff",
     type : "pendant"
-
 }
 const burning_heart = {
     price : 100,
@@ -141,11 +141,11 @@ const echani = {
 
 }
 const inventory = {
-    "wooden_sword" : wooden_sword,
-    "lava_pendant" : lava_pendant,
+    //"wooden_sword" : wooden_sword,
+    //"lava_pendant" : lava_pendant,
     "trace_of_the_void" : trace_of_the_void,
-    "burning_heart" : burning_heart, //테스트
-    "echani" : echani
+    //"burning_heart" : burning_heart, //테스트
+    //"echani" : echani
 }
 
 DB.TABLE.users.update([ { id : "114771621283891074143" } ], [ { inventory :  inventory } ]) 

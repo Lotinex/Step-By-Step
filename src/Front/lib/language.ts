@@ -3,11 +3,12 @@ const TABLE = (window as any).LANGUAGE_TABLE || {};
  * Implement Me
  */
 export default class L {
-    static process(key: string, data?: any){
-        const base = TABLE[key];
+    static process(key: string, ...data: any[]){
+        let base: string = TABLE[key];
         if(base === undefined) return `$${key}$`; // 표에서 적절한 문자열을 찾지 못했을 때
-
-        
+        data.forEach((e, i) => {
+            base = base.replace(new RegExp(`\\{${i}\\}`, "g"), e);
+        })
         return base; 
 
 

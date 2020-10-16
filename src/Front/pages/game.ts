@@ -17,7 +17,11 @@ export default class Player {
 
     public static Inventory: PlayerData.Inventory = {};
     public static Common: Partial<PlayerData.Common> = {};
-    public static Stat: Partial<PlayerData.Stat> = {};
+    public static Stat: Partial<PlayerData.Stat> = {}
+    private static State: PlayerData.State = {
+        upgrading: false,
+        itemUpdated: false,
+    };
     public static Equip: PlayerData.Equip = {};
     public static CurrentTarget?: Partial<PlayerData.CurrentTarget> = {};
     public static CursorPosition: PlayerData.CursorPosition = {
@@ -42,6 +46,61 @@ export default class Player {
             $(e.currentTarget).parent().parent().hide()
         })
 
+        Player.setupInventoryMenuExplain()
+        Player.setupInventoryMenuUse()
+        
+    }
+    public static showDialog(dialogID: string): void {
+        const dialog = $(`#${dialogID}`);
+
+        dialog.css({
+			'left': ($(window).width()! - dialog.width()!) * 0.5,
+			'top': ($(window).height()! - dialog.height()!) * 0.5
+		}).show()
+    }
+    public static setState(stateObject: Partial<PlayerData.State>): void {
+        let state: keyof PlayerData.State
+        for(state in stateObject){
+            const value = stateObject[state]!;
+            Player.State[state] = value;
+            Player.onStateChange(state, value);
+        }
+    }
+    /**@deprecated */
+    public static setStateNoEmit<T extends keyof PlayerData.State>(key: T, value: PlayerData.State[T]): void {
+        Player.State[key] = value;
+    }
+    public static onStateChange<T extends keyof PlayerData.State>(state: T, value: PlayerData.State[T]): void {
+        switch(state){
+            case 'upgrading':
+                if(value){
+                    $("#Inventory").addClass('inventory-upgradeReady')
+                    $("#Inventory").children(".dialog-head").children("span").text(L.process("state_upgradeReady"))
+                } else {
+                    $("#Inventory").removeClass('inventory-upgradeReady')
+                    $("#Inventory").children(".dialog-head").children("span").text(L.process("title_inventory"))
+                }
+                break;
+        }
+    }
+    public static setupInventoryMenuExplain(): void {
+        $(".inventoryMenu").on('mouseenter', e => {
+             Player.Common.currentTooltip = $("#normalTextTooltip");
+            $("#normalTextTooltip").text(L.process($(e.currentTarget).attr('id') as string))
+            $("#normalTextTooltip").show()
+        })
+        .on('mouseleave', e => {
+            Player.Common.currentTooltip = undefined;
+            $("#normalTextTooltip").empty()
+            $("#normalTextTooltip").hide()
+        })
+    }
+    public static setupInventoryMenuUse(): void {
+        $("#upgradeButton").on('click', e => {
+            Player.setState({
+                upgrading: !Player.State.upgrading
+            })
+        })
     }
     public static equipNumber(): number {
         return Object.keys(Player.Equip).length;
@@ -61,6 +120,8 @@ export default class Player {
             $(window).off('mousemove', mouseMoveHandler)
             $(window).off('mouseup', reset)
           }
+          $(window).on('mousemove', mouseMoveHandler)
+          $(window).on('mouseup', reset)
         })
     }
     public static renderStat(): void {
@@ -125,10 +186,9 @@ export default class Player {
         $("#profile-hpbarGage").css("width", `${Player.Common.health as number * (100 / Player.Stat.health!)}%`)
     }
     public static showStat(): void {
-        let key: keyof PlayerData.Stat;
         if($("#Stat").css("display") == "none"){
             Player.renderStat()
-            $("#Stat").show()
+            Player.showDialog("Stat")
         }
         else $("#Stat").hide()
     }
@@ -151,6 +211,10 @@ export default class Player {
         })
         newMob.action()
         Player.StageRenderer.addEntity(newMob)
+    }
+    public static alert(value: string): void {
+        $("#alert-box").text(value)
+        Player.showDialog("Alert")
     }
     public static fightAlert(): void {
         let bgEffectAlpha = 0;
@@ -188,9 +252,32 @@ export default class Player {
             }
         })
     }
+    public static confirm(value: string): Promise<boolean> {
+        return new Promise(rs => {
+            $("#confirm-box").text(value)
+            Player.showDialog("Confirm")
+            $("#confirm-ok").on('click', e => {
+                $("#Confirm").hide()
+                rs(true)
+            })
+            $("#confirm-no").on('click', e => {
+                $("#Confirm").hide()
+                rs(false)
+            })
+        })
+    }
     public static toggle(target: JQuery): JQuery<HTMLElement> {
         if(target.css("display") === "none"){
             target.show()
+        } else target.hide()
+        return target;
+    }
+    public static toggleDialog(target: JQuery): JQuery<HTMLElement> {
+        if(target.css("display") === "none"){
+            target.css({
+                'left': ($(window).width()! - target.width()!) * 0.5,
+                'top': ($(window).height()! - target.height()!) * 0.5
+            }).show()
         } else target.hide()
         return target;
     }
@@ -251,7 +338,7 @@ export default class Player {
                 }
                 break;
             case 'i':
-                Player.toggle($("#Inventory"))
+                Player.toggleDialog($("#Inventory"))
                 break;
             case 'Shift':
                 Player.attack()
@@ -261,105 +348,130 @@ export default class Player {
                 break;
         }
     }
-    public static renderItem(itemObject: any): void {
-        for(const item in itemObject){
+    public static registerItemTooltip(items: any): void {
+        $(".item-box").hover(e => {
+            const item = $(e.currentTarget).attr("item") as string;
+            console.log(item)
+            const itemData = items[item];
+
+            $("#itemTooltip").show();
+            let itemNameColor;
+            switch(itemData.rare){
+                case 'normal':
+                    itemNameColor = 'gray';
+                    break;
+                case 'rare':
+                    itemNameColor = 'lightgreen';
+                    break;
+                case 'epic':
+                    itemNameColor = 'lightblue';
+                    break;
+                case 'legendary':
+                    itemNameColor = 'gold';
+                    break;
+                case 'mythic':
+                    itemNameColor = 'red';
+                    break;
+
+
+            }
+            $("#itemTooltip-name").html(`<span style="color:${itemNameColor};">${itemData.name}</span><span style="color:yellow;text-shadow:0px 0px 2px yellow;">(+${itemData.upgradeLv})</span>`);
+            $("#itemTooltip-rare").text(itemData.rare).attr("class", `rare-${itemData.rare}`)
+            $("#itemTooltip-level").text(`Lv.${itemData.level.value}`);
+            $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
+            $("#itemTooltip-statBox").html('');
+            for(const stat in itemData.stat){
+                $("#itemTooltip-statBox").append(
+                    $("<div>").addClass("itemTooltip-stat-value")
+                    .append(
+                        $("<img>").addClass("itemTooltip-stat-img").attr("src", `img/icons/${stat}.png`)
+                    )
+                    .append(
+                        $("<div>").addClass("itemTooltip-stat-text")
+                        .append($("<span>").text(itemData.stat[stat]))
+                        .append($("<span>").addClass("itemTooltip-stat-additional").text(`(+${itemData.upgradedStat[stat] || 0})`))
+                    )
+                )
+            }
+            let star = '';
+            for(let i=0; i<itemData.level.star; i++){ //별을 반 개씩 카운트하는건 아직 만들지 않았다.
+                star += "★";
+            }
+            for(let i=0; i<Player.CONFIG.STAR_LIMIT - itemData.level.star; i++){
+                star += "☆";
+            }
+
+            $("#itemTooltip-star").text(star)
+            $("#itemTooltip-img").attr("src", `img/items/${item}.png`) //이미지를 나중에 분류해놓자.
+            $("#itemTooltip-description").text(itemData.description);
+            Player.Common.currentTooltip = $("#itemTooltip") //테스트
+
+        }, () => {
+            Player.Common.currentTooltip = undefined; //테스트
+            $("#itemTooltip").hide();
+        })
+    }
+    public static renderItem(): void {
+        for(const item in Player.Inventory){
             const id = item;
-            const itemData = itemObject[item];
+            const itemData = Player.Inventory[item];
     
             let equiped = (Player.Equip as PlayerData.Equip).hasOwnProperty(id);
-    
+            function equipItem(id: string, itemData: any){
+                if(equiped){
+                    XHR.POST('/equipOffItem', {
+                        item: id,
+                        stat: itemData.stat
+                    }).then(res => {
+                        if(res.success){
+                            Player.Stat = res.stat;
+                            Player.renderStat()
+                            delete (Player.Equip as PlayerData.Equip)[id];
+                            equiped = false;
+                            itemBox.removeClass("item-box-equiped");
+                        }
+                    })
+                } else {
+                    if(Player.equipNumber() === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
+                    XHR.POST('/equipItem', {
+                        item: id,
+                        stat: itemData.stat
+                    }).then(res => {
+                        if(res.success){
+                            Player.Stat = res.stat;
+                            Player.renderStat();
+                            (Player.Equip as PlayerData.Equip)[id] = itemData;
+                            equiped = true;
+                            itemBox.addClass("item-box-equiped");
+                        }
+                    })
+                }
+            }
             const itemBox = 
                 $("<div>").addClass("item-box")
                     .append($("<img>").addClass("item-img").attr("src", `img/items/${item}.png`))
                     .attr("item", id)
                     .on('click', e => {
-                        if(equiped){
-                            XHR.POST('/equipOffItem', {
-                                item: id,
-                                stat: itemData.stat
-                            }).then(res => {
-                                if(res.success){
-                                    Player.Stat = res.stat;
-                                    Player.renderStat()
-                                    delete (Player.Equip as PlayerData.Equip)[id];
-                                    equiped = false;
-                                    itemBox.removeClass("item-box-equiped");
-                                }
+                        if(Player.State.upgrading){
+                            if(equiped) return Player.alert(L.process('upgrade_unequip_required'));
+
+                            Player.confirm(L.process("upgrade_confirm", 1)).then(res => {
+                                if(res) Player.ws.send('upgradeItem', id, Player.Inventory[id])
                             })
+
                         } else {
-                            if(Player.equipNumber() === 4) return alert("아이템은 4개까지 착용할 수 있습니다."); //나중에 다이얼로그 알림으로 고치자.
-                            XHR.POST('/equipItem', {
-                                item: id,
-                                stat: itemData.stat
-                            }).then(res => {
-                                if(res.success){
-                                    Player.Stat = res.stat;
-                                    Player.renderStat();
-                                    (Player.Equip as PlayerData.Equip)[id] = itemData;
-                                    equiped = true;
-                                    itemBox.addClass("item-box-equiped");
-                                }
-                            })
+                            let equipItemData = itemData;
+                            if(Player.State.itemUpdated){
+                                equipItemData = Player.Inventory[id];
+                                Player.setState({itemUpdated: false})
+                            }
+                            equipItem(id, Player.Inventory[id])
                         }
                     })
             if(equiped) itemBox.addClass("item-box-equiped");
-    
-            itemBox.hover(e => {
-                $("#itemTooltip").show();
-                let itemNameColor;
-                switch(itemData.rare){
-                    case 'normal':
-                        itemNameColor = 'gray';
-                        break;
-                    case 'rare':
-                        itemNameColor = 'lightgreen';
-                        break;
-                    case 'epic':
-                        itemNameColor = 'lightblue';
-                        break;
-                    case 'legendary':
-                        itemNameColor = 'gold';
-                        break;
-                    case 'mythic':
-                        itemNameColor = 'red';
-                        break;
-    
-    
-                }
-                $("#itemTooltip-name").html(`<span style="color:${itemNameColor};">${itemData.name}</span>`);
-                $("#itemTooltip-rare").text(itemData.rare).attr("class", `rare-${itemData.rare}`)
-                $("#itemTooltip-level").text(`Lv.${itemData.level.value}`);
-                $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
-                $("#itemTooltip-statBox").html('');
-                for(const stat in itemData.stat){
-                    $("#itemTooltip-statBox").append(
-                        $("<div>").addClass("itemTooltip-stat-value")
-                        .append(
-                            $("<img>").addClass("itemTooltip-stat-img").attr("src", `img/icons/${stat}.png`)
-                        )
-                        .append(
-                            $("<div>").addClass("itemTooltip-stat-text").text(itemData.stat[stat])
-                        )
-                    )
-                }
-                let star = '';
-                for(let i=0; i<itemData.level.star; i++){ //별을 반 개씩 카운트하는건 아직 만들지 않았다.
-                    star += "★";
-                }
-                for(let i=0; i<Player.CONFIG.STAR_LIMIT - itemData.level.star; i++){
-                    star += "☆";
-                }
-    
-                $("#itemTooltip-star").text(star)
-                $("#itemTooltip-img").attr("src", `img/items/${item}.png`) //이미지를 나중에 분류해놓자.
-                $("#itemTooltip-description").text(itemData.description);
-                Player.Common.currentTooltip = $("#itemTooltip") //테스트
-            }, e => {
-                Player.Common.currentTooltip = undefined; //테스트
-                $("#itemTooltip").hide();
-            })
             $("#inventory-box").append(itemBox)
         }
+        Player.registerItemTooltip(Player.Inventory)
     }
     public static onEnter(): void {
         Player.ws.on('enter', data => {
@@ -371,6 +483,7 @@ export default class Player {
             Player.Common.stage = data.stage;
             Player.Common.projectileCounter = 0;
             Player.Common.level = data.level;
+            Player.Common.money = data.money;
             
             Player.Skills["detection"] = new ActiveSkill("detection", "p");
             Player.Skills["detection"].use = () => {
@@ -379,7 +492,7 @@ export default class Player {
         
             Player.dragMap()
             Player.drag()
-            Player.renderItem(Player.Inventory)
+            Player.renderItem()
         
         
             $(".renderer").attr("width", window.innerWidth)
@@ -388,7 +501,17 @@ export default class Player {
             $("#profile-level").text(`Lv.${Player.Common.level as number}`)
         
             $("#profile-hpbarGage").css("width", `${Player.Common.health as number * (100 / Player.Stat!.health!)}%`)
-        
+            $(".stage").on('click', e => {
+                const stage = $(e.currentTarget).attr('id');
+                XHR.POST('/changeStage', { stage }).then(res => {
+                    if(res.success) Player.Common.stage = stage;
+                }).catch(e => {
+                    console.error(e)
+                })
+            })
+            $(".dialog-close").on("click", e => {
+                $(e.currentTarget).parent().parent().hide()
+            })
             Player.updateMyHealth(40)
         
         })
@@ -404,16 +527,21 @@ export default class Player {
             Player.fightAlert()
             Player.spawnMob(mob)
         })
-        $(".stage").on('click', e => {
-            const stage = $(e.currentTarget).attr('id');
-            XHR.POST('/changeStage', { stage }).then(res => {
-                if(res.success) Player.Common.stage = stage;
-            }).catch(e => {
-                console.error(e)
-            })
-        })
-        $(".dialog-close").on("click", e => {
-            $(e.currentTarget).parent().parent().hide()
+        Player.ws.on("upgradeResponse", (res: {
+            success: boolean,
+            data: any,
+            id: string
+        }) => {
+            if(res.success){
+                Player.alert(L.process('upgrade_success'))
+                Player.Inventory = res.data;
+                Player.setState({itemUpdated: true})
+                Player.registerItemTooltip(Player.Inventory)
+                Player.renderStat()
+            } else {
+                Player.alert(L.process('upgrade_failed'))
+            }
+            Player.setState({upgrading: false})
         })
     }
 }

@@ -287,3 +287,4 @@ export class Vector {
         this.y = value * Math.sin(radian);
     }
 }
+

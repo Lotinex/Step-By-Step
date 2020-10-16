@@ -22,6 +22,7 @@ declare namespace PlayerData {
         currentTooltip: JQuery;
         projectileCounter: number;
         stage: string;
+        money: number;
     }
     interface Stat {
         atk: number;
@@ -34,6 +35,10 @@ declare namespace PlayerData {
         luck: number;
         ignore_protection: number;
         multishot: number;
+    }
+    interface State {
+        upgrading: boolean;
+        itemUpdated: boolean;
     }
     interface Inventory {
         [itemName: string]: any;
