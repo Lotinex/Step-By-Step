@@ -348,6 +348,41 @@ export default class Player {
                 break;
         }
     }
+    public static upgradeItem(itemID: string, itemData: any): void {
+        const chancePercent = (1 - itemData.upgradeLv * 0.055) * 100;
+        $("#upgrade-itemImg").attr("src", `img/items/${itemID}.png`)
+        $("#upgrade-itemName").addClass(`rare-${itemData.rare}`).text(itemData.name)
+        $("#upgrade-description").text("이 장비를 강화합니다.")
+
+        $("#upgrade-gold").text(1)
+        $("#upgrade-lv")
+        .append(
+            $("<span>").text(itemData.upgradeLv)
+        )
+        .append(
+            $("<i>").attr("class", "fas fa-angle-double-right upgrade-arrow")
+        )
+        .append(
+            $("<span>").text(itemData.upgradeLv + 1)
+        )
+        let chanceColorClass: string = "";
+        if(chancePercent < 10){
+            chanceColorClass = "upgrade-chance-veryLow"
+        } else if(chancePercent < 40){
+            chanceColorClass = "upgrade-chance-low"
+        } else if(chancePercent < 65){
+            chanceColorClass = "upgrade-chance-mid"
+        } else if(chancePercent < 85){
+            chanceColorClass = "upgrade-chance-high"
+        } else if(chancePercent <= 100){
+            chanceColorClass = "upgrade-chance-veryHigh"
+        }
+        $("#upgrade-chance").text(`${chancePercent}%`).addClass(chanceColorClass)
+        this.showDialog("UpgradeConfirm")
+        Player.confirm(L.process("upgrade_confirm", 1)).then(res => {
+            if(res) Player.ws.send('upgradeItem', itemID, Player.Inventory[itemID])
+        })
+    }
     public static registerItemTooltip(items: any): void {
         $(".item-box").hover(e => {
             const item = $(e.currentTarget).attr("item") as string;
@@ -455,9 +490,7 @@ export default class Player {
                         if(Player.State.upgrading){
                             if(equiped) return Player.alert(L.process('upgrade_unequip_required'));
 
-                            Player.confirm(L.process("upgrade_confirm", 1)).then(res => {
-                                if(res) Player.ws.send('upgradeItem', id, Player.Inventory[id])
-                            })
+                            Player.upgradeItem(id, itemData)
 
                         } else {
                             let equipItemData = itemData;

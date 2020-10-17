@@ -86,7 +86,25 @@ html(lang="ko")
             div#confirm-buttons
                 div#confirm-ok.confirmButton 확인
                 div#confirm-no.confirmButton 취소
-
+        +Dialog("UpgradeConfirm", "장비 강화", 300, 400)
+            div#upgrade-confirm-box
+                div#upgrade-headBox
+                    img#upgrade-itemImg
+                    div#upgrade-itemName
+                div#upgrade-description
+                div#upgrade-info
+                    div.upgrade-infoBar
+                        div.upgrade-infoHead 비용
+                        div.upgrade-infoValue#upgrade-gold
+                    div.upgrade-infoBar
+                        div.upgrade-infoHead 강화 레벨
+                        div.upgrade-infoValue#upgrade-lv
+                    div.upgrade-infoBar
+                        div.upgrade-infoHead 성공 확률
+                        div.upgrade-infoValue#upgrade-chance
+            div#upgrade-confirm-buttons
+                div#upgrade-confirm-ok.confirmButton 확인
+                div#upgrade-confirm-no.confirmButton 취소
     
     script(src="pages/game.js")
 

@@ -109,23 +109,23 @@ html, body {
         text-align: center;
     }
         .rare-normal {
-            color: black;
+            /*color: black;*/
             background: linear-gradient(to right, rgba(255,255,255,0.01),rgba(255,255,255,0.2), rgba(255,255,255,0.4),rgba(255,255,255,0.6),rgba(255,255,255,0.8), rgba(255,255,255,1),rgba(255,255,255,0.8),rgba(255,255,255,0.6), rgba(255,255,255,0.4), rgba(255,255,255,0.2),rgba(255,255,255,0.01));
         }
         .rare-rare {
-            color: lightgreen;
+            /*color: lightgreen;*/
             background: linear-gradient(to right, rgba(144,238,144,0.01),rgba(144,238,144,0.2), rgba(144,238,144,0.4),rgba(144,238,144,0.6),rgba(144,238,144,0.8), rgba(144,238,144,1),rgba(144,238,144,0.8),rgba(144,238,144,0.6), rgba(144,238,144,0.4), rgba(144,238,144,0.2),rgba(144,238,144,0.01));
         }
         .rare-epic {
-            color: lightblue;
+            /*color: lightblue;*/
             background: linear-gradient(to right, rgba(173,216,230,0.01),rgba(173,216,230,0.2), rgba(173,216,230,0.4),rgba(173,216,230,0.6),rgba(173,216,230,0.8), rgba(173,216,230,1),rgba(173,216,230,0.8),rgba(173,216,230,0.6), rgba(173,216,230,0.4), rgba(173,216,230,0.2),rgba(173,216,230,0.01));
         }
         .rare-legendary {
-            color: gold;
+            /*color: gold;*/
             background: linear-gradient(to right, rgba(255,125,0,0.01),rgba(255,125,0,0.2), rgba(255,125,0,0.4),rgba(255,125,0,0.6),rgba(255,125,0,0.8), rgba(255,125,0,1),rgba(255,125,0,0.8),rgba(255,125,0,0.6), rgba(255,125,0,0.4), rgba(255,125,0,0.2),rgba(255,125,0,0.01));
         }
         .rare-mythic {
-            color: red;
+            /*color: red;*/
             background: linear-gradient(to right, rgba(255,0,0,0.01),rgba(255,0,0,0.2), rgba(255,0,0,0.4),rgba(255,0,0,0.6),rgba(255,0,0,0.8), rgba(255,0,0,1),rgba(255,0,0,0.8),rgba(255,0,0,0.6), rgba(255,0,0,0.4), rgba(255,0,0,0.2),rgba(255,0,0,0.01));
         }
 
@@ -616,4 +616,95 @@ html, body {
         opacity: 1;
         transform: scale(1.0);
     }
+}
+#upgrade-confirm-box {
+    height: 300px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
+#upgrade-confirm-buttons {
+    margin-top: 10px;
+    height: 50px;
+}
+#upgrade-confirm-ok {
+    background: rgb(28, 132, 192);
+    color: black;
+    margin-left: 35px;
+}
+#upgrade-confirm-no {
+    background: white;
+    color: black;
+    float: right;
+    margin-right: 35px;
+}
+#upgrade-headBox {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+}
+#upgrade-itemImg {
+    border: 2px solid white;
+    box-shadow: 0px 0px 10px white;
+
+}
+#upgrade-itemName {
+    margin-top: 5px;
+    color: yellow;
+    text-shadow: 0px 0px 2px yellow;
+}
+#upgrade-description {
+    margin-top: 5px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.upgrade-infoBar {
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 30px;
+}
+.upgrade-infoHead {
+    display: inline-block;
+    color: yellow;
+    font-size: 16px;
+}
+.upgrade-infoValue {
+    float: right;
+    color: white;
+    font-size: 17px;
+}
+.upgrade-arrow {
+    color: yellow;
+    text-shadow: 0px 0px 2px yellow;
+    margin-left: 5px;
+    margin-right: 5px;
+    animation: 1s fade infinite ease-in-out;
+}
+@keyframes fade {
+    from { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    to { opacity: 1.0; }
+}  
+
+
+.upgrade-chance-veryLow {
+    color: red;
+    text-shadow: 0px 0px 2px red;
+}
+.upgrade-chance-low {
+    color: orange;
+    text-shadow: 0px 0px 2px orange;
+}
+.upgrade-chance-mid {
+    color: yellow;
+    text-shadow: 0px 0px 2px yellow;
+}
+.upgrade-chance-high {
+    color: green;
+    text-shadow: 0px 0px 2px green;
+}
+.upgrade-chance-veryHigh {
+    color: rgb(39, 81, 218);
+    text-shadow: 0px 0px 2px rgb(39, 81, 218);
 }
