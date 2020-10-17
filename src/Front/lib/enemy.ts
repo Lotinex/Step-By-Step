@@ -9,8 +9,9 @@ export abstract class Enemy extends Entity {
     public targeted: boolean;
     public w?: number;
     public h?: number;
+    private parted: boolean;
     protected projectileCounter: number;
-
+    public parts: {[name: string]: Entity} = {};
     constructor(id: string, x: number, y: number, w: number, h: number){ // 리팩토링 다시하자 나중에 (인자 개수좀 쳐줄여라)
         super(id, x, y);
         this.w = w;
@@ -18,6 +19,15 @@ export abstract class Enemy extends Entity {
         this.hp = 0;
         this.targeted = false;
         this.projectileCounter = 0;
+        this.parted = false;
+    }
+    public setParts(partObject: {[name: string]: Entity}): void {
+        this.parts = partObject;
+        for(const name in this.parts){
+            this.parts[name].setBase(this.x, this.y)
+            Player.EnemyEffectRenderer.addEntity(this.parts[name])
+        }
+        this.parted = true;
     }
     public static wait(second: number): Promise<void> {
         return new Promise(rs => {
@@ -26,9 +36,6 @@ export abstract class Enemy extends Entity {
     }
     public setHp(value: number){
         this.hp = value;
-    }
-    public render(ctx: CanvasRenderingContext2D){
-        ctx.drawImage(this.img as HTMLImageElement, this.x  - <number>this.w / 2, this.y - <number>this.h / 2, <number>this.w, <number>this.h)
     }
     public onClick(e: MouseEvent){
         this.targeted = !this.targeted;
@@ -48,13 +55,14 @@ export abstract class Enemy extends Entity {
             const interval = setInterval(func, sec * 1000);
         })
     }
+    /*
     public move(x: number, y: number): Promise<void> {
         return new Promise(rs => {
             this.x += x;
             this.y += y;
             rs()
         })
-    }
+    }*/
     public damage(coord: PurePoint): void {
         const isCritical = Math.random() < ((Player.Stat?.critical_chance as number) / 100);
         const dmg = Player.Stat?.atk;
@@ -76,6 +84,14 @@ export abstract class Enemy extends Entity {
                 y: this.y
             };
         }
+        if(this.parted){
+            for(const name in this.parts){
+                this.parts[name].setBase(this.x, this.y)
+            }
+        }
+    }
+    public summon(entity: Entity): void {
+        Player.EnemyEffectRenderer.addEntity(entity)
     }
     public createProjectile(options: {
         x: number;
@@ -84,10 +100,14 @@ export abstract class Enemy extends Entity {
         ty: number;
         reqTime: number;
         imgSrc: string; //?
+        w?: number;
+        h?: number;
     }): void {
         const projectile = new Projectile(`${this.constructor.name}-projectile-${this.projectileCounter}`, options.x, options.y)
         projectile.setTexture(options.imgSrc)
         projectile.setRenderer(Player.EnemyEffectRenderer)
+        projectile.w = options.w || 10;
+        projectile.h = options.h || 10;
         Player.EnemyEffectRenderer.addEntity(projectile)
         projectile.moveTo(options.tx, options.ty, options.reqTime)
         this.projectileCounter++;

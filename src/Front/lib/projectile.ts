@@ -34,9 +34,6 @@ export default class Projectile extends Entity {
     public setFadeoutWait(second: number): void {
         this.fadeoutWait = second * 1000;
     }
-    public render(ctx: CanvasRenderingContext2D): void {
-        ctx.drawImage(this.img as HTMLImageElement, this.x, this.y)
-    }
     protected remove(): void {
         if(this.renderer === undefined) return console.error('Renderer not defined.') //투사체를 생성할 때 렌더러를 명시하지 않은 경우
         delete this.renderer.entities[this.id];

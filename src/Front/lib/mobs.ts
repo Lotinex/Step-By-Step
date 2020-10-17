@@ -1,6 +1,7 @@
 import {Enemy} from './enemy';
 import Util from './util';
 import Player from '../pages/game';
+import { Entity } from './graphic';
 
 class Slime extends Enemy {
     constructor(id: string, x: number, y: number, w: number, h: number){
@@ -8,9 +9,6 @@ class Slime extends Enemy {
     }
     async action(): Promise<void> {
         await Enemy.wait(3);
-        await this.loopFor(50, 0, async () => {
-            await this.move(0, -2)
-        })
         let xCounter = 0;
         await this.loopFor(10, 0.2, () => {
             this.createProjectile({
@@ -23,9 +21,23 @@ class Slime extends Enemy {
             })
             xCounter += 100;
         })
-        await this.loopFor(50, 0, async () => {
-            await this.move(0, 2)
+        await Enemy.wait(2);
+        let effectCounter = 0;
+        await this.loopFor(5, 0.5, () => {
+            const x = Util.random(0, 1000);
+            const y = Util.random(0, 1000);
+            const attack = new Entity(`slime-attack-${effectCounter}`, x, y);
+            attack.w = 500;
+            attack.h = 500;
+            attack.setTexture('img/effects/slime-attack-2.png')
+            this.summon(attack)
+            this.loopFor(35, 0, () => {
+                attack.w! -= 10;
+                attack.h! -= 10;
+            })
+            effectCounter++;
         })
+
         this.action()
     }
 }

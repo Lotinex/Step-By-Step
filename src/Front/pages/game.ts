@@ -504,7 +504,7 @@ export default class Player {
             $(".stage").on('click', e => {
                 const stage = $(e.currentTarget).attr('id');
                 XHR.POST('/changeStage', { stage }).then(res => {
-                    if(res.success) Player.Common.stage = stage;
+                    if(res.success) Player.changeStage(stage!)
                 }).catch(e => {
                     console.error(e)
                 })
@@ -515,6 +515,38 @@ export default class Player {
             Player.updateMyHealth(40)
         
         })
+    }
+    public static sceneTraisitionEffect(): void {
+        $("#sceneTransition").removeClass("transitionAnimated")
+        $("#sceneTransition").css("background", "black")
+        $("#sceneTransition").addClass("transitionAnimated")
+        $("#sceneTransition").show()
+        const colorArr: string[] = [];
+        for(let i = 0; i<20; i++){
+            colorArr.push(`rgba(0,0,0,1)`)
+        }
+
+        $("#sceneTransition").on('animationend', e => {
+            $("#sceneTransition").css("background", `linear-gradient(to right top, ${colorArr.join(',')})`)
+            let counter = 0;
+            const disappear = setInterval(() => {
+                if(counter >= 19){
+                    clearInterval(disappear)
+                    $("#sceneTransition").hide()
+                }
+                colorArr[counter] = colorArr[counter].replace('1', '0');
+                $("#sceneTransition").css("background", `linear-gradient(to right top, ${colorArr.join(',')})`)
+                counter++;
+            }, 0)
+        })
+    }
+    public static changeBackground(bgName: string): void {
+        Player.sceneTraisitionEffect()
+        $("#background").attr("src", `img/backgrounds/${bgName}.jpg`)
+    }
+    public static changeStage(stage: string): void {
+        Player.Common.stage = stage;
+        Player.changeBackground(stage)
     }
     public static onSocketMessage(): void {
         Player.ws.on("detectMob", (mob: {

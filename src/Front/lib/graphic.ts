@@ -135,11 +135,13 @@ class EntityController {
         this.renderer.removeEntity(this.id)
     }
 }
-export abstract class Entity {
+export class Entity {
     public static ANIMATE_UPDATE_DELAY = 100;
     public id: string;
     public x: number;
     public y: number;
+    public baseX: number;
+    public baseY: number;
     public w?: number;
     public h?: number;
     public img?: HTMLImageElement;
@@ -148,6 +150,7 @@ export abstract class Entity {
     protected frameCount?: number;
     public alive: boolean; //렌더링에서 사라지고 싶을 때 false화 하자.
     public animated: boolean;
+    private fixed: boolean;
     private lastTextureUpdate: number;
     public hitBox?: {
         x1: number;
@@ -164,6 +167,9 @@ export abstract class Entity {
         this.animated = false;
         this.lastTextureUpdate = 0;
         this.updateAnimatedTexture = this.updateAnimatedTexture.bind(this);
+        this.baseX = 0;
+        this.baseY = 0;
+        this.fixed = false;
     }
     public setHitbox(width: number, height: number): void {
         const xValue = width / 2;
@@ -175,6 +181,21 @@ export abstract class Entity {
             y1: this.y - yValue,
             y2: this.y + yValue
         };
+    }
+    public setBase(baseX: number, baseY: number): void {
+        this.baseX = baseX;
+        this.baseY = baseY;
+    }
+    public move(expression: Partial<PurePoint>): void {
+        if(expression.x) this.x = this.baseX + this.x + expression.x;
+        if(expression.y) this.y = this.baseY + this.y + expression.y;
+    }
+    public fix(expression: Partial<PurePoint>): void {
+        this.fixed = true;
+    }
+    public moveToPosition(expression: Partial<PurePoint>): void {
+        if(expression.x) this.x = this.baseX + expression.x;
+        if(expression.y) this.y = this.baseY + expression.y;
     }
     public checkHit(x: number, y: number){
         const $hitBox = this.hitBox!;
@@ -262,11 +283,12 @@ export abstract class Entity {
 
     }
     public update(time: number){}
-    abstract render(ctx: CanvasRenderingContext2D): void;
+    public render(ctx: CanvasRenderingContext2D): void {
+        ctx.drawImage(this.img as HTMLImageElement, this.x  - <number>this.w / 2, this.y - <number>this.h / 2, <number>this.w, <number>this.h)
+    }
     public onClick(e: MouseEvent){}
    // abstract update(): void;
 }
-
 export class Vector {
     public x: number;
     public y: number;
