@@ -6,9 +6,22 @@ import { Entity } from './graphic';
 class Slime extends Enemy {
     constructor(id: string, x: number, y: number, w: number, h: number){
         super(id, x, y, w, h)
+
+        const leftArm = new Entity('leftarm-slime', 0 , 0);
+        leftArm.setTexture('img/effects/slime-attack-2.png')
+        Player.EnemyEffectRenderer.addEntity(leftArm)
+        leftArm.w = 100;
+        leftArm.h = 100;
+        this.setParts({
+            leftArm
+        })
+        leftArm.moveToPosition({
+            x: -200
+        })
     }
     async action(): Promise<void> {
         await Enemy.wait(3);
+        this.x += 100;
         let xCounter = 0;
         await this.loopFor(10, 0.2, () => {
             this.createProjectile({

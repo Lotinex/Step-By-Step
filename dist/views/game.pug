@@ -5,7 +5,7 @@ html(lang="ko")
         meta(name="viewport" content="width=device-width, initial-scale=1.0")
         title 스바스(Step by Step)
         link(rel="stylesheet" href="styles/game.css")
-        link(rel="icon" href="assets/img/trace_of_the_void.png")
+        link(rel="icon" href="img/items/trace_of_the_void.png")
     body
         mixin Dialog(id, title, w, h)
             div.dialog(id=id style=`width:${w}px; height:${h}px;`)
@@ -16,7 +16,7 @@ html(lang="ko")
                 div.dialog-body
                     block
         mixin Stage(id, label, w, h, x, y)
-            div.stage(id=id style=`width:${w}px; height:${h}px; left:${x}px; top:${y}px; background-image: url(assets/img/stages/${id}.png);`)
+            div.stage(id=id style=`width:${w}px; height:${h}px; left:${x}px; top:${y}px; background-image: url(img/stages/${id}.png);`)
                 div.stageLabel= label
                 block
         div#hpbar
@@ -86,7 +86,7 @@ html(lang="ko")
             div#confirm-buttons
                 div#confirm-ok.confirmButton 확인
                 div#confirm-no.confirmButton 취소
-        +Dialog("UpgradeConfirm", "장비 강화", 300, 400)
+        +Dialog("UpgradeConfirm", "장비 강화", 300, 600)
             div#upgrade-confirm-box
                 div#upgrade-headBox
                     img#upgrade-itemImg
@@ -102,6 +102,7 @@ html(lang="ko")
                     div.upgrade-infoBar
                         div.upgrade-infoHead 성공 확률
                         div.upgrade-infoValue#upgrade-chance
+                div#upgrade-stat-info
             div#upgrade-confirm-buttons
                 div#upgrade-confirm-ok.confirmButton 확인
                 div#upgrade-confirm-no.confirmButton 취소

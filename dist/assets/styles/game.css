@@ -26,6 +26,7 @@ html, body {
     font-weight: bold;
     font-size: 15px;
     padding: 3px;
+    padding-left: 10px;
     color: white;
     height: 20px;
     background: rgba(125,125,125,0.8);
@@ -618,7 +619,7 @@ html, body {
     }
 }
 #upgrade-confirm-box {
-    height: 300px;
+    height: 500px;
     color: white;
     font-weight: bold;
     font-size: 20px;
@@ -707,4 +708,35 @@ html, body {
 .upgrade-chance-veryHigh {
     color: rgb(39, 81, 218);
     text-shadow: 0px 0px 2px rgb(39, 81, 218);
+}
+#upgrade-stat-info {
+    display: block;
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.upgrade-stat-value {
+    background: rgba(0,0,0,0.8);
+    display: inline-flex;
+    height: 20px;
+    padding: 5px;
+    align-items: center;
+    margin: 3px;
+}
+.upgrade-stat-img {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: rgba(0,0,0,0.8);
+}
+.upgrade-stat-text {
+    display: inline-flex;
+    text-align: center;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    padding: 3px;
+    font-size: 15px;
 }

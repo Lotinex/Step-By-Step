@@ -8,6 +8,7 @@ import {Enemy} from '../lib/enemy';
 import {PlayerAttackProjectile} from '../lib/projectile';
 import Hpbar from '../lib/hpbar';
 import L from '../lib/language'
+import Util from '../lib/util'
 
 export default class Player {
     public static CONFIG = {
@@ -266,6 +267,19 @@ export default class Player {
             })
         })
     }
+    public static customConfirm(dialog: JQuery, ok: JQuery, no: JQuery): Promise<boolean> {
+        return new Promise(rs => {
+            Player.showDialog(dialog.attr("id")!)
+            ok.on('click', e => {
+                dialog.hide()
+                rs(true)
+            })
+            no.on('click', e => {
+                dialog.hide()
+                rs(false)
+            })
+        })
+    }
     public static toggle(target: JQuery): JQuery<HTMLElement> {
         if(target.css("display") === "none"){
             target.show()
@@ -349,12 +363,13 @@ export default class Player {
         }
     }
     public static upgradeItem(itemID: string, itemData: any): void {
-        const chancePercent = (1 - itemData.upgradeLv * 0.055) * 100;
+        const chancePercent = ~~((1 - itemData.upgradeLv * 0.055) * 100);
         $("#upgrade-itemImg").attr("src", `img/items/${itemID}.png`)
         $("#upgrade-itemName").addClass(`rare-${itemData.rare}`).text(itemData.name)
         $("#upgrade-description").text("이 장비를 강화합니다.")
 
         $("#upgrade-gold").text(1)
+        $("#upgrade-lv").html('')
         $("#upgrade-lv")
         .append(
             $("<span>").text(itemData.upgradeLv)
@@ -377,10 +392,51 @@ export default class Player {
         } else if(chancePercent <= 100){
             chanceColorClass = "upgrade-chance-veryHigh"
         }
+        $("#upgrade-chance").attr("class", "upgrade-infoValue")
         $("#upgrade-chance").text(`${chancePercent}%`).addClass(chanceColorClass)
-        this.showDialog("UpgradeConfirm")
-        Player.confirm(L.process("upgrade_confirm", 1)).then(res => {
-            if(res) Player.ws.send('upgradeItem', itemID, Player.Inventory[itemID])
+        const upgradeStatValue: {[statName: string]: number} = {};
+        const appliedStat : {[statName: string]: number} = {};
+        const itemStat = Player.Inventory[itemID].stat;
+
+        for(const stat in itemStat){
+            const addedStatScaled = Number((itemStat[stat] * (5 + itemData.upgradeLv * 4.5) / 100).toFixed(1));
+            const addedStatDefault = Number((itemStat[stat] * 5 / 100).toFixed(1));
+            const addedStat = Number(Util.random(addedStatDefault, addedStatScaled).toFixed(1));
+            appliedStat[stat] = addedStat;
+            upgradeStatValue[stat] = itemStat[stat] + addedStat;
+        }
+        $("#upgrade-stat-info").html('');
+        for(const stat in itemData.stat){
+            $("#upgrade-stat-info").append(
+                $("<div>").addClass("upgrade-stat-value")
+                .append(
+                    $("<img>").addClass("upgrade-stat-img").attr("src", `img/icons/${stat}.png`)
+                )
+                .append(
+                    $("<div>").addClass("upgrade-stat-text")
+                    .append(
+                        $("<span>").text(itemStat[stat])
+                    )
+                    .append(
+                        $("<i>").attr("class", "fas fa-angle-double-right upgrade-arrow")
+                    )
+                    .append(
+                        $("<span>").text(upgradeStatValue[stat])
+                    )
+                    .append(
+                        $("<span>").addClass("itemTooltip-stat-additional").text(`(+${upgradeStatValue[stat] - itemStat[stat]})`)
+                    )
+                )
+            )
+        }
+        Player.customConfirm($("#UpgradeConfirm"), $("#upgrade-confirm-ok"), $("#upgrade-confirm-no")).then(res => {
+            if(res) {
+                if(Math.random() < chancePercent / 100){ //success
+                    Player.ws.send('upgradeItem', itemID, upgradeStatValue, appliedStat)
+                } else {
+                    Player.alert(L.process('upgrade_failed'))
+                }
+            }
         })
     }
     public static registerItemTooltip(items: any): void {
@@ -447,6 +503,7 @@ export default class Player {
         })
     }
     public static renderItem(): void {
+        $("#inventory-box").html('') //초기회
         for(const item in Player.Inventory){
             const id = item;
             const itemData = Player.Inventory[item];
@@ -593,19 +650,15 @@ export default class Player {
             Player.spawnMob(mob)
         })
         Player.ws.on("upgradeResponse", (res: {
-            success: boolean,
             data: any,
             id: string
         }) => {
-            if(res.success){
-                Player.alert(L.process('upgrade_success'))
-                Player.Inventory = res.data;
-                Player.setState({itemUpdated: true})
-                Player.registerItemTooltip(Player.Inventory)
-                Player.renderStat()
-            } else {
-                Player.alert(L.process('upgrade_failed'))
-            }
+            Player.alert(L.process('upgrade_success'))
+            Player.Inventory[res.id] = res.data;
+            Player.setState({itemUpdated: true})
+            Player.registerItemTooltip(Player.Inventory)
+            Player.renderStat()
+            Player.renderItem()
             Player.setState({upgrading: false})
         })
     }

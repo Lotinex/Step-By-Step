@@ -62,39 +62,22 @@ function onUserSocketRequest(socket: SocketIO.Socket){
         const mobs = await DB.TABLE.mobs.find({stage});
         Clients[SID].send("detectMob", mobs[Util.random(0, mobs.length - 1)])
     })
-    socket.on('upgradeItem', async (itemID: string, itemData: any) => {
-        const chance = 1 - itemData.upgradeLv * 0.055; //점차 확률 감소
-        if(Math.random() < chance){ //success
-            const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
-            const inventory = JSON.parse(user.inventory);
-
-            for(const stat in inventory[itemID].stat){
-                const value: number = inventory[itemID].stat[stat]
-
-                if(!inventory[itemID].upgradedStat[stat]) inventory[itemID].upgradedStat[stat] = 0;
-
-                const addedStatScaled = Number((value * (5 + itemData.upgradeLv * 4.5) / 100).toFixed(1));
-                const addedStatDefault = Number((value * 5 / 100).toFixed(1));
-
-                const addedStat = Number(Util.random(addedStatDefault, addedStatScaled).toFixed(1));
-                console.log(itemData.upgradeLv)
-                inventory[itemID].upgradedStat[stat] += addedStat //스탯 추가 능력치 별도 저징
-                inventory[itemID].stat[stat] = value + addedStat //퍼센트 추가 적용 (강화 레벨에 비례)
-            }
-            inventory[itemID].upgradeLv += 1;
-            await DB.TABLE.users.update([{id: Clients[SID].userID}], [{inventory}]) 
-            Clients[SID].send('upgradeResponse', {
-                success: true,
-                id: itemID,
-                data: inventory
-            })
-        } else { //failed
-            Clients[SID].send('upgradeResponse', {
-                success: false
-            })
+    socket.on('upgradeItem', async (itemID: string, newStat: any, appliedStat: any) => {
+        const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
+        const inventory = JSON.parse(user.inventory);
+        for(const stat in appliedStat){
+            if(!inventory[itemID].upgradedStat[stat]) inventory[itemID].upgradedStat[stat] = 0;
+            inventory[itemID].upgradedStat[stat] += appliedStat[stat];
         }
+        inventory[itemID].stat = newStat;
+        inventory[itemID].upgradeLv += 1;
+        await DB.TABLE.users.update([{id: Clients[SID].userID}], [{inventory}]) 
+        Clients[SID].send('upgradeResponse', {
+            id: itemID,
+            data: inventory[itemID]
+        })
     })
-    /*
+    /*s
     socket.on('equipItem', async (item: string) => {
         const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
         const updatedEquip = JSON.parse(user.equip);
