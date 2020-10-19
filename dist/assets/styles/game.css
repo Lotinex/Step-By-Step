@@ -211,7 +211,7 @@ html, body {
     background: rgba(0,0,0,0.9);
     width: 100%;
     height: 100%;
-    z-index: 4;
+    z-index: 3;
     cursor: grab;
     overflow: auto;
     display: none;
@@ -611,7 +611,7 @@ html, body {
 @keyframes newScene {
     from {
         opacity: 0;
-        transform: scale(1.5);
+        transform: scale(0.5);
     }
     to {
         opacity: 1;
@@ -739,4 +739,106 @@ html, body {
     margin-left: 5px;
     padding: 3px;
     font-size: 15px;
+}
+.boss {
+    position: absolute;
+    transition: 0.3s;
+    background-size: contain;
+}
+.boss:hover {
+    transform: scale(1.2);
+}
+.bossLabel {
+    background: linear-gradient(to right, rgba(255,0,0,0.01),rgba(255,0,0,0.2), rgba(255,0,0,0.4),rgba(255,0,0,0.6),rgba(255,0,0,0.8), rgba(255,0,0,1),rgba(255,0,0,0.8),rgba(255,0,0,0.6), rgba(255,0,0,0.4), rgba(255,0,0,0.2),rgba(255,0,0,0.01));
+    color: black;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 120px;
+    position: absolute;
+    top:0;
+    font-weight: bold;
+    bottom:0;
+    left:0;
+    right:0;
+    margin:auto;
+    margin-left: -30px;
+    margin-bottom: -20px;
+}
+#bossFightTransition {
+    user-select: none;
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+    animation: 300ms forwards newScene;
+    background: linear-gradient(to right top, rgba(0,0,0), rgb(0,0,0), rgb(22, 22, 22), rgb(30, 30, 30), rgba(40, 40, 40), rgba(45, 45, 45));
+}
+#bossImage {
+    position: absolute;
+    left: 1000px;
+    top: -100px;
+    animation: 0.5s bossImageRotate;
+    transform: rotate(5deg);
+}
+@keyframes bossImageRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(5deg);
+    }
+}
+#bossSplash-diagonalTop {
+    position: absolute;
+    top: 100px;
+    left: -100px;
+    width: 1300px;
+    height: 100px;
+    background: repeating-linear-gradient(
+        -45deg,
+        gray,
+        gray 20px,
+        black 20px,
+        black 30px
+    );
+    animation: 50s hpbarBgEffect linear infinite;
+    color: transparent;
+    background-size: 350% 100%;
+    transform: rotate(-25deg);
+}
+#bossSplash-diagonalBot {
+    position: absolute;
+    top: 560px;
+    left: 350px;
+    width: 1300px;
+    height: 100px;
+    background: repeating-linear-gradient(
+        -45deg,
+        gray,
+        gray 20px,
+        black 20px,
+        black 30px
+    );
+    animation: 50s hpbarBgEffect linear infinite;
+    color: transparent;
+    background-size: 350% 100%;
+    transform: rotate(-25deg);
+}
+#bossName {
+    font-family: 'Black Han Sans', sans-serif;
+    -webkit-text-stroke: 10px #000;
+    position: absolute;
+    font-size: 200px;
+    right: 100px;
+    bottom: 70px;
+    z-index: 7;
+    background: linear-gradient(to top, rgb(255,0,0), rgb(255,0,0), rgb(255, 0, 0), rgb(255, 100, 0), rgb(255, 100, 0), rgb(255,255,0),rgb(255,255,0), rgb(255,255,0));
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }

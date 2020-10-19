@@ -4,6 +4,7 @@
         "Adelheid" : "아델하이트",
         "Charlotte" : "샤를로테"
     },
+    "bossname_shepherd": "셰퍼드",
     "playerstat_atk": "공격력",
     "playerstat_health": "체력",
     "playerstat_critical_chance": "치명타 확률",

@@ -1,7 +1,7 @@
 import SocketClient from '../lib/socket';
 import ActiveSkill from '../lib/skill';
 import XHR from '../lib/xhr';
-import {GraphicRenderer, GraphicDamageRenderer} from '../lib/graphic';
+import {GraphicRenderer, GraphicDamageRenderer, Vector} from '../lib/graphic';
 import $ from 'jquery';
 import EnemyClasses from '../lib/mobs';
 import {Enemy} from '../lib/enemy';
@@ -10,6 +10,53 @@ import Hpbar from '../lib/hpbar';
 import L from '../lib/language'
 import Util from '../lib/util'
 
+export class Tools {
+    public static smoothMove(options: {
+        element: JQuery;
+        x: number;
+        y: number;
+        reqTime: number;
+    }): void {
+        const arvX = options.x;
+        const arvY = options.y;
+        const reqTime = options.reqTime;
+        let lastProcess = 0;
+        const elementPosition = (element: JQuery, type: 'left' | 'top') => Number(element.css(type).replace('px', ''));
+        function motionUpdate(time: number){
+            const elapsedTime = time - lastProcess;
+            lastProcess = time;
+            const distance = Vector.distanceBetweenPoints({
+                x: elementPosition(options.element, 'left'),
+                y: elementPosition(options.element, 'top')
+            }, {
+                x: arvX,
+                y: arvY 
+            });
+            if(distance <= 10){
+                return;
+            }
+
+            const angle = Vector.angleBetweenPoints({
+                x: elementPosition(options.element, 'left'),
+                y: elementPosition(options.element, 'top')
+            }, {
+                x: arvX,
+                y: arvY 
+            });
+            const velocity = distance / reqTime;
+            const targetPointVector = new Vector(velocity, angle);
+            const elapsedSec = elapsedTime / 1000;
+            options.element.css('left', elementPosition(options.element, 'left') + targetPointVector.x * elapsedSec);
+            options.element.css('top', elementPosition(options.element, 'top') + targetPointVector.y * elapsedSec);
+
+            requestAnimationFrame(motionUpdate)
+        }
+        requestAnimationFrame((time: number) => {
+            lastProcess = time;
+            motionUpdate(time)
+        })
+    }
+}
 export default class Player {
     public static CONFIG = {
         STAR_LIMIT : 7,
@@ -439,6 +486,26 @@ export default class Player {
             }
         })
     }
+    public static bossFightEnterTransition(bossID: string): void {
+        $("#bossImage").attr("src", `img/boss/${bossID}/${bossID}-00.png`)
+        $("#bossName").text(L.process(`bossname_${bossID}`))
+        $("#bossFightTransition").show()
+        Tools.smoothMove({
+            element: $("#bossImage"),
+            x: 300,
+            y: 100,
+            reqTime: 0.5
+        })
+        setTimeout(() => {
+            $("#bossFightTransition").hide()
+        }, 2500)
+
+    }
+    public static registerBossFightEnter(): void {
+        $(".boss").on('click', e => {
+            Player.bossFightEnterTransition($(e.currentTarget).attr('id')!)
+        })
+    }
     public static registerItemTooltip(items: any): void {
         $(".item-box").hover(e => {
             const item = $(e.currentTarget).attr("item") as string;
@@ -599,6 +666,7 @@ export default class Player {
                     console.error(e)
                 })
             })
+            Player.registerBossFightEnter()
             $(".dialog-close").on("click", e => {
                 $(e.currentTarget).parent().parent().hide()
             })
