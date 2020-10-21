@@ -487,7 +487,7 @@ export default class Player {
         })
     }
     public static bossFightEnterTransition(bossID: string): void {
-        $("#bossImage").attr("src", `img/boss/${bossID}/${bossID}-00.png`)
+        $("#bossImage").attr("src", `img/boss/${bossID}/${bossID}-0.png`)
         $("#bossName").text(L.process(`bossname_${bossID}`))
         $("#bossFightTransition").show()
         Tools.smoothMove({
@@ -503,7 +503,7 @@ export default class Player {
     }
     public static registerBossFightEnter(): void {
         $(".boss").on('click', e => {
-            Player.bossFightEnterTransition($(e.currentTarget).attr('id')!)
+            Player.ws.send("bossfight", $(e.currentTarget).attr('id')!)
         })
     }
     public static registerItemTooltip(items: any): void {
@@ -613,9 +613,7 @@ export default class Player {
                     .on('click', e => {
                         if(Player.State.upgrading){
                             if(equiped) return Player.alert(L.process('upgrade_unequip_required'));
-
                             Player.upgradeItem(id, itemData)
-
                         } else {
                             let equipItemData = itemData;
                             if(Player.State.itemUpdated){
@@ -728,6 +726,16 @@ export default class Player {
             Player.renderStat()
             Player.renderItem()
             Player.setState({upgrading: false})
+        })
+        Player.ws.on("bossfightEnter", (res: {
+            canEnter: boolean;
+            boss: string;
+        }) => {
+            if(res.canEnter){
+                Player.bossFightEnterTransition(res.boss)
+            } else {
+                Player.alert(L.process('bossfight_enter_failed'))
+            }
         })
     }
 }

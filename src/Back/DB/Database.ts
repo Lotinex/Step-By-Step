@@ -9,7 +9,7 @@ const DB = MySQL.createConnection({
     password : CONFIG.PASS,
     database : CONFIG.DB,
 })
-class Table<T extends "users" | "mobs" | "session" | "item"> {
+class Table<T extends "users" | "mobs" | "session" | "item" | "boss"> {
     private table: T;
     constructor(table: T){
         this.table = table;
@@ -94,6 +94,7 @@ export default {
         users: new Table("users"),
         item: new Table("item"),
         session: new Table("session"),
-        mobs: new Table("mobs")
+        mobs: new Table("mobs"),
+        boss: new Table("boss")
     }
 };

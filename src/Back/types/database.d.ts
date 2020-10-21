@@ -3,8 +3,8 @@ declare namespace Database {
         users: {
             id: string;
             inventory: string;
-            level: string;
-            money: string;
+            level: number;
+            money: number;
             stage: string;
             stat: string;
             equip: string;
@@ -23,6 +23,12 @@ declare namespace Database {
         };
         item: {
 
+        };
+        boss: {
+            id: string;
+            hp: string;
+            frame: number;
+            reqLv: number;
         };
     }
 }

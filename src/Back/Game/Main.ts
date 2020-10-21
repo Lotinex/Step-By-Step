@@ -77,6 +77,21 @@ function onUserSocketRequest(socket: SocketIO.Socket){
             data: inventory[itemID]
         })
     })
+    socket.on('bossfight', async (boss: string) => {
+        const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
+        const targetBoss = await DB.TABLE.boss.findOne({id: boss});
+        if(targetBoss.reqLv > user.level){
+            Clients[SID].send('bossfightEnter', {
+                canEnter: false,
+                boss
+            })
+        } else {
+            Clients[SID].send('bossfightEnter', {
+                canEnter: true,
+                boss
+            })
+        }
+    })
     /*s
     socket.on('equipItem', async (item: string) => {
         const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
