@@ -13,7 +13,7 @@ export class GraphicRenderer<T extends Entity = Entity> {
         [entityID: string]: T;
     }
     constructor(canvasID: string){
-
+        console.log(canvasID)
         const canvas = document.getElementById(canvasID) as HTMLCanvasElement;
 
         this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;

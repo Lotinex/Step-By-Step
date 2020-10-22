@@ -9,6 +9,7 @@ import {PlayerAttackProjectile} from '../lib/projectile';
 import Hpbar from '../lib/hpbar';
 import L from '../lib/language'
 import Util from '../lib/util'
+import Star from '../lib/star';
 
 export class Tools {
     public static smoothMove(options: {
@@ -62,7 +63,7 @@ export default class Player {
         STAR_LIMIT : 7,
         test: 1
     };
-
+    private static starCount =  200;
     public static Inventory: PlayerData.Inventory = {};
     public static Common: Partial<PlayerData.Common> = {};
     public static Stat: Partial<PlayerData.Stat> = {}
@@ -83,6 +84,8 @@ export default class Player {
     public static ObjectRenderer = new GraphicRenderer("objects");
     public static EnemyEffectRenderer = new GraphicRenderer("enemy-effect");
     public static MyEffectRenderer = new GraphicRenderer("my-effect");
+    public static BackgroundRendererLayer1 = new GraphicRenderer("spaceBackgroundLayer1");
+    public static BackgroundRendererLayer2 = new GraphicRenderer("spaceBackgroundLayer2");
     public static ws = new SocketClient();
 
     public static Init(): void {
@@ -93,10 +96,20 @@ export default class Player {
         $(".dialog-close").on("click", e => {
             $(e.currentTarget).parent().parent().hide()
         })
-
+        Player.renderBackground()
         Player.setupInventoryMenuExplain()
         Player.setupInventoryMenuUse()
         
+    }
+    public static renderBackground(): void {
+        const createStar = (renderer: GraphicRenderer) => {
+            for(let i=0; i<Player.starCount; i++){
+                const star = new Star(`star-${i}`, Util.random(0, 2000), Util.random(0, 1050), Util.random(1, 2));
+                renderer.addEntity(star)
+            }
+        }
+        createStar(Player.BackgroundRendererLayer1)
+        createStar(Player.BackgroundRendererLayer2)
     }
     public static showDialog(dialogID: string): void {
         const dialog = $(`#${dialogID}`);
@@ -347,6 +360,12 @@ export default class Player {
             x: event.pageX,
             y: event.pageY
         }
+        $("#spaceBackgroundLayer1")
+            .css('left', -(event.pageX * 0.1))
+            .css('top', -(event.pageY * 0.1))
+        $("#spaceBackgroundLayer2")
+            .css('left', -(event.pageX * 0.05))
+            .css('top', -(event.pageY * 0.05))
         if(Player.Common.currentTooltip){
             let dx = 0;
             let dy = 0;

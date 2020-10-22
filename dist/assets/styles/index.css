@@ -154,7 +154,11 @@ html, body {
 .menu:hover {
     transform: translateX(20px);
 }
-#background {
+#backgroundLayer1 {
+    z-index: -3;
+    position: absolute;
+}
+#backgroundLayer2 {
     z-index: -3;
     position: absolute;
 }
