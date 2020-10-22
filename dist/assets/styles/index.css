@@ -1,21 +1,99 @@
 @font-face { font-family: N; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff'); font-weight: normal; font-style: normal; }
 html, body {
     font-family: N;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.3),rgba(0,0,0,0.4), rgba(0,0,0,0.5),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1))
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.65),rgba(0,0,0,0.6), rgba(0,0,0,0.6),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1))
+}
+.floats {
+    animation: 4s floatsAnimation infinite alternate-reverse ease-in-out;
+}
+@keyframes floatsAnimation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-15deg);
+    }
+}
+#loard_down_benzene {
+    position: absolute;
+    right: 300px;
+    top: 80px;
+    width: 650px;
+    height: 650px;
+    user-select: none;
+    z-index: -2;
+}
+#stone1 {
+    position: absolute;
+    left: 100px;
+    bottom: 50px;
+    width: 350px;
+    height: 350px;
+    user-select: none;
+    z-index: -2;
+    background-size: contain;
+}
+#stone2 {
+    position: absolute;
+    left: 300px;
+    top: 150px;
+    width: 200px;
+    height: 200px;
+    user-select: none;
+    z-index: -2;
+    background-size: contain;
+}
+#stone3 {
+    position: absolute;
+    right: 300px;
+    top: 400px;
+    width: 150px;
+    height: 150px;
+    user-select: none;
+    z-index: -2;
+    background-size: contain;
+}
+#stone4 {
+    position: absolute;
+    right: 450px;
+    top: -100px;
+    width: 400px;
+    height: 400px;
+    user-select: none;
+    z-index: -2;
+    background-size: contain;
+}
+#stone5 {
+    position: absolute;
+    right: -100px;
+    bottom: -100px;
+    width: 500px;
+    height: 500px;
+    user-select: none;
+    z-index: -2;
+    background-size: contain;
 }
 #title {
-    height: 60px;
+    height: 100px;
     text-align: center;
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     left:0;
     right:0;
     top:0;
     bottom: 0;
     margin:auto;
-    margin-top: 20px;
-    font-size: 40px;
+    margin-top: 150px;
+    font-size: 50px;
+    font-weight: bold;
     font-weight: bold;
     color: white;
+    text-shadow: 0px 0px 3px white;
     background: linear-gradient(to right, rgba(0,0,0,0.01),rgba(0,0,0,0.2), rgba(0,0,0,0.4),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1),rgba(0,0,0,0.8),rgba(0,0,0,0.6), rgba(0,0,0,0.4), rgba(0,0,0,0.2),rgba(0,0,0,0.01));
 }
 #loginArea {
@@ -50,20 +128,41 @@ html, body {
     color: white;
     background: linear-gradient(to right, rgba(0,0,0,0.01),rgba(0,0,0,0.2), rgba(0,0,0,0.4),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1),rgba(0,0,0,0.8),rgba(0,0,0,0.6), rgba(0,0,0,0.4), rgba(0,0,0,0.2),rgba(0,0,0,0.01));
 }
-.loginButton {
+#menuBox {
+    position: absolute;
+    left: 300px;
+    bottom: 300px;
+
+}
+.menu {
     height: 50px;
     width: 250px;
+    margin: 10px;
+    color: white;
+    text-shadow: 0px 0px 2px white;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding-left: 10px;
+    font-weight: bold;
+    background: linear-gradient(90deg, rgba(155,155,155), rgba(246,205,23,0));
     border-radius: 7px;
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
 }
-.loginButton:hover {
-    box-shadow: 1px 3px 6px gray;
+.menu:hover {
+    transform: translateX(20px);
 }
-#google-login {
-    background: white;
+#background {
+    z-index: -3;
+    position: absolute;
+}
 
+@keyframes hpbarBgEffect {
+    100% {
+        background-position: 100% 100%;
+      }
 }
 #profileArea {
     position: absolute;

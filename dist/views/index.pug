@@ -1,23 +1,20 @@
 html
     include base.pug
     link(rel="stylesheet", href="styles/index.css")
+    link(href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nosifer&display=swap" rel="stylesheet")
     head
         title 스바스(Step by Step)
     body
         div#title Step By Step
-
-        div#loginArea
-            div#loginTitle 로그인
-            div#login
-                button.loginButton#google-login(onclick="location.href='/auth/google'") 구글 계정으로 로그인
-        
-        div#profileArea
-            div#profileTitle 내 정보
-            div#profile
-                img#profile-img(src=profileImgSrc)
-                div#profile-name= profileName
-                div#profile-level= profileLevel
-
-
-
+        div#menuBox
+            div.menu#start(onclick="location.href='/auth/google'") 이야기 속으로
+            div.menu#about 정보
+            div.menu#dev-log 개발 일지
+        img#loard_down_benzene(src="img/decorator/loard_down_benzene.png")
+        img#stone1.floats(src="img/decorator/stone1.png")
+        img#stone2.floats(src="img/decorator/stone2.png")
+        img#stone3.floats(src="img/decorator/stone3.png")
+        img#stone4.floats(src="img/decorator/stone4.png")
+        img#stone5.floats(src="img/decorator/stone5.png")
+        canvas#background
         script(src="pages/index.js")
