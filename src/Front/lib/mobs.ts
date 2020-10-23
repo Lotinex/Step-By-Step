@@ -29,11 +29,15 @@ class Slime extends Enemy {
         const arm = new Entity('slime-arm', -200, -200);
         arm.setTexture('img/mobs/slime/slime-arm-0.png')
         arm.setSize(300, 300)
+        arm.setState({
+            x: 265,
+            y: 40
+        })
         this.setParts({arm})
         Util.createAnimationLoop(() => {
             arm.moveToPosition({
-                x: 265,
-                y: 40
+                x: arm.state.x,
+                y: arm.state.y
             })
         })
         await Enemy.wait(0.5);
@@ -44,7 +48,7 @@ class Slime extends Enemy {
         })
         await Enemy.wait(1);
         arm.setTexture('img/mobs/slime/slime-arm-0.png')
-        await this.loopFor(5, 0.1, (counter: number) => {
+        await this.loopFor(5, 0.1, counter => {
             let attackPoint: PurePoint = {x: 0, y: 0};
             switch(counter){
                 case 0:
@@ -75,9 +79,22 @@ class Slime extends Enemy {
             })
         })
         this.unpart('ball')
-        await Enemy.wait(1);
+        await Enemy.wait(2);
+        await this.loopFor(10, 0.2, counter => {
+            this.createProjectile({
+                x: counter * 100,
+                y: 0,
+                tx: Player.CursorPosition.x,
+                ty: Player.CursorPosition.y,
+                reqTime: 1,
+                imgSrc: 'img/effects/slime/slime-attack.png',
+                w: 75,
+                h: 75
+            })
+        })
 
-
+        
+        await Enemy.wait(3);
         this.action()
     }
 }

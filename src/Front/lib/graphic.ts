@@ -143,6 +143,7 @@ export class Entity {
     public baseY: number;
     public w?: number;
     public h?: number;
+    public state: {[stateName: string]: any} = {};
     public img?: HTMLImageElement;
     private animateFrameDelay = 100;
     private rotation: number;
@@ -150,6 +151,7 @@ export class Entity {
     protected animatedTexture?: HTMLImageElement[];
     protected frameCountLimit?: number;
     protected frameCount?: number;
+    /**@deprecated remove() 메서드의 구현으로 더 이상 사용되지 않음. */
     public alive: boolean; //렌더링에서 사라지고 싶을 때 false화 하자.
     public animated: boolean;
     private fixed: boolean;
@@ -173,6 +175,12 @@ export class Entity {
         this.baseY = 0;
         this.fixed = false;
         this.rotation = 0;
+    }
+    public setState(stateObject: {[stateName: string]: any}): void {
+        for(const state in stateObject){
+            const value = stateObject[state]!;
+            this.state[state] = value;
+        }
     }
     public setSize(width: number, height: number): void {
         this.w = width;
