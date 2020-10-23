@@ -7,49 +7,76 @@ class Slime extends Enemy {
     constructor(id: string, x: number, y: number, w: number, h: number){
         super(id, x, y, w, h)
 
-        const leftArm = new Entity('leftarm-slime', 0 , 0);
-        leftArm.setTexture('img/effects/slime-attack-2.png')
-        Player.EnemyEffectRenderer.addEntity(leftArm)
-        leftArm.w = 100;
-        leftArm.h = 100;
-        this.setParts({
-            leftArm
-        })
-        leftArm.moveToPosition({
-            x: -200
-        })
     }
     async action(): Promise<void> {
-        await Enemy.wait(3);
-        this.x += 100;
-        let xCounter = 0;
-        await this.loopFor(10, 0.2, () => {
+        this.unpartAll()
+        await Enemy.wait(1);
+        const ball = new Entity('slime-ball', -200, -200);
+        ball.setAnimatedTexture({
+            template: 'effects/slime/slime-attack1',
+            limit: 5,
+            frameDelay: 200
+        })
+        ball.setSize(70, 70)
+        this.setParts({ball})
+        Util.createAnimationLoop(() => {
+            ball.moveToPosition({
+                x: 250,
+                y: -50
+            })
+        })
+        await Enemy.wait(2.5);
+        const arm = new Entity('slime-arm', -200, -200);
+        arm.setTexture('img/mobs/slime/slime-arm-0.png')
+        arm.setSize(300, 300)
+        this.setParts({arm})
+        Util.createAnimationLoop(() => {
+            arm.moveToPosition({
+                x: 265,
+                y: 40
+            })
+        })
+        await Enemy.wait(0.5);
+        arm.setAnimatedTexture({
+            template: 'mobs/slime/slime-arm',
+            frameDelay: 150,
+            limit: 8
+        })
+        await Enemy.wait(1);
+        arm.setTexture('img/mobs/slime/slime-arm-0.png')
+        await this.loopFor(5, 0.1, (counter: number) => {
+            let attackPoint: PurePoint = {x: 0, y: 0};
+            switch(counter){
+                case 0:
+                    attackPoint = {x: 0, y: 100};
+                    break;
+                case 1:
+                    attackPoint = {x: 1500, y: 200};
+                    break;
+                case 2:
+                    attackPoint = {x: 0, y: 700};
+                    break;
+                case 3:
+                    attackPoint = {x: 1500, y: 650};
+                    break;
+                case 4:
+                    attackPoint = {x: 1500, y: 400};
+                    break;
+            }
             this.createProjectile({
-                x: xCounter,
-                y: 10,
-                tx: Player.CursorPosition?.x as number + Util.random(-50, 50),
-                ty: Player.CursorPosition?.y as number + Util.random(-50, 50),
-                reqTime: 2.5,
-                imgSrc: 'img/effects/slime-attack.png'
+                x: ball.x,
+                y: ball.y,
+                tx: attackPoint.x,
+                ty: attackPoint.y,
+                reqTime: 0.6,
+                imgSrc: 'img/effects/slime/slime-attack.png',
+                w: 70,
+                h: 70
             })
-            xCounter += 100;
         })
-        await Enemy.wait(2);
-        let effectCounter = 0;
-        await this.loopFor(5, 0.5, () => {
-            const x = Util.random(0, 1000);
-            const y = Util.random(0, 1000);
-            const attack = new Entity(`slime-attack-${effectCounter}`, x, y);
-            attack.w = 500;
-            attack.h = 500;
-            attack.setTexture('img/effects/slime-attack-2.png')
-            this.summon(attack)
-            this.loopFor(35, 0, () => {
-                attack.w! -= 10;
-                attack.h! -= 10;
-            })
-            effectCounter++;
-        })
+        this.unpart('ball')
+        await Enemy.wait(1);
+
 
         this.action()
     }

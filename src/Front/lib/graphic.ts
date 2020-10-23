@@ -13,7 +13,6 @@ export class GraphicRenderer<T extends Entity = Entity> {
         [entityID: string]: T;
     }
     constructor(canvasID: string){
-        console.log(canvasID)
         const canvas = document.getElementById(canvasID) as HTMLCanvasElement;
 
         this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -76,6 +75,7 @@ export class GraphicRenderer<T extends Entity = Entity> {
     }
     public addEntity<K extends T>(entity: K): K {
         this.entities[entity.id] = entity;
+        this.entities[entity.id].setRenderer(this);
         return entity;
     }
     public removeEntity(id: string){
@@ -136,7 +136,6 @@ class EntityController {
     }
 }
 export class Entity {
-    public static ANIMATE_UPDATE_DELAY = 100;
     public id: string;
     public x: number;
     public y: number;
@@ -145,6 +144,9 @@ export class Entity {
     public w?: number;
     public h?: number;
     public img?: HTMLImageElement;
+    private animateFrameDelay = 100;
+    private rotation: number;
+    private renderer?: GraphicRenderer;
     protected animatedTexture?: HTMLImageElement[];
     protected frameCountLimit?: number;
     protected frameCount?: number;
@@ -170,6 +172,35 @@ export class Entity {
         this.baseX = 0;
         this.baseY = 0;
         this.fixed = false;
+        this.rotation = 0;
+    }
+    public setSize(width: number, height: number): void {
+        this.w = width;
+        this.h = height;
+    }
+    public rotate(degree: number, reqTime = 0): void {
+        let start: null | number = null;
+        const isFirst = true;
+
+        const radian = degree * Math.PI / 180;
+        if(reqTime === 0){
+            this.rotation = radian;
+            return;
+        }
+
+        const rotateAnimation = (time: number) => {
+            if(!start){
+                start = time;
+            }
+            const progress = time - start;
+            if(progress >= reqTime) return;
+            this.rotation = radian * (progress / reqTime)
+            requestAnimationFrame(rotateAnimation)
+        }
+        requestAnimationFrame(rotateAnimation)
+    }
+    public setRenderer(renderer: GraphicRenderer): void {
+        this.renderer = renderer;
     }
     public setHitbox(width: number, height: number): void {
         const xValue = width / 2;
@@ -209,7 +240,14 @@ export class Entity {
             return this.id;
         }
     }
+    public remove(): void {
+        this.renderer!.removeEntity(this.id);
+    }
+    public cancelAnimatedTexture(): void {
+        this.animated = false;
+    }
     public setTexture(expression: {src: string; width?: number, height?: number} | string){
+        this.cancelAnimatedTexture()
         if(typeof expression === 'object'){
             const texture = new Image();
             texture.src = expression.src; //필수
@@ -245,9 +283,10 @@ export class Entity {
         template: string;
         width?: number;
         height?: number;
+        frameDelay?: number;
         type?: 'png' | 'jpg';
     }){ //성능에 다소 영향을
-
+        if(expression.frameDelay) this.animateFrameDelay = expression.frameDelay;
         this.frameCountLimit = expression.limit - 1;
         const firstFrame = new Image();
         firstFrame.src = `img/${expression.template}-0.${expression.type || 'png'}`;
@@ -269,7 +308,8 @@ export class Entity {
      * this.animatedTexture에 미리 Image 인스턴스를 넣어두는 작업을 한다.
      */
     public updateAnimatedTexture(time: number): void { //줄 수 있다.
-        if((time - this.lastTextureUpdate) < Entity.ANIMATE_UPDATE_DELAY) {
+        if(!this.animated) return;
+        if((time - this.lastTextureUpdate) < this.animateFrameDelay) {
             return void requestAnimationFrame(this.updateAnimatedTexture)
         }
         this.lastTextureUpdate = time;
@@ -282,9 +322,20 @@ export class Entity {
         requestAnimationFrame(this.updateAnimatedTexture)
 
     }
+    /**
+     * 오버라이딩할때 rotation을 쉽게 적용할 수 있도록
+     */
+    private applyRotation(ctx: CanvasRenderingContext2D): void {
+        ctx.translate(this.x, this.y)
+        ctx.rotate(this.rotation)
+        ctx.translate(-this.x, -this.y)
+    }
     public update(time: number){}
     public render(ctx: CanvasRenderingContext2D): void {
+        ctx.save() //오버라이딩 시
+        this.applyRotation(ctx)
         ctx.drawImage(this.img as HTMLImageElement, this.x  - <number>this.w / 2, this.y - <number>this.h / 2, <number>this.w, <number>this.h)
+        ctx.restore() //빠져서는 안 된다.
     }
     public onClick(e: MouseEvent){}
    // abstract update(): void;

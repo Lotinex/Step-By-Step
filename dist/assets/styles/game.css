@@ -13,6 +13,9 @@ html, body {
     display: none;
     animation: dialogAppear 300ms forwards;
 }
+.backgroundLayer {
+    z-index: -5;
+}
 @keyframes dialogAppear {
     from {
         opacity: 0;
@@ -266,7 +269,7 @@ html, body {
 }
 #damage-text {
     position: absolute;
-    z-index: 5;
+    z-index: 6;
     pointer-events: none;
 }
 #my-effect {
@@ -274,6 +277,7 @@ html, body {
 }
 #enemy-effect {
     position: absolute;
+    z-index: 5;
 }
 #objects {
     position: absolute;
@@ -537,9 +541,10 @@ html, body {
 .inventoryMenu:hover {
     opacity: 0.5;
 }
+/**
 .inventory-upgradeReady {
-    box-shadow: 1px 2px 3px yellow;
-}
+    
+}**/
 .itemTooltip-stat-additional {
     color: rgb(49, 209, 188);
     text-shadow: 0px 0px 2px rgb(49, 209, 188);

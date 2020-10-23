@@ -388,7 +388,6 @@ export default class Player {
         if(!Player.CurrentTarget) return; //타겟팅이 어무것도 안 되어 있을 때
         const projectile = new PlayerAttackProjectile(`my-projectile-${Player.Common.projectileCounter}`, Player.CursorPosition?.x as number, Player.CursorPosition?.y as number);
         projectile.setSize(10, 10)
-        projectile.setRenderer(Player.MyEffectRenderer)
         projectile.isSmooth = true;
         projectile.setTexture({
             src: 'img/items/trace_of_the_void.png',
@@ -691,7 +690,7 @@ export default class Player {
         
         })
     }
-    public static sceneTraisitionEffect(): void {
+    public static sceneTransitionEffect(): void {
         $("#sceneTransition").removeClass("transitionAnimated")
         $("#sceneTransition").css("background", "black")
         $("#sceneTransition").addClass("transitionAnimated")
@@ -715,13 +714,14 @@ export default class Player {
             }, 0)
         })
     }
+    /**@deprecated */
     public static changeBackground(bgName: string): void {
-        Player.sceneTraisitionEffect()
+        Player.sceneTransitionEffect()
         $("#background").attr("src", `img/backgrounds/${bgName}.jpg`)
     }
     public static changeStage(stage: string): void {
         Player.Common.stage = stage;
-        Player.changeBackground(stage)
+       // Player.changeBackground(stage)
     }
     public static onSocketMessage(): void {
         Player.ws.on("detectMob", (mob: {

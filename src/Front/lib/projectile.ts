@@ -8,7 +8,6 @@ export default class Projectile extends Entity {
     protected arvX: number;
     protected arvY: number;
     protected lastProcess: number;
-    protected renderer?: GraphicRenderer;
     protected distance: number;
     protected smooth: boolean;
 
@@ -33,13 +32,6 @@ export default class Projectile extends Entity {
     }
     public setFadeoutWait(second: number): void {
         this.fadeoutWait = second * 1000;
-    }
-    protected remove(): void {
-        if(this.renderer === undefined) return console.error('Renderer not defined.') //투사체를 생성할 때 렌더러를 명시하지 않은 경우
-        delete this.renderer.entities[this.id];
-    }
-    public setRenderer(target: GraphicRenderer): void {
-        this.renderer = target;
     }
     public moveTo(x: number, y: number, reqTime: number): void {
         this.arvX = x;

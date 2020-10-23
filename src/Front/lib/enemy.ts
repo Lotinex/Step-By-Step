@@ -21,9 +21,30 @@ export abstract class Enemy extends Entity {
         this.projectileCounter = 0;
         this.parted = false;
     }
-    public setParts(partObject: {[name: string]: Entity}): void {
-        this.parts = partObject;
+    public unpartAll(): void {
+        this.parted = false;
         for(const name in this.parts){
+            this.parts[name].remove()
+        }
+        this.parts = {};
+    }
+    public unpart(name: string): void {
+        this.parts[name].remove()
+        delete this.parts[name];
+    }
+    /**@deprecated */
+    public addPart(name: string, part: Entity): void {
+        this.parts[name] = part;
+        this.parts[name].setBase(this.x, this.y)
+        Player.EnemyEffectRenderer.addEntity(this.parts[name])
+
+        if(!this.parted) this.parted = true;
+    }
+    public setParts(partObject: {[name: string]: Entity}): void {
+        for(const name in partObject){
+            this.parts[name] = partObject[name];
+        }
+        for(const name in partObject){
             this.parts[name].setBase(this.x, this.y)
             Player.EnemyEffectRenderer.addEntity(this.parts[name])
         }
@@ -41,7 +62,7 @@ export abstract class Enemy extends Entity {
         this.targeted = !this.targeted;
         if(!this.targeted) Player.CurrentTarget = undefined;
     }
-    public loopFor(number: number, sec: number, action: () => void): Promise<void> {
+    public loopFor(number: number, sec: number, action: (counter: number) => void): Promise<void> {
         return new Promise(rs => {
             let counter = 0;
             const func = () => {
@@ -49,7 +70,7 @@ export abstract class Enemy extends Entity {
                     clearInterval(interval);
                     rs();
                 }
-                action()
+                action(counter)
                 counter++;
             }
             const interval = setInterval(func, sec * 1000);
