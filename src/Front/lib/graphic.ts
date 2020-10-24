@@ -1,6 +1,6 @@
-import { text } from 'express';
 import DamageText from './damage';
-
+import $ from 'jquery';
+import Util from './util';
 /**
  * deprecated: damage text rendering (=> GraphicDamageRenderer class)
  */
@@ -147,6 +147,7 @@ export class Entity {
     public img?: HTMLImageElement;
     private animateFrameDelay = 100;
     private rotation: number;
+    public alpha: number;
     private renderer?: GraphicRenderer;
     protected animatedTexture?: HTMLImageElement[];
     protected frameCountLimit?: number;
@@ -175,6 +176,88 @@ export class Entity {
         this.baseY = 0;
         this.fixed = false;
         this.rotation = 0;
+        this.alpha = 1;
+    }
+    /**
+     * 사라질 때 까지가 Promise의 resolve 시점이 아니라 나타날 때이다.
+     *  */
+    public static fillTextBox(value: string): Promise<void> {
+        return new Promise(async rs => {
+            $("#entityTextBox").css("opacity", "1")
+            $("#entityTextBox").text(value)
+            $("#entityTextBox").css("display", "flex")
+            rs()
+            await Util.waitFor(1);
+            $("#entityTextBox").animate({
+                opacity: "0"
+            }, 1000, () => {
+                $("#entityTextBox").hide()
+            })
+        })
+    }
+    public setAlpha(alpha: number, reqTime = 0): void {
+        let start: null | number = null;
+
+        if(reqTime === 0){
+            this.alpha = alpha;
+            return;
+        }
+        const rotateAnimation = (time: number) => {
+            if(!start){
+                start = time;
+            }
+            const progress = time - start;
+            if(progress >= reqTime) return;
+            this.alpha = alpha * (progress / reqTime);
+            requestAnimationFrame(rotateAnimation)
+        }
+        requestAnimationFrame(rotateAnimation)
+    }
+    public smoothMove(options: {
+        x: number;
+        y: number;
+        reqTime: number;
+        stopDistance?: number;
+    }): Promise<void> {
+        return new Promise(rs => {
+            const arvX = options.x;
+            const arvY = options.y;
+            const reqTime = options.reqTime;
+            const stopDistance = options.stopDistance || 10;
+            let lastProcess = 0;
+            const motionUpdate = (time: number) => {
+                const elapsedTime = time - lastProcess;
+                lastProcess = time;
+                const distance = Vector.distanceBetweenPoints({
+                    x: this.x,
+                    y: this.y
+                }, {
+                    x: arvX,
+                    y: arvY 
+                });
+                if(distance <= stopDistance){
+                    return rs();
+                }
+                const angle = Vector.angleBetweenPoints({
+                    x: this.x,
+                    y: this.y
+                }, {
+                    x: arvX,
+                    y: arvY 
+                });
+                const velocity = distance / reqTime;
+                const targetPointVector = new Vector(velocity, angle);
+                const elapsedSec = elapsedTime / 1000;
+                this.x += targetPointVector.x * elapsedSec;
+                this.y += targetPointVector.y * elapsedSec;
+    
+                requestAnimationFrame(motionUpdate)
+            }
+            requestAnimationFrame((time: number) => {
+                lastProcess = time;
+                motionUpdate(time)
+            })
+        })
     }
     public setState(stateObject: {[stateName: string]: any}): void {
         for(const state in stateObject){
@@ -188,7 +271,6 @@ export class Entity {
     }
     public rotate(degree: number, reqTime = 0): void {
         let start: null | number = null;
-        const isFirst = true;
 
         const radian = degree * Math.PI / 180;
         if(reqTime === 0){
@@ -338,10 +420,17 @@ export class Entity {
         ctx.rotate(this.rotation)
         ctx.translate(-this.x, -this.y)
     }
+    /**
+     * 오버라이딩할때 alpha를 쉽게 적용할 수 있도록
+     */
+    private applyAlpha(ctx: CanvasRenderingContext2D): void {
+        ctx.globalAlpha = this.alpha;
+    }
     public update(time: number){}
     public render(ctx: CanvasRenderingContext2D): void {
         ctx.save() //오버라이딩 시
         this.applyRotation(ctx)
+        this.applyAlpha(ctx)
         ctx.drawImage(this.img as HTMLImageElement, this.x  - <number>this.w / 2, this.y - <number>this.h / 2, <number>this.w, <number>this.h)
         ctx.restore() //빠져서는 안 된다.
     }

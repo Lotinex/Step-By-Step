@@ -8,9 +8,9 @@ class Slime extends Enemy {
         super(id, x, y, w, h)
 
     }
-    async action(): Promise<void> {
+    public async action(): Promise<void> {
         this.unpartAll()
-        await Enemy.wait(1);
+        await Util.waitFor(1);
         const ball = new Entity('slime-ball', -200, -200);
         ball.setAnimatedTexture({
             template: 'effects/slime/slime-attack1',
@@ -25,7 +25,7 @@ class Slime extends Enemy {
                 y: -50
             })
         })
-        await Enemy.wait(2.5);
+        await Util.waitFor(2.5);
         const arm = new Entity('slime-arm', -200, -200);
         arm.setTexture('img/mobs/slime/slime-arm-0.png')
         arm.setSize(300, 300)
@@ -40,13 +40,13 @@ class Slime extends Enemy {
                 y: arm.state.y
             })
         })
-        await Enemy.wait(0.5);
+        await Util.waitFor(0.5);
         arm.setAnimatedTexture({
             template: 'mobs/slime/slime-arm',
             frameDelay: 150,
             limit: 8
         })
-        await Enemy.wait(1);
+        await Util.waitFor(1);
         arm.setTexture('img/mobs/slime/slime-arm-0.png')
         await this.loopFor(5, 0.1, counter => {
             let attackPoint: PurePoint = {x: 0, y: 0};
@@ -79,7 +79,7 @@ class Slime extends Enemy {
             })
         })
         this.unpart('ball')
-        await Enemy.wait(2);
+        await Util.waitFor(2);
         await this.loopFor(10, 0.2, counter => {
             this.createProjectile({
                 x: counter * 100,
@@ -94,7 +94,7 @@ class Slime extends Enemy {
         })
 
         
-        await Enemy.wait(3);
+        await Util.waitFor(3);
         this.action()
     }
 }
@@ -102,8 +102,8 @@ class Erosion extends Enemy {
     constructor(id: string, x: number, y: number, w: number, h: number){
         super(id, x, y, w, h)
     }
-    async action(): Promise<void> {
-
+    public async action(): Promise<void> {
+        this.unpartAll()
     }
 }
 export default {

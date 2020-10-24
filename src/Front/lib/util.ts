@@ -24,4 +24,12 @@ export default class Util {
     public static createAnimationLoop(action: (time: number) => void): AnimationFrame {
         return new AnimationFrame(action);
     }
+    public static isOdd(number: number): boolean {
+        return number % 2 != 0 ? true : false;
+    }
+    public static waitFor(sec: number): Promise<void> {
+        return new Promise(rs => {
+            setTimeout(rs, sec * 1000)
+        });
+    }
 }

@@ -47,6 +47,7 @@ declare namespace PlayerData {
         [itemName: string]: any;
     }
 }
+type BossID = "shepherd";
 type PurePoint = {
     x: number;
     y: number;

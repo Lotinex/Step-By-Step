@@ -45,7 +45,6 @@ ws.on('connection', async socket => {
         user.inventory = JSON.parse(user.inventory);
         user.stat = JSON.parse(user.stat);
         user.equip = JSON.parse(user.equip);
-        console.log(user.level)
 
         Clients[SID] = new User(socket, SID, userID);
         Clients[SID].send("enter", user);
@@ -80,15 +79,16 @@ function onUserSocketRequest(socket: SocketIO.Socket){
     socket.on('bossfight', async (boss: string) => {
         const user = await DB.TABLE.users.findOne({id: Clients[SID].userID});
         const targetBoss = await DB.TABLE.boss.findOne({id: boss});
+        const bossData = targetBoss;
         if(targetBoss.reqLv > user.level){
             Clients[SID].send('bossfightEnter', {
                 canEnter: false,
-                boss
+                boss: bossData
             })
         } else {
             Clients[SID].send('bossfightEnter', {
                 canEnter: true,
-                boss
+                boss: bossData
             })
         }
     })

@@ -3,13 +3,14 @@ html, body {
     font-family: N;
     margin: 0;
     overflow: hidden;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.65),rgba(0,0,0,0.6), rgba(0,0,0,0.6),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1))
+    background: linear-gradient(to bottom, rgba(0,0,0,0.65),rgba(0,0,0,0.6), rgba(0,0,0,0.6),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1));
 }
 .dialog {
     position: fixed;
     background: rgba(0,0,0,0.8);
     border-radius: 7px;
     cursor: pointer;
+    z-index: 6;
     display: none;
     animation: dialogAppear 300ms forwards;
 }
@@ -82,7 +83,7 @@ html, body {
 /* 여기서부터 아이템 툴팁 */
 
 #itemTooltip {
-    z-index: 3;
+    z-index: 7;
     background: rgba(0,0,0,0.8);
     border-radius: 7px;
     border: 1px solid white;
@@ -276,7 +277,9 @@ html, body {
     position: absolute;
 }
 #enemy-effect {
+    pointer-events: none;
     position: absolute;
+    z-index: 5;
 }
 #objects {
     position: absolute;
@@ -452,7 +455,7 @@ html, body {
     color: white;
     padding: 5px;
     position: absolute;
-    z-index: 5;
+    z-index: 7;
 }
 .statIcon {
     width: 30px;
@@ -600,8 +603,13 @@ html, body {
     position: fixed;
     width: 100%;
     height: 100%;
-    filter: blur(8px);
-    z-index: -5;
+    z-index: -4;
+}
+.backgroundDefault {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.65),rgba(0,0,0,0.6), rgba(0,0,0,0.6),rgba(0,0,0,0.6),rgba(0,0,0,0.8), rgba(0,0,0,1));
+}
+.backgroundShepherd {
+    background: linear-gradient(to bottom, rgba(85,19,19,0.65),rgba(85,19,19,0.6), rgba(85,19,19,0.6),rgba(85,19,19,0.6),rgba(85,19,19,0.8), rgba(85,19,19,1));
 }
 #sceneTransition {
     position: fixed;
@@ -750,6 +758,7 @@ html, body {
     position: absolute;
     transition: 0.3s;
     background-size: contain;
+    user-select: none;
 }
 .boss:hover {
     transform: scale(1.2);
@@ -847,4 +856,26 @@ html, body {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+#entityTextBox {
+    position: absolute;
+    width: 500px;
+    height: 50px;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    margin: auto;
+    margin-top: 150px;
+    z-index: 7;
+    background: rgba(49, 46, 46, 0.9);
+    border: 1px solid white;
+    box-shadow: 0px 0px 10px white;
+    color: white;
+    text-shadow: 0px 0px 2px white;
+    font-size: 20px;
+    text-align: center;
+    display: none;
+    align-items: center;
+    justify-content: center;
 }

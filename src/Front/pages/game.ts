@@ -11,6 +11,9 @@ import L from '../lib/language'
 import Util from '../lib/util'
 import Star from '../lib/star';
 
+import Shepherd from '../lib/boss/Shepherd';
+import Boss from 'Front/lib/boss/boss';
+
 export class Tools {
     public static smoothMove(options: {
         element: JQuery;
@@ -255,6 +258,25 @@ export default class Player {
     }
     public static displayEnemyHpbar(name: string, limit: number): void {
         Player.Common.currentEnemyHpbar = new Hpbar(name, limit);
+    }
+    public static spawnBoss(boss: {
+        id: "shepherd"
+        hp: string;
+        frame: string;
+    }): void {
+        let newBoss: Boss;
+        switch(boss.id){
+            case 'shepherd':
+                newBoss = new Shepherd('shepherd', 750, 300, 450, 450);
+                break;
+        }
+        Player.displayEnemyHpbar(boss.id, parseInt(boss.hp))
+        newBoss.setAnimatedTexture({
+            template: `boss/${boss.id}/${boss.id}`,
+            limit: parseInt(boss.frame)
+        })
+        newBoss.action()
+        Player.StageRenderer.addEntity(newBoss)
     }
     public static spawnMob(mob: {
         id: keyof typeof EnemyClasses
@@ -504,19 +526,26 @@ export default class Player {
             }
         })
     }
-    public static bossFightEnterTransition(bossID: string): void {
-        $("#bossImage").attr("src", `img/boss/${bossID}/${bossID}-0.png`)
-        $("#bossName").text(L.process(`bossname_${bossID}`))
-        $("#bossFightTransition").show()
-        Tools.smoothMove({
-            element: $("#bossImage"),
-            x: 300,
-            y: 100,
-            reqTime: 0.5
+    public static bossFightEnterTransition(bossID: string): Promise<void> {
+        return new Promise(rs => {
+            $("#bossImage")
+            .css("left", 1000)
+            .css("top", -100)
+            $("#bossImage").attr("src", `img/boss/${bossID}/${bossID}-0.png`)
+            $("#bossName").text(L.process(`bossname_${bossID}`))
+            $("#bossFightTransition").show()
+            Tools.smoothMove({
+                element: $("#bossImage"),
+                x: 300,
+                y: 100,
+                reqTime: 0.5
+            })
+            setTimeout(() => {
+                $("#bossFightTransition").hide()
+                Player.toggle($("#map"))
+                rs()
+            }, 2500)
         })
-        setTimeout(() => {
-            $("#bossFightTransition").hide()
-        }, 2500)
 
     }
     public static registerBossFightEnter(): void {
@@ -748,10 +777,20 @@ export default class Player {
         })
         Player.ws.on("bossfightEnter", (res: {
             canEnter: boolean;
-            boss: string;
+            boss: {
+                id: "shepherd"
+                frame: string;
+                hp: string;
+            };
         }) => {
             if(res.canEnter){
-                Player.bossFightEnterTransition(res.boss)
+                Player.bossFightEnterTransition(res.boss.id).then(() => {
+                    Player.spawnBoss({
+                        id: res.boss.id,
+                        frame: res.boss.frame,
+                        hp: res.boss.hp
+                    })
+                })
             } else {
                 Player.alert(L.process('bossfight_enter_failed'))
             }
