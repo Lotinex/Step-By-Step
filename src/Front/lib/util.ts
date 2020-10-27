@@ -21,6 +21,9 @@ export default class Util {
     public static random(start: number, end: number){
         return Math.floor((Math.random() * (end-start+1)) + start)
     }
+    public static numOfPx(px: string): number {
+        return Number(px.replace('px', ''));
+    }
     public static createAnimationLoop(action: (time: number) => void): AnimationFrame {
         return new AnimationFrame(action);
     }

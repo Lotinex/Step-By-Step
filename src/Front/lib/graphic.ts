@@ -22,7 +22,7 @@ export class GraphicRenderer<T extends Entity = Entity> {
         this.entities = {};
         this.UpdateRequest = this.UpdateRequest.bind(this);
 
-        window.requestAnimationFrame(this.UpdateRequest)
+        requestAnimationFrame(this.UpdateRequest)
         canvas.addEventListener("click", e => {
             for(const id in this.entities){
                 const entity = this.entities[id];
@@ -187,7 +187,7 @@ export class Entity {
             $("#entityTextBox").text(value)
             $("#entityTextBox").css("display", "flex")
             rs()
-            await Util.waitFor(1);
+            await Util.waitFor(2);
             $("#entityTextBox").animate({
                 opacity: "0"
             }, 1000, () => {
@@ -269,25 +269,27 @@ export class Entity {
         this.w = width;
         this.h = height;
     }
-    public rotate(degree: number, reqTime = 0): void {
-        let start: null | number = null;
+    public rotate(degree: number, reqTime = 0): Promise<void> {
+        return new Promise(rs => {
+            let start: null | number = null;
 
-        const radian = degree * Math.PI / 180;
-        if(reqTime === 0){
-            this.rotation = radian;
-            return;
-        }
-
-        const rotateAnimation = (time: number) => {
-            if(!start){
-                start = time;
+            const radian = degree * Math.PI / 180;
+            if(reqTime === 0){
+                this.rotation = radian;
+                return rs();
             }
-            const progress = time - start;
-            if(progress >= reqTime) return;
-            this.rotation = radian * (progress / reqTime)
+    
+            const rotateAnimation = (time: number) => {
+                if(!start){
+                    start = time;
+                }
+                const progress = time - start;
+                if(progress >= reqTime) return rs();
+                this.rotation = radian * (progress / reqTime)
+                requestAnimationFrame(rotateAnimation)
+            }
             requestAnimationFrame(rotateAnimation)
-        }
-        requestAnimationFrame(rotateAnimation)
+        })
     }
     public setRenderer(renderer: GraphicRenderer): void {
         this.renderer = renderer;
@@ -413,7 +415,7 @@ export class Entity {
 
     }
     /**
-     * 오버라이딩할때 rotation을 쉽게 적용할 수 있도록
+     * override할때 rotation을 쉽게 적용할 수 있도록
      */
     private applyRotation(ctx: CanvasRenderingContext2D): void {
         ctx.translate(this.x, this.y)
@@ -421,14 +423,32 @@ export class Entity {
         ctx.translate(-this.x, -this.y)
     }
     /**
-     * 오버라이딩할때 alpha를 쉽게 적용할 수 있도록
+     * override할때 alpha를 쉽게 적용할 수 있도록
      */
     private applyAlpha(ctx: CanvasRenderingContext2D): void {
         ctx.globalAlpha = this.alpha;
     }
-    public update(time: number){}
+    public update(time: number): void {}
+    /**
+     * 렌더링을 override 할 때 필수로 넣어야 할 것들을 위한 함수.
+     * @param renderingFunc 렌더링에서 수행할 내용
+     * @example
+     * public render(ctx: CanvasRenderingContext2D): void {
+     *  this.OverrideRendering(ctx => {
+     *      ctx.drawImage(...)
+     *  })
+     * }
+     */
+    public OverrideRendering(renderingFunc: (ctx: CanvasRenderingContext2D) => void): void {
+        const ctx = this.renderer!.ctx;
+        ctx.save()
+        this.applyRotation(ctx)
+        this.applyAlpha(ctx)
+        renderingFunc(ctx)
+        ctx.restore()
+    }
     public render(ctx: CanvasRenderingContext2D): void {
-        ctx.save() //오버라이딩 시
+        ctx.save() //override 시
         this.applyRotation(ctx)
         this.applyAlpha(ctx)
         ctx.drawImage(this.img as HTMLImageElement, this.x  - <number>this.w / 2, this.y - <number>this.h / 2, <number>this.w, <number>this.h)

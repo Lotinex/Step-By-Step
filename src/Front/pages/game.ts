@@ -15,6 +15,15 @@ import Shepherd from '../lib/boss/Shepherd';
 import Boss from 'Front/lib/boss/boss';
 
 export class Tools {
+    public static shake(target: JQuery, level: number): void {
+        if(level < 1) return;
+        target.css('top', Util.numOfPx(target.css('top')) - level)
+        setTimeout(() => {
+            target.css('top', 0)
+            Tools.shake(target, level * 0.7)
+        }, 50)
+    
+    }
     public static smoothMove(options: {
         element: JQuery;
         x: number;
@@ -275,7 +284,18 @@ export default class Player {
             template: `boss/${boss.id}/${boss.id}`,
             limit: parseInt(boss.frame)
         })
-        newBoss.action()
+        if(newBoss.state.requireReady){
+            newBoss.ready().then(() => {
+                newBoss.action()
+                if(newBoss.state.loopAfterReady) newBoss.loopAction()
+            })
+        } else {
+            newBoss.once()
+            newBoss.action()
+        }
+        if(newBoss.state.hasLoopAction && !newBoss.state.loopAfterReady){
+            newBoss.loopAction()
+        }
         Player.StageRenderer.addEntity(newBoss)
     }
     public static spawnMob(mob: {
