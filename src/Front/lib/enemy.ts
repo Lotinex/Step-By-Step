@@ -32,14 +32,6 @@ export abstract class Enemy extends Entity {
         this.parts[name].remove()
         delete this.parts[name];
     }
-    /**@deprecated */
-    public addPart(name: string, part: Entity): void {
-        this.parts[name] = part;
-        this.parts[name].setBase(this.x, this.y)
-        Player.EnemyEffectRenderer.addEntity(this.parts[name])
-
-        if(!this.parted) this.parted = true;
-    }
     public setParts(partObject: {[name: string]: Entity}): void {
         for(const name in partObject){
             this.parts[name] = partObject[name];

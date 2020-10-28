@@ -4,6 +4,7 @@ import Boss from '../boss';
 import Util, { AnimationFrame } from '../../util'
 import { Enemy } from '../../enemy';
 import $ from 'jquery';
+import System from '../../system';
 
 export default class Shepherd extends Boss {
     private sword?: Entity;
@@ -15,7 +16,7 @@ export default class Shepherd extends Boss {
             requireReady: true,
             loopAfterReady: true
         })
-        this.playTheme()
+        System.playSound('boss.shepherd')
     }
     public async loopAction(): Promise<void> {
         await this.smoothMove({
