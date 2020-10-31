@@ -1,8 +1,8 @@
-import {GraphicRenderer, Entity} from '../lib/graphic';
+import {GraphicRenderer} from '../lib/graphic';
 import Util from '../lib/util'
 import $ from 'jquery'
 import Star from '../lib/star';
-
+import Entity from '../lib/entity';
 class Main {
     private static BackgroundRendererLayer1 = new GraphicRenderer("backgroundLayer1");
     private static BackgroundRendererLayer2 = new GraphicRenderer("backgroundLayer2");

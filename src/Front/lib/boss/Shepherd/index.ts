@@ -1,4 +1,4 @@
-import { Entity } from '../../graphic';
+import Entity from '../../entity';
 import Player, {Tools} from '../../../pages/game';
 import Boss from '../boss';
 import Util, { AnimationFrame } from '../../util'
@@ -72,6 +72,7 @@ export default class Shepherd extends Boss {
             limit: 5
         })
         blackFlame.setAlpha(0)
+        blackFlame.setAttackbox(blackFlame.getAbstractEntityBox())
         Player.EnemyEffectRenderer.addEntity(blackFlame)
         await Util.waitFor(0.3);
         await this.loopFor(10, 0.1, counter => {

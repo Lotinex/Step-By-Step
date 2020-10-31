@@ -10,6 +10,7 @@ import Hpbar from '../lib/hpbar';
 import L from '../lib/language'
 import Util from '../lib/util'
 import Star from '../lib/star';
+import Entity from '../lib/entity';
 
 import Shepherd from '../lib/boss/Shepherd';
 import Boss from 'Front/lib/boss/boss';
@@ -567,6 +568,9 @@ export default class Player {
             }, 2500)
         })
 
+    }
+    public static onHurt(entity: Entity): void {
+        console.log(`${entity.id} 로부터 피해를 받았습니다.`)
     }
     public static registerBossFightEnter(): void {
         $(".boss").on('click', e => {

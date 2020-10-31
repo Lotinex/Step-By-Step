@@ -1,9 +1,10 @@
-import {Entity, GraphicDamageRenderer} from './graphic';
+import {GraphicDamageRenderer} from './graphic';
 import DamageText from './damage';
 import Util from './util';
 import Player from '../pages/game';
 import ActiveSkill from './skill';
 import Projectile from './projectile';
+import Entity from './entity';
 export abstract class Enemy extends Entity {
     public hp: number;
     public targeted: boolean;
@@ -116,7 +117,7 @@ export abstract class Enemy extends Entity {
         w?: number;
         h?: number;
     }): void {
-        const projectile = new Projectile(`${this.constructor.name}-projectile-${this.projectileCounter}`, options.x, options.y)
+        const projectile = new Projectile(`${this.constructor.name}-projectile-${this.projectileCounter}`, options.x, options.y);
         projectile.setTexture(options.imgSrc)
         projectile.setRenderer(Player.EnemyEffectRenderer)
         projectile.w = options.w || 10;

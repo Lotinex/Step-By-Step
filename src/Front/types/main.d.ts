@@ -52,3 +52,13 @@ type PurePoint = {
     x: number;
     y: number;
 }
+type hitBoxOverlapInfo = {
+    subject: import('../lib/entity').default;
+    target: import('../lib/entity').default;
+};
+type PureBox = {
+    x1: number,
+    x2: number;
+    y1: number;
+    y2: number;
+};

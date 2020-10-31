@@ -1,6 +1,6 @@
-import {Entity, Vector, GraphicRenderer} from './graphic';
+import {Vector, GraphicRenderer} from './graphic';
 import Player from '../pages/game';
-
+import Entity from './entity';
 export default class Projectile extends Entity {
 
     protected fadeoutWait: number;

@@ -18,6 +18,15 @@ export class AnimationFrame {
     }
 }
 export default class Util {
+    public static checkPointInArea(point: PurePoint, area: PureBox): boolean {
+        if(
+            point.x >= area.x1 &&
+            point.x <= area.x2 &&
+            point.y >= area.y1 &&
+            point.y <= area.y2
+        ) return true;
+        return false;
+    }
     public static random(start: number, end: number){
         return Math.floor((Math.random() * (end-start+1)) + start)
     }

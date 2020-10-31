@@ -1,6 +1,7 @@
-import {GraphicRenderer, Entity} from '../lib/graphic';
+import {GraphicRenderer} from '../lib/graphic';
 import Util from '../lib/util'
 import $ from 'jquery'
+import Entity from './entity';
 export default class Star extends Entity {
     private brightness: number = 1;
     private radius: number;
