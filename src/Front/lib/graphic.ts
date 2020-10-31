@@ -56,7 +56,7 @@ export class GraphicRenderer<T extends Entity = Entity> {
         for(const id in this.entities){
             const entity = this.entities[id];
             if(entity.hasHitbox) entity.updateHitbox()
-            
+            if(entity.hasAttackbox) entity.updateAttackbox()
             if(entity.hasAttackbox){
                 const cursorPosition = {
                     x: Player.CursorPosition.x,

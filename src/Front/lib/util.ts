@@ -18,6 +18,20 @@ export class AnimationFrame {
     }
 }
 export default class Util {
+    public static loopFor(number: number, sec: number, action: (counter: number) => void): Promise<void> {
+        return new Promise(rs => {
+            let counter = 0;
+            const func = () => {
+                if(counter == number){
+                    clearInterval(interval);
+                    rs();
+                }
+                action(counter)
+                counter++;
+            }
+            const interval = setInterval(func, sec * 1000);
+        })
+    }
     public static checkPointInArea(point: PurePoint, area: PureBox): boolean {
         if(
             point.x >= area.x1 &&

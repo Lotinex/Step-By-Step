@@ -36,8 +36,6 @@ export abstract class Enemy extends Entity {
     public setParts(partObject: {[name: string]: Entity}): void {
         for(const name in partObject){
             this.parts[name] = partObject[name];
-        }
-        for(const name in partObject){
             this.parts[name].setBase(this.x, this.y)
             Player.EnemyEffectRenderer.addEntity(this.parts[name])
         }
@@ -54,20 +52,6 @@ export abstract class Enemy extends Entity {
     public onClick(e: MouseEvent){
         this.targeted = !this.targeted;
         if(!this.targeted) Player.CurrentTarget = undefined;
-    }
-    public loopFor(number: number, sec: number, action: (counter: number) => void): Promise<void> {
-        return new Promise(rs => {
-            let counter = 0;
-            const func = () => {
-                if(counter == number){
-                    clearInterval(interval);
-                    rs();
-                }
-                action(counter)
-                counter++;
-            }
-            const interval = setInterval(func, sec * 1000);
-        })
     }
     /*
     public move(x: number, y: number): Promise<void> {

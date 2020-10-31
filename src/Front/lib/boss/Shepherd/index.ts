@@ -9,6 +9,7 @@ import System from '../../system';
 export default class Shepherd extends Boss {
     private sword?: Entity;
     private swordMoveLoop?: AnimationFrame;
+    private blackBoltMoveLoop?: AnimationFrame;
     constructor(id: string, x: number, y: number, w: number, h: number){
         super(id, x, y, w, h)
         this.setState({
@@ -55,7 +56,7 @@ export default class Shepherd extends Boss {
             sword: sword
         })
         await Entity.fillTextBox('셰퍼드가 「분산의 검」을 준비합니다.');
-        await this.loopFor(20, 0.1, counter => {
+        await Util.loopFor(20, 0.1, counter => {
             sword.setAlpha(sword.alpha + 0.05)
         });
     }
@@ -75,13 +76,13 @@ export default class Shepherd extends Boss {
         blackFlame.setAttackbox(blackFlame.getAbstractEntityBox())
         Player.EnemyEffectRenderer.addEntity(blackFlame)
         await Util.waitFor(0.3);
-        await this.loopFor(10, 0.1, counter => {
+        await Util.loopFor(10, 0.1, counter => {
             Tools.shake($(".renderer"), 20)
             blackFlame.setAlpha(blackFlame.alpha + 0.1)
         });
         await Util.waitFor(3);
         sword.setAlpha(0.3)
-        await this.loopFor(40, 0, counter => {
+        await Util.loopFor(40, 0, counter => {
             sword.setState({
                 y: sword.state.y - 2
             })
@@ -108,10 +109,73 @@ export default class Shepherd extends Boss {
         blackFlameRow.setAlpha(0)
         Player.EnemyEffectRenderer.addEntity(blackFlameRow)
         await Util.waitFor(0.3);
-        await this.loopFor(10, 0.1, counter => {
+        await Util.loopFor(10, 0.1, counter => {
             Tools.shake($(".renderer"), 20)
             blackFlameRow.setAlpha(blackFlameRow.alpha + 0.1)
         });
+        await Util.waitFor(1.5);
+        const blackBolt = new Entity('blackBolt', -300, -300);
+        blackBolt.setAlpha(0.3)
+        blackBolt.setAnimatedTexture({
+            template: 'effects/shepherd/blackBolt',
+            limit: 10,
+            frameDelay: 170
+        })
+        blackBolt.setSize(500, 500)
+        blackBolt.setState({
+            x: 125,
+            y: 50
+        })
+        this.blackBoltMoveLoop = Util.createAnimationLoop(() => {
+            blackBolt.moveToPosition({
+                x: blackBolt.state.x,
+                y: blackBolt.state.y
+            })
+        })
+        this.setParts({blackBolt})
+        await Util.loopFor(10, 0.1, counter => {
+            blackBolt.setAlpha(blackBolt.alpha + 0.1)
+        });
+        await Util.waitFor(2);
+        await Util.loopFor(10, 0.1, counter => {
+            const $counter = counter === 0 ? ++counter : counter;
+            const blackBall = new Entity(`blackBall-${counter}`, blackBolt.x, blackBolt.y);
+            blackBall.setAnimatedTexture({
+                template: 'effects/shepherd/blackBall',
+                limit: 6,
+                frameDelay: 160
+            })
+            blackBall.setSize(50, 50)
+            Player.EnemyEffectRenderer.addEntity(blackBall)
+            Util.loopFor(20, 0.05, counter => {
+                blackBall.setSize(blackBall.w! + 10, blackBall.h! + 10)
+            })
+            blackBall.smoothMove({
+                x: Util.random(1, 2) == 1 ? 100: 1400,
+                y: Util.random(1, 2) == 1 ? 50 : 740,
+                reqTime: 0.7,
+                stopDistance: 20
+            })
+        })
+        this.unpart('blackBolt')
+        await Util.waitFor(3);
+        const theRune = new Entity('theRune', Util.random(200, 1300), Util.random(350, 650));
+        theRune.setAnimatedTexture({
+            template: 'effects/shepherd/theRune',
+            frameDelay: 150,
+            limit: 4
+        })
+        theRune.setAlpha(0)
+        theRune.setSize(500, 500)
+        Player.EnemyEffectRenderer.addEntity(theRune)
+        theRune.smoothMove({
+            x: theRune.x,
+            y: theRune.y + 30,
+            reqTime: 0.8
+        })
+        await Util.loopFor(10, 0.05, counter => {
+            theRune.setAlpha(theRune.alpha + 0.1)
+        })
         await Util.waitFor(3.5);
         this.action() //required
     }

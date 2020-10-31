@@ -569,7 +569,14 @@ export default class Player {
         })
 
     }
+    public static hurtScreenEffect(): void {
+        const effect = $("#hurtScreenEffect");
+        effect.css('opacity', 1)
+        effect.show()
+        effect.fadeOut(300)
+    }
     public static onHurt(entity: Entity): void {
+        Player.hurtScreenEffect()
         console.log(`${entity.id} 로부터 피해를 받았습니다.`)
     }
     public static registerBossFightEnter(): void {

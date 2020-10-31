@@ -48,7 +48,7 @@ class Slime extends Enemy {
         })
         await Util.waitFor(1);
         arm.setTexture('img/mobs/slime/slime-arm-0.png')
-        await this.loopFor(5, 0.1, counter => {
+        await Util.loopFor(5, 0.1, counter => {
             let attackPoint: PurePoint = {x: 0, y: 0};
             switch(counter){
                 case 0:
@@ -80,7 +80,7 @@ class Slime extends Enemy {
         })
         this.unpart('ball')
         await Util.waitFor(2);
-        await this.loopFor(10, 0.2, counter => {
+        await Util.loopFor(10, 0.2, counter => {
             this.createProjectile({
                 x: counter * 100,
                 y: 0,
@@ -110,4 +110,3 @@ export default {
     'slime': Slime,
     'erosion': Erosion
 }
-

@@ -17,12 +17,7 @@ export default class Entity {
     private rotation: number;
     public hitboxW: number = 0;
     public hitboxH: number = 0;
-    private attackBoxPositions: {
-        x1: number;
-        x2: number;
-        y1: number;
-        y2: number;
-    } = {
+    private attackBoxPositions: PureBox = {
         x1: 0,
         x2: 0,
         y1: 0,
@@ -408,4 +403,11 @@ export default class Entity {
     }
     public onClick(e: MouseEvent): void {}
    // abstract update(): void;
+}
+function a(b: string | Array<any>){
+    if(b instanceof Array){
+        b.forEach(e => {
+
+        })
+    }
 }

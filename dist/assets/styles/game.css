@@ -879,3 +879,11 @@ html, body {
     align-items: center;
     justify-content: center;
 }
+#hurtScreenEffect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    pointer-events: none;
+    display: none;
+}
