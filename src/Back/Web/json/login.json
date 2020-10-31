@@ -1,6 +1,0 @@
-{
-    "clientID": "85980254947-tbpk5bogtbg9egmsievv1gbmrtmsibel.apps.googleusercontent.com",
-    "clientSecret": "vepcxiwShQNOQMLllW8t_VOZ",
-    "callbackURL": "http://lotix.kro.kr/auth/google/callback",
-    "SESSION_SECRET" : "TEST1234"
-}
