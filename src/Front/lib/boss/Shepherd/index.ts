@@ -137,24 +137,22 @@ export default class Shepherd extends Boss {
             blackBolt.setAlpha(blackBolt.alpha + 0.1)
         });
         await Util.waitFor(2);
-        await Util.loopFor(10, 0.1, counter => {
-            const $counter = counter === 0 ? ++counter : counter;
-            const blackBall = new Entity(`blackBall-${counter}`, blackBolt.x, blackBolt.y);
+        await Util.loopFor(10, 0.45, counter => {
+            const blackBall = new Entity(`blackBall-${counter}`, Util.random(50, 1500), 0);
             blackBall.setAnimatedTexture({
                 template: 'effects/shepherd/blackBall',
                 limit: 6,
                 frameDelay: 160
             })
-            blackBall.setSize(50, 50)
+            blackBall.setSize(150, 150)
             Player.EnemyEffectRenderer.addEntity(blackBall)
-            Util.loopFor(20, 0.05, counter => {
-                blackBall.setSize(blackBall.w! + 10, blackBall.h! + 10)
-            })
             blackBall.smoothMove({
-                x: Util.random(1, 2) == 1 ? 100: 1400,
-                y: Util.random(1, 2) == 1 ? 50 : 740,
+                x: blackBall.x,
+                y: blackBall.y + 750,
                 reqTime: 0.7,
                 stopDistance: 20
+            }).then(() => {
+                blackBall.remove()
             })
         })
         this.unpart('blackBolt')
@@ -176,7 +174,108 @@ export default class Shepherd extends Boss {
         await Util.loopFor(10, 0.05, counter => {
             theRune.setAlpha(theRune.alpha + 0.1)
         })
-        await Util.waitFor(3.5);
+        await Entity.fillTextBox('셰퍼드가 룬을 꺼내 주변을 흑화시키고 있습니다.');
+        await Util.waitFor(1.5);
+        await Util.loopFor(6, 0.5, counter => {
+            Tools.shake($(".renderer"), 60)
+            const chain = new Entity(`chain-${counter}`, 0, 0);
+            chain.setSize(2000, 2000)
+            chain.setTexture('img/effects/shepherd/longChain.png')
+            switch(counter){
+                case 0:
+                    chain.moveToPosition({
+                        x: 1700,
+                        y: 350
+                    })
+                    chain.rotate(-45)
+                    break;
+                case 1:
+                    chain.moveToPosition({
+                        x: -200,
+                        y: 350
+                    })
+                    chain.rotate(45)
+                    break;
+                case 2:
+                    chain.moveToPosition({
+                        x: -200,
+                        y: 430
+                    })
+                    chain.rotate(-45)
+                    break;
+                case 3:
+                    chain.moveToPosition({
+                        x: 1100,
+                        y: 1030
+                    })
+                    chain.rotate(45)
+                    break;
+                case 4:
+                    chain.setSize(1000, 1000)
+                    chain.moveToPosition({
+                        x: 200,
+                        y: 0
+                    })
+                    chain.setAnimatedTexture({
+                        template: 'effects/shepherd/poweredChain',
+                        limit: 6
+                    })
+                    break;
+                case 5:
+                    chain.setSize(1000, 1000)
+                    chain.moveToPosition({
+                        x: 1300,
+                        y: 0
+                    })
+                    chain.setAnimatedTexture({
+                        template: 'effects/shepherd/poweredChain',
+                        limit: 6
+                    })
+                    break;
+            }
+            Player.EnemyEffectRenderer.addEntity(chain)
+            switch(counter){
+                case 0:
+                    chain.smoothMove({
+                        x: 1400,
+                        y: 50,
+                        reqTime: 0.6
+                    })
+                    break;
+                case 1:
+                    chain.smoothMove({
+                        x: 100,
+                        y: 50,
+                        reqTime: 0.6
+                    })
+                    break;
+                case 2:
+                    chain.smoothMove({
+                        x: 100,
+                        y: 730,
+                        reqTime: 0.6
+                    })
+                    break;
+                case 3:
+                    chain.smoothMove({
+                        x: 1400,
+                        y: 730,
+                        reqTime: 0.6
+                    })
+                    break;
+                case 4:
+                case 5:
+                    chain.smoothMove({
+                        x: chain.x,
+                        y: 500,
+                        reqTime: 0.55
+                    }).then(() => {
+                        Tools.shake($(".renderer"), 60)
+                    })
+                    break;
+            }
+        })
+        await Util.waitFor(5);
         this.action() //required
     }
 }

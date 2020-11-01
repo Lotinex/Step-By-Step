@@ -24,7 +24,7 @@ export default class Util {
             const func = () => {
                 if(counter == number){
                     clearInterval(interval);
-                    rs();
+                    return rs();
                 }
                 action(counter)
                 counter++;
