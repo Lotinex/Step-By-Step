@@ -404,10 +404,3 @@ export default class Entity {
     public onClick(e: MouseEvent): void {}
    // abstract update(): void;
 }
-function a(b: string | Array<any>){
-    if(b instanceof Array){
-        b.forEach(e => {
-
-        })
-    }
-}

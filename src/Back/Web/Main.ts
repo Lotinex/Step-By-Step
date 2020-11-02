@@ -47,8 +47,27 @@ const wooden_sword = {
     },
     description : "초보자용 나무 검이다.",
     atk_type : "attack",
-    type : "sword"
+    type : "sword",
+    upgradeLv: 0
 
+}
+const red_chain = {
+    price: 100,
+    name: "붉은 사슬",
+    rare: "mythic",
+    reqLV: 800,
+    level: {
+        value: 554,
+        star: 7
+    },
+    stat: {
+        atk: 35673,
+        health: 115600,
+        critical_damage: 3.5,
+        ignore_protection: 75,
+    },
+    upgradeLv: 0,
+    description: "역사상 가장 강해 막을 수 없었던 필멸자 한 명을 구속한 유일한 사슬이다. 강한 기운이 깃들어 있어 조심해야 한다."
 }
 const lava_pendant  = {
     price : 100,
@@ -70,7 +89,8 @@ const lava_pendant  = {
     },
     description : "전설적인 불의 새의 심장에 있는 보석이 박힌 펜던트이다.",
     atk_type : "buff",
-    type : "pendant"
+    type : "pendant",
+    upgradeLv: 0
 
 }
 const trace_of_the_void  = {
@@ -90,7 +110,7 @@ const trace_of_the_void  = {
     upgradedStat: {},
     description : "알 수 없는 공간에서 한 연구원이 떼어 온 공허(보이드) 의 흔적이다.\n주변 공간을 일그러뜨리고 있다.",
     atk_type : "buff",
-    type : "pendant"
+    type : "pendant",
 }
 const burning_heart = {
     price : 100,
@@ -115,13 +135,15 @@ const burning_heart = {
     },
     description : "전설 속 정의 영혼이 가졌던 불타는 심장이다. 죽지 않고 살아있다.",
     atk_type : "buff",
-    type : "pendant"
+    type : "pendant",
+    upgradeLv: 0
 
 }
 const echani = {
     price : 100,
     name : "에찬이",
     rare : "mythic",
+    upgradeLv: 0,
     reqLV : 999,
     level : {
         value : 750,
@@ -141,11 +163,12 @@ const echani = {
 
 }
 const inventory = {
-    //"wooden_sword" : wooden_sword,
-    //"lava_pendant" : lava_pendant,
+    "wooden_sword" : wooden_sword,
+    "lava_pendant" : lava_pendant,
     "trace_of_the_void" : trace_of_the_void,
-    //"burning_heart" : burning_heart, //테스트
-    //"echani" : echani
+    "red_chain": red_chain,
+    "burning_heart" : burning_heart, //테스트
+    "echani" : echani
 }
 
 DB.TABLE.users.update([ { id : "114771621283891074143" } ], [ { inventory :  inventory } ]) 

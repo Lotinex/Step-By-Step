@@ -575,9 +575,9 @@ export default class Player {
         effect.show()
         effect.fadeOut(300)
     }
-    public static onHurt(entity: Entity): void {
+    public static onHurt(entity?: Entity): void {
         Player.hurtScreenEffect()
-        console.log(`${entity.id} 로부터 피해를 받았습니다.`)
+        console.log(`${entity?.id} 로부터 피해를 받았습니다.`)
     }
     public static registerBossFightEnter(): void {
         $(".boss").on('click', e => {
@@ -617,6 +617,7 @@ export default class Player {
             $("#itemTooltip-reqLV").text(`reqLv.${itemData.reqLV}`);
             $("#itemTooltip-statBox").html('');
             for(const stat in itemData.stat){
+                const additionalStat = itemData.upgradedStat ? (itemData.upgradedStat[stat] || 0) : 0;
                 $("#itemTooltip-statBox").append(
                     $("<div>").addClass("itemTooltip-stat-value")
                     .append(
@@ -625,7 +626,7 @@ export default class Player {
                     .append(
                         $("<div>").addClass("itemTooltip-stat-text")
                         .append($("<span>").text(itemData.stat[stat]))
-                        .append($("<span>").addClass("itemTooltip-stat-additional").text(`(+${itemData.upgradedStat[stat] || 0})`))
+                        .append($("<span>").addClass("itemTooltip-stat-additional").text(`(+${additionalStat})`))
                     )
                 )
             }
