@@ -1,6 +1,6 @@
 # Step-By-Step
 ![tmqktm](https://user-images.githubusercontent.com/34784356/101200023-184cee80-36a9-11eb-92eb-a7104559a0ed.png)
-- ~~이 프로젝트는 11월 말 Electron 기반의 앱 게임으로 재구성될 예정이..였습니다. ~~
+- ~~이 프로젝트는 11월 말 Electron 기반의 앱 게임으로 재구성될 예정이..였습니다.~~
 - ~~이에 따라 웹 서버는 삭제되며, 추가적으로 TypeScript에 대한 엄격 타입 리팩토링이 진행될 예정입니다.~~
 - **Step By Step은 Covid-Simulator와 함께 WebGL의 공부 후 WebGL 기반으로 변경될 예정입니다.**
 + 사용됨:
